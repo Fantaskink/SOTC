@@ -9,7 +9,7 @@ extern PTR_DAT_014649f8; // Memory card pointer.
 /*----------- Memory Card -----------------*/
 
 float _gameFWorkChk_sub_135e388(int index) {
-  return (PTR_DAT_014649f8 + index * 4); // Return a float with the specified index from the memory card
+  return (PTR_DAT_014649f8 + index * 4); // Return a float from the specified index in the memory card
 }
 
 
@@ -99,9 +99,7 @@ void addPlayerMaxHp_sub_1367400(float hp_to_add) {
 
 
 
-void endingflowDecPlayerHpPersent_sub_135cf08(float multiplier)
-
-{
+void endingflowDecPlayerHpPersent_sub_135cf08(float multiplier) {
   float current_hp = getPlayerHp_sub_1367220();
   
   setPlayerHp_sub_1367230(current_hp * multiplier);
@@ -123,10 +121,7 @@ float getPlayerMaxGrip_sub_1367550() {
 
 
 void setPlayerGrip_sub_1367448(float target_grip) {
-  float current_grip;
-  float max_grip;
-  
-  current_grip = _gameFWorkChk_sub_135e388(0xc);
+  float current_grip = _gameFWorkChk_sub_135e388(0xc);
   if (current_grip < target_grip) {
     current_grip = _gameFWorkChk_sub_135e388(0xc);
   }
@@ -137,18 +132,15 @@ void setPlayerGrip_sub_1367448(float target_grip) {
     }
   }
   player_grip = current_grip;
-  max_grip = _gameFWorkChk_sub_135e388(0xc);
+  float max_grip = _gameFWorkChk_sub_135e388(0xc);
   setgrip_sub_1401bd8(current_grip / max_grip);
   return;
 }
 
 
 void addPlayerGrip_sub_13674c8(float grip_to_add) {
-  float current_grip;
-  float max_grip;
-  
   grip_to_add = player_grip + grip_to_add;
-  current_grip = _gameFWorkChk_sub_135e388(0xc);
+  float current_grip = _gameFWorkChk_sub_135e388(0xc);
   if (current_grip < grip_to_add) {
     current_grip = _gameFWorkChk_sub_135e388(0xc);
   }
@@ -159,7 +151,7 @@ void addPlayerGrip_sub_13674c8(float grip_to_add) {
     }
   }
   player_grip = current_grip;
-  max_grip = _gameFWorkChk_sub_135e388(0xc);
+  float max_grip = _gameFWorkChk_sub_135e388(0xc);
   setgrip_sub_1401bd8(current_grip / max_grip);
   return;
 }
