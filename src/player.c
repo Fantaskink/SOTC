@@ -1,18 +1,13 @@
-struct player_data {
-  float max_hp;
-  float max_grip;
-};
-
 struct player_data *player_data; // PTR_DAT_014649f8
 
 float player_health; // DAT_012e7b64
 float player_grip; // DAT_012e7b60
 
-extern PTR_DAT_014649f8;
+extern PTR_DAT_014649f8; // Memory card pointer. 
 
 
-float _gameFWorkChk_sub_135e388(int param_1) {
-  return *(float)(PTR_DAT_014649f8 + param_1 * 4);
+float _gameFWorkChk_sub_135e388(int index) {
+  return (PTR_DAT_014649f8 + index * 4); // Return a float with the specified index from the memory card
 }
 
 
