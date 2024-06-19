@@ -1,4 +1,4 @@
-struct player_data *player_data; // PTR_DAT_014649f8
+//struct player_data *player_data; // PTR_DAT_014649f8
 
 float player_health; // DAT_012e7b64
 float player_grip; // DAT_012e7b60
@@ -6,9 +6,18 @@ float player_grip; // DAT_012e7b60
 extern PTR_DAT_014649f8; // Memory card pointer. 
 
 
+/*----------- Memory Card -----------------*/
+
 float _gameFWorkChk_sub_135e388(int index) {
   return (PTR_DAT_014649f8 + index * 4); // Return a float with the specified index from the memory card
 }
+
+
+void _gameFWorkSet_sub_135e328(float value, int index) {
+  (PTR_DAT_014649f8 + index * 4) = value; // Set specified value at specified index in memory card
+  return;
+}
+
 
 
 /* ------------- Health -------------------*/
@@ -74,11 +83,20 @@ void addPlayerHp_sub_13672b0(float health_to_add) {
       player_health = health_to_add;
     }
   }
-  current_hp = (float)getPlayerHp_sub_1367220();
-  max_hp = (float)getPlayerMaxHp_sub_13673d0();
+  current_hp = getPlayerHp_sub_1367220();
+  max_hp = getPlayerMaxHp_sub_13673d0();
   playerlifebar_sethp_sub_1400088(current_hp / max_hp);
   return;
 }
+
+
+void addPlayerMaxHp_sub_1367400(float hp_to_add) { 
+  float max_hp = _gameFWorkChk_sub_135e388(0xb);
+  _gameFWorkSet_sub_135e328(max_hp + hp_to_add,0xb);
+  playerlifebar_effect_sub_1401c78();
+  return;
+}
+
 
 
 void endingflowDecPlayerHpPersent_sub_135cf08(float multiplier)
@@ -125,13 +143,42 @@ void setPlayerGrip_sub_1367448(float target_grip) {
 }
 
 
-void setgrip_sub_1401bd8(float param_1) {
-  if (param_1 == DAT_014659e0) {
+void addPlayerGrip_sub_13674c8(float grip_to_add) {
+  float current_grip;
+  float max_grip;
+  
+  grip_to_add = player_grip + grip_to_add;
+  current_grip = _gameFWorkChk_sub_135e388(0xc);
+  if (current_grip < grip_to_add) {
+    current_grip = _gameFWorkChk_sub_135e388(0xc);
+  }
+  else {
+    current_grip = 0.0;
+    if (0.0 <= grip_to_add) {
+      current_grip = grip_to_add;
+    }
+  }
+  player_grip = current_grip;
+  max_grip = _gameFWorkChk_sub_135e388(0xc);
+  setgrip_sub_1401bd8(current_grip / max_grip);
+  return;
+}
+
+
+extern DAT_014659e0; // Unknown
+extern DAT_014659e4; // Unknown
+extern DAT_014659e8; // Unknown
+extern DAT_014659d4; // Unknown
+extern DAT_014659d8; // Unknown
+extern DAT_014645c8; // Unknown
+
+void setgrip_sub_1401bd8(float grip_ratio) {
+  if (grip_ratio == DAT_014659e0) {
     DAT_014659e4 = DAT_014659e8;
     DAT_014659d4 = 0;
     return;
   }
-  if (param_1 < DAT_014659e0) {
+  if (grip_ratio < DAT_014659e0) {
     if (DAT_014659d4 == 0) {
       DAT_014659d8 = DAT_014645c8;
     }
@@ -141,8 +188,8 @@ void setgrip_sub_1401bd8(float param_1) {
     DAT_014659d4 = 0;
   }
   DAT_014659e4 = DAT_014659e8;
-  DAT_014659e0 = param_1;
-  DAT_014659e8 = param_1;
+  DAT_014659e0 = grip_ratio;
+  DAT_014659e8 = grip_ratio;
   FUN_013fde00(0);
   return;
 }
