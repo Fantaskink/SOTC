@@ -1,9 +1,7 @@
-// struct player_data *player_data; // PTR_DAT_014649f8
-
 float player_hp;   // DAT_012e7b64
 float player_grip; // DAT_012e7b60
 
-extern PTR_DAT_014649f8; // Memory card pointer.
+extern PTR_DAT_014649f8; // Memory card pointer multiplied by an index and number of bytes (4 for floats) to point to player max hp or player max grip
 
 /*----------- Memory Card -----------------*/
 
@@ -66,7 +64,6 @@ void setPlayerHp_sub_1367230(float target_health)
 }
 
 void addPlayerHp_sub_13672b0(float hp_to_add)
-
 {
   float player_max_hp;
   float hp;
@@ -148,23 +145,28 @@ void setPlayerGrip_sub_1367448(float target_grip)
 
 void addPlayerGrip_sub_13674c8(float grip_to_add)
 {
+  float new_grip;
+  float max_grip;
+
   grip_to_add = player_grip + grip_to_add;
-  float current_grip = _gameFWorkChk_sub_135e388(0xc);
-  if (current_grip < grip_to_add)
+  max_grip = _gameFWorkChk_sub_135e388(0xc);
+
+  if (grip_to_add > max_grip)
   {
-    current_grip = _gameFWorkChk_sub_135e388(0xc);
+    new_grip = max_grip;
   }
   else
   {
-    current_grip = 0.0;
-    if (0.0 <= grip_to_add)
+    new_grip = 0.0;
+    if (grip_to_add >= 0.0)
     {
-      current_grip = grip_to_add;
+      new_grip = grip_to_add;
     }
   }
-  player_grip = current_grip;
-  float max_grip = _gameFWorkChk_sub_135e388(0xc);
-  setgrip_sub_1401bd8(current_grip / max_grip);
+
+  player_grip = new_grip;
+  max_grip = _gameFWorkChk_sub_135e388(0xc);
+  setgrip_sub_1401bd8(new_grip / max_grip);
   return;
 }
 
