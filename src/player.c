@@ -3,18 +3,18 @@ float player_grip; // DAT_012e7b60
 float current_hp_ratio;
 int hp_decreasing;
 
-extern PTR_DAT_014649f8; // Memory card pointer multiplied by an index and number of bytes (4 for floats) to point to player max hp or player max grip
+float *mcPlayerDataPtr; // Memory card pointer multiplied by an index and number of bytes (4 for floats) to point to player max hp or player max grip
 
 /*----------- Memory Card -----------------*/
 
 float _gameFWorkChk_sub_135e388(int index)
 {
-  return (PTR_DAT_014649f8 + index * 4); // Return a float from the specified index in the memory card
+  return mcPlayerDataPtr[index];
 }
 
 void _gameFWorkSet_sub_135e328(float value, int index)
 {
-  (PTR_DAT_014649f8 + index * 4) = value; // Set specified value at specified index in memory card
+  mcPlayerDataPtr[index] = value;
   return;
 }
 
@@ -265,6 +265,15 @@ void startGaugeMaxAddEffect_sub_1401b48(void)
 
 void setPlayerMaxGrip_sub_1367568(float new_max)
 {
-  _gameFWorkSet_sub_135e328(new_max, 0xc);
+  _gameFWorkSet_sub_135e328(new_max, 12);
+  return;
+}
+
+void player_SetGripDamage_sub_13c1220(float new_grip_damage)
+{
+  float *pointer;
+
+  pointer = GetSCRCharaAIWorkPtr_sub_13d8d10();
+  pointer[62] = new_grip_damage;
   return;
 }
