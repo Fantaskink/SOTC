@@ -1,0 +1,56 @@
+name: Shadow of the Colossus (Preview Version)
+sha1: c4d5576d1cae3721c411a746c7845f5c6f026dbb
+options:
+    # paths
+    basename: SCPS_150.97
+    target_path: iso/SCPS_150.97
+    base_path: ..
+    
+    asm_path: asm
+    src_path: src
+    build_path: build
+    
+    extensions_path: tools/splat_ext
+    symbol_addrs_path: config/symbol_addrs.txt
+    undefined_funcs_auto_path: config/undefined_funcs_auto.txt
+    undefined_syms_auto_path:  config/undefined_syms_auto.txt
+    
+    # compiler 
+    compiler: EEGCC
+    platform: ps2
+
+    #ld_bss_contains_common: True
+    ld_bss_is_noload: true
+    
+    string_encoding: EUC-JP
+    rodata_string_guesser_level: 2 # improve string detection
+    disasm_unknown: True
+    named_regs_for_c_funcs: False
+    gp_value: 0x141e70
+    find_file_boundaries: False
+    section_order: [".text", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
+segments:
+    - [0, databin, elf_header]
+    - name: main
+      type: code
+      start: 0x1000
+      vram: 0x100000
+      bss_size: 0x301A8
+      subalign: 4
+      subsegments:
+        - [0x1000, asm] # .text, .text_nop
+        - [0x32CB4, databin] # .reginfo
+        - [0x32d00, data] # .data
+        - [0x371CC, databin] # .ctors
+        - [0x371D4, databin] # .dtors
+        - [0x371E0, databin] # .eh_frame
+        - [0x37200, rodata] # .rodata
+        - [0x3AE80, lit4] # .lit4
+        - [0x3AE84, sdata] # .data_nop, .sdata
+        - {start: 0x3B284, type: sbss, vram: 0x0013A300}
+        - {start: 0x3B284, type: bss, vram: 0x0013A380} 
+    - [0x3B284, databin] # padding
+    - [0x3B370, databin] # .shstrtab
+    - [0x3B3FC, databin] # ELF section headers
+    - [0x3B76C] # end of file
+        
