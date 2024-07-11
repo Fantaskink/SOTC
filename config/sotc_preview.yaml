@@ -52,5 +52,4 @@ segments:
     - [0x3B284, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
-    - [0x3B76C] # end of file
-        
+    - [0x3B670] # end of file
