@@ -50,6 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+*.iso
+
 /iso
 /venv
 /asm
