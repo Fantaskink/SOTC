@@ -54,3 +54,5 @@ dkms.conf
 /venv
 /asm
 /assets
+config/undefined_funcs_auto.txt
+config/undefined_syms_auto.txt
