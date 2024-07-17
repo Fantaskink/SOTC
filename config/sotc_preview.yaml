@@ -39,6 +39,13 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm] # .text, .text_nop
+    ###########
+    # Library #
+    ###########
+        # libkernl.a
+        - [0x7cc0, asm, libkernel/klib]
+        - [0x8560, asm] # unknown
+
         - [0x32CB4, databin] # .reginfo
         - [0x32d00, data] # .data
         - [0x371CC, databin] # .ctors
