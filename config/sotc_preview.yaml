@@ -22,7 +22,7 @@ options:
     #ld_bss_contains_common: True
     ld_bss_is_noload: true
     
-    string_encoding: EUC-JP
+    #string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
     disasm_unknown: True
     named_regs_for_c_funcs: False
@@ -44,7 +44,7 @@ segments:
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-        - [0x37200, rodata] # .rodata
+        - [0x37200, rodata, 1000] # .rodata
         - [0x3AE80, lit4] # .lit4
         - [0x3AE84, sdata] # .data_nop, .sdata
         - {start: 0x3B284, type: sbss, vram: 0x0013A300}
