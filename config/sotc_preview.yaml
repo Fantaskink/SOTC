@@ -42,9 +42,17 @@ segments:
     ###########
     # Library #
     ###########
+
         # libkernl.a
         - [0x7cc0, asm, libkernel/klib]
         - [0x8560, asm] # unknown
+        # libc.a
+        
+        - [0x28868, asm, libc/malloc]
+        - [0x28b60, asm, libc/malloc_r]
+        - [0x29288, asm, libc/memcmp]
+        - [0x2a1c4, asm, libc/strlen]
+
 
         - [0x32CB4, databin] # .reginfo
         - [0x32d00, data] # .data
