@@ -246,6 +246,8 @@ PSMode                                           = 0x00107520; // type:func
 MachineType                                      = 0x00107530; // type:func
 GetMemorySize                                    = 0x00107540; // type:func
 _InitTLB                                         = 0x00107550; // type:func
+
+// intr.o
 QueryIntrContext                                 = 0x00107560; // type:func
 DisableIntc                                      = 0x00107570; // type:func
 EnableIntc                                       = 0x001075D8; // type:func
@@ -411,6 +413,8 @@ sceSifSetRebootNotifyBuffer                      = 0x00111C18; // type:func
 sceSifAddRebootNotifyHandler                     = 0x00111C98; // type:func
 sceSifRemoveRebootNotifyHandler                  = 0x00111D50; // type:func
 sceSifExecNotifyHandler                          = 0x00111DA8; // type:func
+
+// glue.o
 sceResetttyinit                                  = 0x00111E50; // type:func
 VSync                                            = 0x00111E60; // type:func
 VSync2                                           = 0x00111EF0; // type:func
@@ -427,6 +431,8 @@ getpid                                           = 0x001121A0; // type:func
 kill                                             = 0x001121A8; // type:func
 stat                                             = 0x001121D0; // type:func
 unlink                                           = 0x001121F8; // type:func
+
+// deci2.o
 sceDeci2Open                                     = 0x00112220; // type:func
 sceDeci2Close                                    = 0x00112268; // type:func
 sceDeci2ReqSend                                  = 0x00112290; // type:func
@@ -439,6 +445,8 @@ sceDeci2ExReqSend                                = 0x001123B0; // type:func
 sceDeci2ExLock                                   = 0x001123E0; // type:func
 sceDeci2ExUnLock                                 = 0x00112408; // type:func
 kputs                                            = 0x00112430; // type:func
+
+
 sceTtyWrite                                      = 0x00112698; // type:func
 sceTtyRead                                       = 0x00112810; // type:func
 sceTtyInit                                       = 0x001128E0; // type:func
@@ -743,12 +751,22 @@ atoi                                             = 0x00127600; // type:func
 __errno                                          = 0x00127628; // type:func
 memalign                                         = 0x00127638; // type:func
 _memalign_r                                      = 0x001276A0; // type:func
+
+// malloc.o
 malloc                                           = 0x00127868; // type:func
 free                                             = 0x001278C0; // type:func
+
+// malloc_r.o
 _malloc_r                                        = 0x00127B60; // type:func
+
+// memcmp.o
 memcmp                                           = 0x00128288; // type:func
+
+// memcpy.o
 memcpy                                           = 0x0012831C; // type:func
 memmove                                          = 0x001283CC; // type:func
+
+// memset.o
 memset                                           = 0x001284D0; // type:func
 __malloc_lock                                    = 0x00128590; // type:func
 __malloc_unlock                                  = 0x00128610; // type:func
@@ -842,6 +860,8 @@ _fstat_r                                         = 0x00131258; // type:func
 _lseek_r                                         = 0x001312B8; // type:func
 _read_r                                          = 0x00131318; // type:func
 _realloc_r                                       = 0x00131378; // type:func
+
+// cache.o
 _sceSDC                                          = 0x00131918; // type:func
 SyncDCache                                       = 0x001319C0; // type:func
 iSyncDCache                                      = 0x00131A40; // type:func
