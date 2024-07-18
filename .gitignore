@@ -51,11 +51,27 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+.ninja_log
+.splache
+build.ninja
+SCPS_150.97.*
+
+
 *.iso
 
 /iso
 /venv
 /asm
 /assets
-config/undefined_funcs_auto.txt
-config/undefined_syms_auto.txt
+
+permuter_settings.toml
+undefined_funcs_auto.txt
+undefined_syms_auto.txt
+
+tools/cc/**
+/include/gcc
+/include/sdk
+
+# Excluded compiler files
+
+
