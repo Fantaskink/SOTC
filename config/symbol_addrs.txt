@@ -257,6 +257,8 @@ iEnableIntc                                      = 0x00107710; // type:func
 iDisableIntc                                     = 0x00107730; // type:func
 iEnableDmac                                      = 0x00107750; // type:func
 iDisableDmac                                     = 0x00107770; // type:func
+
+// thread.o
 InitThread                                       = 0x00107868; // type:func
 iWakeupThread                                    = 0x00107958; // type:func
 iRotateThreadReadyQueue                          = 0x001079F0; // type:func
@@ -271,6 +273,8 @@ sceSnprintf                                      = 0x00108F40; // type:func
 sceVprintf                                       = 0x00108F88; // type:func
 scePrintf                                        = 0x00108FF8; // type:func
 kprintf                                          = 0x00109078; // type:func
+
+// sifrpc.o
 sceSifInitRpc                                    = 0x001090F8; // type:func
 sceSifExitRpc                                    = 0x00109298; // type:func
 sceSifGetOtherData                               = 0x001095D8; // type:func
@@ -284,6 +288,15 @@ sceSifRemoveRpcQueue                             = 0x00109EC0; // type:func
 sceSifGetNextRequest                             = 0x00109F50; // type:func
 sceSifExecRequest                                = 0x00109FA8; // type:func
 sceSifRpcLoop                                    = 0x0010A170; // type:func
+
+// filestub.o
+_sceFsIobSemaMK                                  = 0x0010a1b0; // type:func
+new_iob                                          = 0x0010a2a0; // type:func
+get_iob                                          = 0x0010a418; // type:func
+_sceFs_Rcv_Intr                                  = 0x0010a488; // type:func
+_sceFsSemInit                                    = 0x0010A840; // type:func
+_sceFsWaitS                                      = 0x0010A898; // type:func
+_sceFsSigSema                                    = 0x0010A8C8; // type:func
 scePowerOffHandler                               = 0x0010A8D8; // type:func
 sceFsInit                                        = 0x0010A9C0; // type:func
 sceFsReset                                       = 0x0010AC58; // type:func
@@ -316,6 +329,8 @@ sceLseek64                                       = 0x0010D528; // type:func
 sceDevctl                                        = 0x0010D768; // type:func
 sceSymlink                                       = 0x0010DA10; // type:func
 sceReadlink                                      = 0x0010DC08; // type:func
+
+
 sceSifInitIopHeap                                = 0x0010DDE8; // type:func
 sceSifAllocIopHeap                               = 0x0010DE70; // type:func
 sceSifAllocSysMemory                             = 0x0010DEE0; // type:func
@@ -327,6 +342,10 @@ sceSifQueryMaxFreeMemSize                        = 0x0010E158; // type:func
 sceSifQueryTotalFreeMemSize                      = 0x0010E1C8; // type:func
 sceSifQueryBlockTopAddress                       = 0x0010E238; // type:func
 sceSifQueryBlockSize                             = 0x0010E2B8; // type:func
+
+// eeloadfile.o
+_lf_bind                                         = 0x0010E338; // type:func
+_lf_version                                      = 0x0010E438; // type:func
 sceSifLoadFileReset                              = 0x0010E4C8; // type:func
 sceSifStopModule                                 = 0x0010E708; // type:func
 sceSifUnloadModule                               = 0x0010E910; // type:func
@@ -786,8 +805,14 @@ _getpid_r                                        = 0x00128AD0; // type:func
 _sprintf_r                                       = 0x00128AE8; // type:func
 sprintf                                          = 0x00128B70; // type:func
 sscanf                                           = 0x00128C08; // type:func
+
+// strcat.o
 strcat                                           = 0x00128CB0; // type:func
+
+// strchr.o
 strchr                                           = 0x00128DDC; // type:func
+
+// strcmp.o
 strcmp                                           = 0x00128F6C; // type:func
 strcpy                                           = 0x001290B0; // type:func
 strlen                                           = 0x001291C4; // type:func
@@ -868,6 +893,7 @@ iSyncDCache                                      = 0x00131A40; // type:func
 _sceIDC                                          = 0x00131A58; // type:func
 InvalidDCache                                    = 0x00131B00; // type:func
 iInvalidDCache                                   = 0x00131B80; // type:func
+
 __fixdfdi                                        = 0x00131B98; // type:func
 dptoli                                           = 0x00131C10; // type:func
 _iosAssert                                       = 0x001ACAE0; // type:func
