@@ -42,16 +42,25 @@ segments:
     ###########
     # Library #
     ###########
-
         # libkernl.a
-        - [0x7cc0, asm, libkernel/klib]
-        - [0x8560, asm] # unknown
-        # libc.a
+        - [0x7cc0, asm, libkernl/klib]
         
+        - [0x8560, asm] # unknown
+        - [0xa0f8, asm, libkernl/sifrpc]
+        - [0xb1b0, asm, libkernl/filestub]
+        - [0xf338, asm, libkernl/eeloadfile]
+        
+        # libc.a
+        - [0x28868, asm, libc/atoi]
         - [0x28868, asm, libc/malloc]
         - [0x28b60, asm, libc/malloc_r]
         - [0x29288, asm, libc/memcmp]
+        - [0x2a0b0, asm, libc/strcpy]
         - [0x2a1c4, asm, libc/strlen]
+
+        # libkernl.a
+        - [0x32918, asm, libkernl/cache]
+        
 
 
         - [0x32CB4, databin] # .reginfo
