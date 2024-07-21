@@ -39,16 +39,44 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm] # .text, .text_nop
+        - [0x2800, c, main/FreeDecodedSection]
+        #- [0x10d0, c, loadersys]
+        - [0x28b8, asm] # .text, .text_nop
     ###########
     # Library #
     ###########
         # libkernl.a
         - [0x7cc0, asm, libkernl/klib]
-        
-        - [0x8560, asm] # unknown
+        - [0x8560, asm, libkernl/intr]
+        - [0x8868, asm, libkernl/thread]
         - [0xa0f8, asm, libkernl/sifrpc]
         - [0xb1b0, asm, libkernl/filestub]
+        - [0xede8, asm, libkernl/iopheap]
         - [0xf338, asm, libkernl/eeloadfile]
+        - [0x10098, asm, libkernl/iopreset]
+        - [0x10378, asm, libkernl/tlbfunc]
+        - [0x108c0, asm, libkernl/tlbtrap]
+        - [0x10c88, asm, libkernl/initsys]
+        - [0x110b0, asm, libkernl/exit]
+        - [0x11350, asm, libkernl/alarm]
+
+        - [0x12e50, asm, libkernl/glue]
+        - [0x13220, asm, libkernl/deci2]
+        - [0x13458, asm, libkernl/tty]
+        - [0x139d0, asm, libkernl/sifcmd]
+
+        # libgraph.a
+        - [0x14620, asm, libgraph]
+    
+        - [0x158c0, asm, libdma]
+        - [0x16108, asm, libpad2]
+        - [0x169c0, asm, libvib]
+
+        # libcdvd.a
+        - [0x17d58, asm, libcdvd/cdvd000]
+        - [0x192d0, asm, libcdvd/cdvd035]
+
+        - [0x19480, asm, libnet]
         
         # libc.a
         - [0x28868, asm, libc/atoi]
