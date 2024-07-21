@@ -111,6 +111,7 @@ PutChar                                          = 0x00106C58; // type:func
 // klib.o
 RFU000_FullReset                                 = 0x00106CC0; // type:func
 ResetEE                                          = 0x00106CD0; // type:func
+SetGsCrt                                         = 0x00106CE0; // type:func
 RFU003                                           = 0x00106CF0; // type:func
 _Exit                                            = 0x00106D00; // type:func
 RFU005                                           = 0x00106D10; // type:func
@@ -290,10 +291,10 @@ sceSifExecRequest                                = 0x00109FA8; // type:func
 sceSifRpcLoop                                    = 0x0010A170; // type:func
 
 // filestub.o
-_sceFsIobSemaMK                                  = 0x0010a1b0; // type:func
-new_iob                                          = 0x0010a2a0; // type:func
-get_iob                                          = 0x0010a418; // type:func
-_sceFs_Rcv_Intr                                  = 0x0010a488; // type:func
+_sceFsIobSemaMK                                  = 0x0010A1b0; // type:func
+new_iob                                          = 0x0010A2A0; // type:func
+get_iob                                          = 0x0010A418; // type:func
+_sceFs_Rcv_Intr                                  = 0x0010A488; // type:func
 _sceFsSemInit                                    = 0x0010A840; // type:func
 _sceFsWaitS                                      = 0x0010A898; // type:func
 _sceFsSigSema                                    = 0x0010A8C8; // type:func
@@ -330,7 +331,7 @@ sceDevctl                                        = 0x0010D768; // type:func
 sceSymlink                                       = 0x0010DA10; // type:func
 sceReadlink                                      = 0x0010DC08; // type:func
 
-
+// iopheap.o
 sceSifInitIopHeap                                = 0x0010DDE8; // type:func
 sceSifAllocIopHeap                               = 0x0010DE70; // type:func
 sceSifAllocSysMemory                             = 0x0010DEE0; // type:func
@@ -347,6 +348,7 @@ sceSifQueryBlockSize                             = 0x0010E2B8; // type:func
 _lf_bind                                         = 0x0010E338; // type:func
 _lf_version                                      = 0x0010E438; // type:func
 sceSifLoadFileReset                              = 0x0010E4C8; // type:func
+_sceSifLoadModuleBuffer                          = 0x0010E500; // type:func
 sceSifStopModule                                 = 0x0010E708; // type:func
 sceSifUnloadModule                               = 0x0010E910; // type:func
 sceSifSearchModuleByName                         = 0x0010E9A0; // type:func
@@ -359,15 +361,24 @@ sceSifLoadElfPart                                = 0x0010EE80; // type:func
 sceSifLoadElf                                    = 0x0010EEA0; // type:func
 sceSifGetIopAddr                                 = 0x0010EEC8; // type:func
 sceSifSetIopAddr                                 = 0x0010EFB8; // type:func
+
+// iopreset.o
 sceSifResetIop                                   = 0x0010F098; // type:func
 sceSifIsAliveIop                                 = 0x0010F1F0; // type:func
 sceSifSyncIop                                    = 0x0010F218; // type:func
 sceSifRebootIop                                  = 0x0010F268; // type:func
+
+// tlbfunc.o
 SetTLBHandler                                    = 0x0010F378; // type:func
 SetDebugHandler                                  = 0x0010F3D8; // type:func
+Copy                                             = 0x0010F460; // type:func
+kCopy                                            = 0x0010F470; // type:func
+GetEntryAddress                                  = 0x0010F4A8; // type:func
+SetSyscall                                       = 0x0010F4B8; // type:func
 InitTLBFunctions                                 = 0x0010F4C8; // type:func
 PutTLBEntry                                      = 0x0010F590; // type:func
 iPutTLBEntry                                     = 0x0010F5A0; // type:func
+_SetTLBEntry                                     = 0x0010F5B0; // type:func
 SetTLBEntry                                      = 0x0010F5C0; // type:func
 iSetTLBEntry                                     = 0x0010F5F0; // type:func
 GetTLBEntry                                      = 0x0010F600; // type:func
@@ -377,19 +388,34 @@ iProbeTLBEntry                                   = 0x0010F630; // type:func
 ExpandScratchPad                                 = 0x0010F640; // type:func
 InitTLB                                          = 0x0010F650; // type:func
 InitTLB32MB                                      = 0x0010F690; // type:func
+
+// tlbtrap.o
 _kTLBException                                   = 0x0010F8C0; // type:func
 _kExitTLBHandler                                 = 0x0010FA00; // type:func
 _kDebugException                                 = 0x0010FB00; // type:func
+
+// 
 DIntr                                            = 0x0010FC20; // type:func
 EIntr                                            = 0x0010FC70; // type:func
 __sceKernlGetEhSemaId                            = 0x0010FCE8; // type:func
+
+// initsys.o
+supplement_crt0                                  = 0x0010FC88; // type:func
+Copy2                                            = 0x0010FCF8; // type:func
+kCopy2                                           = 0x0010FD08; // type:func
 GetSystemCallEntry                               = 0x0010FD90; // type:func
 _InitSys                                         = 0x0010FED8; // type:func
 InitExecPS2                                      = 0x00110000; // type:func
+
+// exit.o
+setup                                            = 0x001100F0; // type:func
+SetArg                                           = 0x00110100; // type:func
 ExecPS2                                          = 0x00110220; // type:func
 LoadExecPS2                                      = 0x00110290; // type:func
 Exit                                             = 0x001102D8; // type:func
 ExecOSD                                          = 0x00110300; // type:func
+
+// alarm.o
 InitAlarm                                        = 0x001103B8; // type:func
 SetT2_COUNT                                      = 0x00110500; // type:func
 SetT2_MODE                                       = 0x00110510; // type:func
@@ -465,11 +491,18 @@ sceDeci2ExLock                                   = 0x001123E0; // type:func
 sceDeci2ExUnLock                                 = 0x00112408; // type:func
 kputs                                            = 0x00112430; // type:func
 
-
+// tty.o
+QueueInit                                        = 0x00112458; // type:func
+QueuePeekWriteDone                               = 0x00112480; // type:func
+QueuePeekReadDone                                = 0x001124C0; // type:func
+sceTtyHandler                                    = 0x00112500; // type:func
 sceTtyWrite                                      = 0x00112698; // type:func
 sceTtyRead                                       = 0x00112810; // type:func
 sceTtyInit                                       = 0x001128E0; // type:func
+
+// sifcmd.o
 sceSifGetSreg                                    = 0x001129D0; // type:func
+sceSifSetSreg                                    = 0x001129E8; // type:func
 sceSifGetDataTable                               = 0x00112A08; // type:func
 sceSifInitCmd                                    = 0x00112A18; // type:func
 sceSifExitCmd                                    = 0x00112C98; // type:func
@@ -477,9 +510,13 @@ sceSifSetCmdBuffer                               = 0x00112CD0; // type:func
 sceSifSetSysCmdBuffer                            = 0x00112CE8; // type:func
 sceSifAddCmdHandler                              = 0x00112D00; // type:func
 sceSifRemoveCmdHandler                           = 0x00112D78; // type:func
+_sceSifSendCmd                                   = 0x00112DC8; // type:func
 sceSifSendCmd                                    = 0x00112F00; // type:func
 isceSifSendCmd                                   = 0x00112F40; // type:func
+_sceSifCmdIntrHdlr                               = 0x00112F80; // type:func
 sceSifWriteBackDCache                            = 0x001130C8; // type:func
+
+
 sceVif1PkInit                                    = 0x00113178; // type:func
 sceVif1PkReset                                   = 0x00113188; // type:func
 sceVif1PkTerminate                               = 0x00113198; // type:func
@@ -492,21 +529,58 @@ sceVif1PkCloseGifTag                             = 0x00113340; // type:func
 sceVif1PkAlign                                   = 0x001133E8; // type:func
 sceVif1PkAddGsData                               = 0x00113468; // type:func
 sceGsResetGraph                                  = 0x00113490; // type:func
+
+//=============================
+// libgraph.a
+//=============================
+// graph001.o
 sceGsGetGParam                                   = 0x00113620; // type:func
+
+// graph002.o
 sceGsResetPath                                   = 0x00113630; // type:func
+
+// graph006.o
 sceGsSetDefDrawEnv                               = 0x00113698; // type:func
+
+// graph008.o
 sceGsPutDrawEnv                                  = 0x00113880; // type:func
+
+// graph009.o
 sceGsSetDefDBuff                                 = 0x00113968; // type:func
+
+// graph010.o
 sceGsSwapDBuff                                   = 0x00113C00; // type:func
+
+// graph011.o
 sceGsSyncV                                       = 0x00113C60; // type:func
+
+// graph012.o
 sceGsSyncPath                                    = 0x00113CF8; // type:func
+
+// graph013.o
 sceGsSetDefTexEnv                                = 0x00114010; // type:func
+
+// graph014.o
 sceGsSetDefAlphaEnv                              = 0x00114120; // type:func
+
+// graph021.o
 sceGsSetHalfOffset                               = 0x00114180; // type:func
+
+// graph003.o
 sceGsSetDefDispEnv                               = 0x001142B8; // type:func
+
+// graph004.o
 sceGsPutDispEnv                                  = 0x00114630; // type:func
+
+// graph005.o
 sceGszbufaddr                                    = 0x001146F0; // type:func
 sceGsSetDefClear                                 = 0x001147B8; // type:func
+
+// libdma.o
+WaitDma                                          = 0x001148C0; // type:func
+WatchDma                                         = 0x00114930; // type:func
+CheckAddress                                     = 0x001149B8; // type:func
+memclr                                           = 0x001149E0; // type:func
 sceDmaGetChan                                    = 0x00114A18; // type:func
 sceDmaReset                                      = 0x00114A40; // type:func
 sceDmaPutEnv                                     = 0x00114B20; // type:func
@@ -522,6 +596,8 @@ sceDmaSync                                       = 0x00114FE8; // type:func
 sceDmaWatch                                      = 0x00115020; // type:func
 sceDmaPause                                      = 0x00115058; // type:func
 sceDmaRestart                                    = 0x001150F0; // type:func
+
+// libpad2.o
 scePad2Init                                      = 0x00115108; // type:func
 scePad2End                                       = 0x00115148; // type:func
 scePad2CreateSocket                              = 0x001151B0; // type:func
@@ -531,8 +607,12 @@ scePad2GetButtonProfile                          = 0x001153E8; // type:func
 scePad2GetState                                  = 0x001154B8; // type:func
 scePad2GetButtonInfo                             = 0x001155F8; // type:func
 scePad2StateIntToStr                             = 0x00115988; // type:func
+
+// libvib.o
 sceVibGetProfile                                 = 0x001159C0; // type:func
 sceVibSetActParam                                = 0x00115A40; // type:func
+
+// libdbc.o but assembly does not match 
 sceDbcInit                                       = 0x00115B88; // type:func
 sceDbcEnd                                        = 0x00115E28; // type:func
 sceDbcSetWorkAddr                                = 0x00115ED0; // type:func
@@ -549,6 +629,9 @@ sceDbcSendData                                   = 0x001167F8; // type:func
 sceDbcSendData2                                  = 0x00116928; // type:func
 sceDbcSendData3                                  = 0x00116AD8; // type:func
 sceDbcReceiveData                                = 0x00116C30; // type:func
+
+// cdvd000.0
+sceCdDelayThread                                 = 0x00116D58; // type:func
 sceCdCallback                                    = 0x00116D80; // type:func
 _sceCd_cd_callback                               = 0x00116DE8; // type:func
 _sceCd_cbLoop                                    = 0x00116E88; // type:func
@@ -566,9 +649,20 @@ _sceCdSC                                         = 0x00117B00; // type:func
 sceCdInit                                        = 0x00117BB0; // type:func
 sceCdDiskReady_old                               = 0x00117E98; // type:func
 sceCdDiskReady                                   = 0x001180B0; // type:func
+
+// cdv035.0
 sceCdPowerOff                                    = 0x001182D0; // type:func
+
+
 sceCdMmode                                       = 0x00118388; // type:func
 sceCdChgSys                                      = 0x00118458; // type:func
+
+// libnet.o
+CallRpc                                          = 0x00118480; // type:func
+MemcpyD                                          = 0x00118538; // type:func
+MemcpyS                                          = 0x00118590; // type:func
+StrcpyD                                          = 0x001185E8; // type:func
+StrcpyS                                          = 0x00118678; // type:func
 sceInetPoll                                      = 0x001186A8; // type:func
 sceInetName2Address                              = 0x00118750; // type:func
 sceInetAddress2String                            = 0x00118810; // type:func
@@ -766,6 +860,8 @@ __fpcmp_parts_d                                  = 0x00127370; // type:func
 __pack_f                                         = 0x00127490; // type:func
 abort                                            = 0x00127548; // type:func
 atexit                                           = 0x00127560; // type:func
+
+// atoi.o
 atoi                                             = 0x00127600; // type:func
 __errno                                          = 0x00127628; // type:func
 memalign                                         = 0x00127638; // type:func
@@ -814,17 +910,37 @@ strchr                                           = 0x00128DDC; // type:func
 
 // strcmp.o
 strcmp                                           = 0x00128F6C; // type:func
+
+// strcpy.o
 strcpy                                           = 0x001290B0; // type:func
+
+// strlen.o
 strlen                                           = 0x001291C4; // type:func
+
+// strncmp.o
 strncmp                                          = 0x00129300; // type:func
+
+// strncpy.o
 strncpy                                          = 0x001294B8; // type:func
+
+// strchr.o
 strrchr                                          = 0x00129678; // type:func
+
+// strtol.o
 _strtol_r                                        = 0x001296C8; // type:func
 strtol                                           = 0x00129900; // type:func
+
+// vprintf.o
 vfprintf                                         = 0x00129A30; // type:func
+
+// vscanf.o
 __svfscanf                                       = 0x0012B3B8; // type:func
 __sccl                                           = 0x0012C048; // type:func
+
+// vsprintf.o
 vsprintf                                         = 0x0012C148; // type:func
+
+
 vsprintf_r                                       = 0x0012C1A0; // type:func
 __swsetup                                        = 0x0012C1F8; // type:func
 atof                                             = 0x0012C308; // type:func
@@ -1839,9 +1955,17 @@ __kernel_sinf                                    = 0x001DF520; // type:func
 floorf                                           = 0x001DF628; // type:func
 scalbnf                                          = 0x001DF700; // type:func
 copysignf                                        = 0x001DF7C8; // type:func
+
+// graph020.o
 sceGsPutIMR                                      = 0x001DF808; // type:func
+
+// graph029.o
 sceGsGetIMR                                      = 0x001DF848; // type:func
+
+// graph030.o
 isceGsPutIMR                                     = 0x001DF868; // type:func
+
+
 sceCdRead                                        = 0x001DF8A8; // type:func
 sceCdReadIOPm                                    = 0x001DFA88; // type:func
 sceCdGetError                                    = 0x001DFBE0; // type:func
