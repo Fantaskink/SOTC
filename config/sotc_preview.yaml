@@ -39,9 +39,8 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm] # .text, .text_nop
-        - [0x2800, c, main/FreeDecodedSection]
-        #- [0x10d0, c, loadersys]
-        - [0x28b8, asm] # .text, .text_nop
+        - [0x10d0, c, main/loadersys]
+        
     ###########
     # Library #
     ###########
@@ -88,15 +87,32 @@ segments:
 
         # libkernl.a
         - [0x32918, asm, libkernl/cache]
-        
-
 
         - [0x32CB4, databin] # .reginfo
         - [0x32d00, data] # .data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-        - [0x37200, rodata, 1000] # .rodata
+        #- [0x37200, rodata] # .rodata
+        - [0x37200, rodata, main/loadersys]
+        - [0x38D88, rodata, libkernl/intr]
+        - [0x38DB0, rodata, libkernl/thread]
+        - [0x38FA8, rodata, libkernl/sifrpc]
+        - [0x38FE0, rodata, libkernl/filestub]
+        - [0x39298, rodata, libkernl/eeloadfile]
+        - [0x392A0, rodata, libkernl/iopreset]
+        - [0x392D0, rodata, libkernl/tlbfunc]
+        - [0x39350, rodata, libkernl/initsys]
+        - [0x39378, rodata, libkernl/tty]
+
+        - [0x393E8, rodata, libgraph]
+        - [0x39660, rodata, libpad2]
+        - [0x396C0, rodata, libvib]
+        - [0x39968, rodata, libcdvd/cdvd000]
+        - [0x39B98, rodata, libcdvd/cdvd035]
+        - [0x39BC0, rodata, libnet]
+        - [0x3A550, rodata, libc/strlen]
+        
         - [0x3AE80, lit4] # .lit4
         - [0x3AE84, sdata] # .data_nop, .sdata
         - {start: 0x3B284, type: sbss, vram: 0x0013A300}
