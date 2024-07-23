@@ -3,8 +3,6 @@
 
 # Object files
 *.o
-*.ko
-*.obj
 *.elf
 
 # Linker output
@@ -67,3 +65,5 @@ permuter_settings.toml
 undefined_funcs_auto.txt
 undefined_syms_auto.txt
 /.vscode
+
+compile_commands.json
