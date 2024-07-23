@@ -31,10 +31,10 @@ COMPILER_FLAGS     = "-O2"
 COMPILER_FLAGS_CPP = "-O2 -G8 -x c++ -fno-exceptions"
 
 COMPILE_CMD = (
-    f"{COMPILER_DIR}/ee-gcc.exe -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
+    f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS}"
 )
 COMPILE_CMD_CPP = (
-    f"{COMPILER_DIR}/ee-gcc.exe -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
+    f"{COMPILER_DIR}/ee-gcc -c {COMMON_INCLUDES} {COMPILER_FLAGS_CPP}"
 )
 
 
@@ -56,14 +56,14 @@ def clean():
 def write_permuter_settings():
     with open("permuter_settings.toml", "w") as f:
         f.write(
-            f"""compiler_command = "tools/cc/ee-gcc2.96/bin/ee-gcc.exe -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -D__GNUC__"
+            f"""compiler_command = "tools/cc/ee-gcc2.96/bin/ee-gcc -c -Iinclude -Iinclude/sdk/ee -Iinclude/gcc -Iinclude/gcc/gcc-lib -O2 -D__GNUC__"
 assembler_command = "mips-linux-gnu-as -march=r5900 -mabi=eabi -Iinclude"
 compiler_type = "gcc"
 
 [preserve_macros]
 
 [decompme.compilers]
-"tools/cc/ee-gcc2.96/bin/ee-gcc.exe" = "ee-gcc2.9-991111-01"
+"tools/cc/ee-gcc2.96/bin/ee-gcc" = "ee-gcc2.9-991111-01"
 """
         )
 

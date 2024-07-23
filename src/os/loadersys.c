@@ -79,35 +79,43 @@ INCLUDE_ASM(const s32, "os\loadersys", LoaderSysEntryExternalIopMemoryList);
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysDeleteExternalIntcHandlerList);
 
-extern s32 D_0013B910[];
+#define THREAD_LIST_LEN 256
+
+s32 thread_list[THREAD_LIST_LEN];
 
 s32 LoaderSysDeleteExternalThreadList(s32 threadId)
 {
-    s32 index;
-    s32 *threadListEntry;
+    s32 i;
 
-    // Assume D_0013B910 is a pointer to the start of the thread list array
-    threadListEntry = D_0013B910;
-
-    // Loop through the thread list to find the specified threadId
-    for (index = 0; index < 256; index++)
+    for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if (*threadListEntry == threadId)
+        if (thread_list[i] == threadId)
         {
-            // If found, mark the entry as deleted by setting it to -1
-            *threadListEntry = -1;
-            // Return the threadId indicating successful deletion
+            thread_list[i] = -1;
             return threadId;
         }
-        // Move to the next entry in the thread list
-        threadListEntry++;
     }
-
-    // If the threadId was not found, return -1 indicating failure
     return -1;
 }
 
-INCLUDE_ASM(const s32, "os\loadersys", LoaderSysDeleteExternalSemaList);
+#define SEMA_LIST_LEN 256
+
+s32 sema_list[SEMA_LIST_LEN];
+
+s32 LoaderSysDeleteExternalSemaList(s32 param_1)
+{
+    s32 i;
+
+    for (i = 0; i < SEMA_LIST_LEN; i++)
+    {
+        if (sema_list[i] == param_1)
+        {
+            sema_list[i] = -1;
+            return param_1;
+        }
+    }
+    return -1;
+}
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysDeleteExternalIopMemoryList);
 
@@ -119,7 +127,21 @@ INCLUDE_ASM(const s32, "os\loadersys", LoaderSysInitExternalThreadList);
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysExternalThreadListCallBack);
 
-INCLUDE_ASM(const s32, "os\loadersys", LoaderSysChangeExteranalThreadPriorityExceptMe);
+void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
+{
+    s32 i;
+    s32 thread_id;
+
+    thread_id = GetThreadId();
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        if ((thread_list[i] != thread_id) && (-1 < thread_list[i]))
+        {
+            ChangeThreadPriority(thread_list[i], priority);
+        }
+    }
+    return;
+}
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysDeleteAllExternalThread);
 
@@ -151,9 +173,9 @@ INCLUDE_ASM(const s32, "os\loadersys", LoaderSysFWrite);
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysRemove);
 
-INCLUDE_ASM(const s32, "os\loadersys", LoaderSysRmdir);
+INCLUDE_ASM(const s32, "os\loadersys", LoaderSysRmdir); // Never referenced
 
-INCLUDE_ASM(const s32, "os\loadersys", LoaderSysMkdir);
+INCLUDE_ASM(const s32, "os\loadersys", LoaderSysMkdir); // Never referenced
 
 INCLUDE_ASM(const s32, "os\loadersys", LoaderSysGetstat);
 

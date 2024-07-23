@@ -84,8 +84,11 @@ segments:
         - [0x28868, asm, libc/malloc]
         - [0x28b60, asm, libc/malloc_r]
         - [0x29288, asm, libc/memcmp]
-        - [0x2a0b0, asm, libc/strcpy]
-        - [0x2a1c4, asm, libc/strlen]
+        - [0x29f6c, asm, libc/string]
+        - [0x2aaa8, asm] # Unknown
+        
+        
+        
 
         # libkernl.a
         - [0x32918, asm, libkernl/cache]
@@ -107,7 +110,6 @@ segments:
         - [0x392D0, rodata, libkernl/tlbfunc]
         - [0x39350, rodata, libkernl/initsys]
         - [0x39378, rodata, libkernl/tty]
-
         
 
         - [0x393E8, rodata, libgraph]
@@ -123,7 +125,7 @@ segments:
         - [0x3B100, sdata, os/loadersys] 
         
         - {start: 0x3B284, type: sbss, vram: 0x0013A300}
-        - {start: 0x3B284, type: bss, vram: 0x0013A380} 
+        - {start: 0x3B284, type: bss, vram: 0x0013A380, name: os/loadersys} 
     - [0x3B284, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers

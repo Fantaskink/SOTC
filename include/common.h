@@ -32,23 +32,4 @@ typedef float f32;
 #define FALSE 0
 #endif
 
-#define PR_EXTERN extern "C"
-
-#define PR_ARRAYSIZEU(arr) (sizeof(arr) / sizeof(arr[0]))
-#define PR_ARRAYSIZE(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
-#define PR_CLEAR(x)                     \
-    {                                   \
-        u_int i;                        \
-        char *p = (char *)&x;           \
-        for (i = 0; i < sizeof(x); i++) \
-            *p++ = 0;                   \
-    }
-#define PR_CONCAT(x, y) ((x << 16) | (y))
-#define PR_BIT(x) (1 << x)
-
-#define PR_ALIGNU(size, align) ((u_int)(size + (align - 1)) & ~(align - 1))
-#define PR_ALIGN(size, align) ((size + (align - 1)) & ~(align - 1))
-
-#define PR_ALIGNED(x) __attribute__((aligned(x)))
-
 #endif /* COMMON_H */
