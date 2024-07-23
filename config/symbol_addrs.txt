@@ -1,3 +1,5 @@
+_exit                                            = 0x001000C0; // type:func
+_root                                            = 0x001000C8; // type:func
 ResolveRelocation                                = 0x001000D0; // type:func
 DecodeSection                                    = 0x00100278; // type:func
 RelocateElfInfoHeader                            = 0x001004B8; // type:func
