@@ -80,7 +80,7 @@ segments:
         - [0x19480, asm, libnet]
         
         # libc.a
-        - [0x28868, asm, libc/atoi]
+        - [0x28600, asm, libc/atoi]
         - [0x28868, asm, libc/malloc]
         - [0x28b60, asm, libc/malloc_r]
         - [0x29288, asm, libc/memcmp]
