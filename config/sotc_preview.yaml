@@ -78,6 +78,21 @@ segments:
         - [0x192d0, asm, libcdvd/cdvd035]
 
         - [0x19480, asm, libnet]
+        - [0x24480, asm, libgcc/__divdi3]
+        - [0x24B18, asm, libgcc/__moddi3]
+        - [0x251A8, asm, libgcc/__udivdi3]
+        - [0x25728, asm, libgcc/__umoddi3]
+        - [0x25C90, asm, libgcc/__floatdisf]
+        - [0x25D78, asm, libgcc/__fixunsdfdi]
+        - [0x25E90, asm, libgcc/__fixunssfdi]
+        - [0x25fB8, asm, libgcc/__main]
+        
+        - [0x271A8, asm, libgcc/frame]
+        - [0x28028, asm, libgcc/__muldi3]
+        - [0x280A0, asm, libgcc/__floatdidf]
+        - [0x28548, asm, libc/abort]
+        
+        
         
         # libc.a
         - [0x28600, asm, libc/atoi]
@@ -94,7 +109,7 @@ segments:
         - [0x32918, asm, libkernl/cache]
 
         - [0x32CB4, databin] # .reginfo
-        - [0x32d00, data] # .data
+        - [0x32D00, data, os/loadersys] # .data
 
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors

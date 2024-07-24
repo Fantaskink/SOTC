@@ -1,3 +1,5 @@
+func_0                                           = 0x00000000; // ignore:true
+
 _exit                                            = 0x001000C0; // type:func
 _root                                            = 0x001000C8; // type:func
 ResolveRelocation                                = 0x001000D0; // type:func
@@ -825,6 +827,8 @@ sceNetcnfifSendIOP                               = 0x00123208; // type:func
 sceNetcnfifDmaCheck                              = 0x00123258; // type:func
 sce_call_rpc                                     = 0x00123360; // type:func
 sce_sync                                         = 0x001233F0; // type:func
+
+// libgcc.a
 __divdi3                                         = 0x00123480; // type:func
 __moddi3                                         = 0x00123B18; // type:func
 __udivdi3                                        = 0x001241A8; // type:func
@@ -832,6 +836,8 @@ __umoddi3                                        = 0x00124728; // type:func
 __floatdisf                                      = 0x00124C90; // type:func
 __fixunsdfdi                                     = 0x00124D78; // type:func
 __fixunssfdi                                     = 0x00124E90; // type:func
+
+// __main.o
 __do_global_dtors                                = 0x00124FB8; // type:func
 __do_global_ctors                                = 0x00125048; // type:func
 __main                                           = 0x00125108; // type:func
@@ -845,6 +851,8 @@ litodp                                           = 0x001258B8; // type:func
 __make_dp                                        = 0x00125970; // type:func
 dptofp                                           = 0x001259A0; // type:func
 dptoul                                           = 0x001259F8; // type:func
+
+// frame.o
 __register_frame_info                            = 0x001261A8; // type:func
 __register_frame                                 = 0x00126210; // type:func
 __register_frame_info_table                      = 0x00126240; // type:func
@@ -852,14 +860,21 @@ __register_frame_table                           = 0x001262A8; // type:func
 __deregister_frame_info                          = 0x001262D8; // type:func
 __deregister_frame                               = 0x00126398; // type:func
 __frame_state_for                                = 0x00126E70; // type:func
+
+// Each has its own .o file
 __muldi3                                         = 0x00127028; // type:func
 __floatdidf                                      = 0x001270A0; // type:func
+
+
 __unpack_f                                       = 0x00127148; // type:func
 __make_fp                                        = 0x001271A8; // type:func
 __pack_d                                         = 0x001271D8; // type:func
 __unpack_d                                       = 0x001272B0; // type:func
 __fpcmp_parts_d                                  = 0x00127370; // type:func
 __pack_f                                         = 0x00127490; // type:func
+
+// libc.a
+// abort.o
 abort                                            = 0x00127548; // type:func
 atexit                                           = 0x00127560; // type:func
 
