@@ -93,16 +93,23 @@ segments:
         - [0x28548, asm, libc/abort]
         
         
-        
         # libc.a
         - [0x28600, asm, libc/atoi]
         - [0x28868, asm, libc/malloc]
         - [0x28b60, asm, libc/malloc_r]
         - [0x29288, asm, libc/memcmp]
-        - [0x29f6c, asm, libc/string]
-        - [0x2aaa8, asm] # Unknown
-        
-        
+        - [0x29CB0, asm, libc/strcat]
+        - [0x29ddc, asm, libc/strchr]
+        - [0x29f6c, asm, libc/strcmp]
+        - [0x2a0b0, asm, libc/strcpy]
+        - [0x2a1c4, asm, libc/strlen]
+        - [0x2a300, asm, libc/strncmp]
+        - [0x2a4b8, asm, libc/strncpy]
+        - [0x2a678, asm, libc/strrchr]
+        - [0x2a6c8, asm, libc/_strtol_r]
+        - [0x2a930, asm, libc/vprintf]
+        - [0x2c3b8, asm, libc/vscanf]
+        - [0x2d148, asm, libc/vsprintf]
         
 
         # libkernl.a
@@ -115,7 +122,7 @@ segments:
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
 
-        - [0x37200, rodata, os/loadersys]
+        - [0x37200, .rodata, os/loadersys]
         - [0x38D88, rodata, libkernl/intr]
         - [0x38DB0, rodata, libkernl/thread]
         - [0x38FA8, rodata, libkernl/sifrpc]

@@ -948,7 +948,12 @@ _strtol_r                                        = 0x001296C8; // type:func
 strtol                                           = 0x00129900; // type:func
 
 // vprintf.o
+__sprint                                         = 0x00129930; // type:func
+__sbprintf                                       = 0x00129978; // type:func
 vfprintf                                         = 0x00129A30; // type:func
+_vfprintf_r                                      = 0x00129AA8; // type:func
+cvf                                              = 0x0012B118; // type:func
+exponent                                         = 0x0012B2D8; // type:func
 
 // vscanf.o
 __svfscanf                                       = 0x0012B3B8; // type:func
