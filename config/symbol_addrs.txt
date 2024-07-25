@@ -964,19 +964,38 @@ vsprintf                                         = 0x0012C148; // type:func
 
 
 vsprintf_r                                       = 0x0012C1A0; // type:func
+
+// wsetup.o
 __swsetup                                        = 0x0012C1F8; // type:func
+
+// ato.o
 atof                                             = 0x0012C308; // type:func
+
+// atol.o
 atol                                             = 0x0012C320; // type:func
+
+// dtoa.o
 _dtoa_r                                          = 0x0012C570; // type:func
+
+// fflush.o
 fflush                                           = 0x0012D7D8; // type:func
+
+// findfp
+std                                              = 0x0012D8F0; // type:func
 __sfmoreglue                                     = 0x0012D950; // type:func
 __sfp                                            = 0x0012D9C8; // type:func
 _cleanup_r                                       = 0x0012DAC0; // type:func
 _cleanup                                         = 0x0012DAE0; // type:func
 __sinit                                          = 0x0012DB00; // type:func
+
+// fread.o
 fread                                            = 0x0012DB90; // type:func
+
+
 _free_r                                          = 0x0012DCB0; // type:func
 _malloc_trim_r                                   = 0x0012DFA8; // type:func
+
+// fvwrite.o
 __sfvwrite                                       = 0x0012E118; // type:func
 _fwalk                                           = 0x0012E4F8; // type:func
 _setlocale_r                                     = 0x0012E590; // type:func

@@ -99,17 +99,29 @@ segments:
         - [0x28b60, asm, libc/malloc_r]
         - [0x29288, asm, libc/memcmp]
         - [0x29CB0, asm, libc/strcat]
-        - [0x29ddc, asm, libc/strchr]
-        - [0x29f6c, asm, libc/strcmp]
-        - [0x2a0b0, asm, libc/strcpy]
-        - [0x2a1c4, asm, libc/strlen]
-        - [0x2a300, asm, libc/strncmp]
-        - [0x2a4b8, asm, libc/strncpy]
-        - [0x2a678, asm, libc/strrchr]
-        - [0x2a6c8, asm, libc/_strtol_r]
-        - [0x2a930, asm, libc/vprintf]
-        - [0x2c3b8, asm, libc/vscanf]
-        - [0x2d148, asm, libc/vsprintf]
+        - [0x29DDC, asm, libc/strchr]
+        - [0x29F6C, asm, libc/strcmp]
+        - [0x2A0B0, asm, libc/strcpy]
+        - [0x2A1C4, asm, libc/strlen]
+        - [0x2A300, asm, libc/strncmp]
+        - [0x2A4B8, asm, libc/strncpy]
+        - [0x2A678, asm, libc/strrchr]
+        - [0x2A6C8, asm, libc/_strtol_r]
+        - [0x2A930, asm, libc/vprintf]
+        - [0x2C3b8, asm, libc/vscanf]
+        - [0x2D148, asm, libc/vsprintf]
+
+        - [0x2D1F8, asm, libc/swsetup]
+        - [0x2D308, asm, libc/atof]
+        - [0x2D320, asm, libc/atol]
+
+        - [0x2D570, asm, libc/dtoa]
+        - [0x2E7D8, asm, libc/fflush]
+        - [0x2E8F0, asm, libc/findfp]
+        - [0x2eb90, asm, libc/fread]
+        - [0x2f118, asm, libc/fvwrite]
+
+        
         
 
         # libkernl.a
