@@ -120,9 +120,15 @@ segments:
         - [0x2E8F0, asm, libc/findfp]
         - [0x2eb90, asm, libc/fread]
         - [0x2f118, asm, libc/fvwrite]
+        - [0x2f4f8, asm, libc/fwalk]
+        - [0x2f590, asm, libc/locale]
+        - [0x2f678, asm, libc/makebuf]
 
-        
-        
+        - [0x30b40, asm, libc/stdio]
+        - [0x30cb0, asm, libc/strtod]
+        - [0x31c18, asm, libc/strtoul]
+        - [0x31e78, asm, libc/ungetc]
+        - [0x320e8, asm, libc/writer]
 
         # libkernl.a
         - [0x32918, asm, libkernl/cache]

@@ -980,7 +980,7 @@ _dtoa_r                                          = 0x0012C570; // type:func
 // fflush.o
 fflush                                           = 0x0012D7D8; // type:func
 
-// findfp
+// findfp.o
 std                                              = 0x0012D8F0; // type:func
 __sfmoreglue                                     = 0x0012D950; // type:func
 __sfp                                            = 0x0012D9C8; // type:func
@@ -991,17 +991,25 @@ __sinit                                          = 0x0012DB00; // type:func
 // fread.o
 fread                                            = 0x0012DB90; // type:func
 
-
+// 
 _free_r                                          = 0x0012DCB0; // type:func
 _malloc_trim_r                                   = 0x0012DFA8; // type:func
 
 // fvwrite.o
 __sfvwrite                                       = 0x0012E118; // type:func
+
+// fwalk.o
 _fwalk                                           = 0x0012E4F8; // type:func
+
+// locale.o
 _setlocale_r                                     = 0x0012E590; // type:func
 setlocale                                        = 0x0012E630; // type:func
 localeconv                                       = 0x0012E658; // type:func
+
+// makebuf.o
 __smakebuf                                       = 0x0012E678; // type:func
+
+
 _mbtowc_r                                        = 0x0012E7D0; // type:func
 memchr                                           = 0x0012E804; // type:func
 _Balloc                                          = 0x0012E8E8; // type:func
@@ -1028,13 +1036,21 @@ __sread                                          = 0x0012FB40; // type:func
 __swrite                                         = 0x0012FBA8; // type:func
 __sseek                                          = 0x0012FC28; // type:func
 __sclose                                         = 0x0012FC90; // type:func
+
+// strtod.o
 _strtod_r                                        = 0x0012FCB0; // type:func
 strtod                                           = 0x00130BC8; // type:func
 strtodf                                          = 0x00130BF0; // type:func
+
+// strtoul.o
 _strtoul_r                                       = 0x00130C18; // type:func
 strtoul                                          = 0x00130E48; // type:func
+
+// ungetc.o
 __submore                                        = 0x00130E78; // type:func
 ungetc                                           = 0x00130F60; // type:func
+
+// writer.o
 _write_r                                         = 0x001310E8; // type:func
 _calloc_r                                        = 0x00131148; // type:func
 _close_r                                         = 0x00131200; // type:func
