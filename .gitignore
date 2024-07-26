@@ -51,6 +51,7 @@ dkms.conf
 .ninja_log
 .splache
 build.ninja
+SCPS_150.97
 SCPS_150.97.*
 
 
@@ -67,4 +68,3 @@ undefined_syms_auto.txt
 /.vscode
 
 compile_commands.json
-*.Identifier
