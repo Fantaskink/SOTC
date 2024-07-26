@@ -68,3 +68,4 @@ undefined_syms_auto.txt
 /.vscode
 
 compile_commands.json
+/__pycache__
