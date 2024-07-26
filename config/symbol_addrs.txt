@@ -900,11 +900,19 @@ memmove                                          = 0x001283CC; // type:func
 
 // memset.o
 memset                                           = 0x001284D0; // type:func
+
+// mlock.o
 __malloc_lock                                    = 0x00128590; // type:func
 __malloc_unlock                                  = 0x00128610; // type:func
+
+// printf.o
 _printf_r                                        = 0x00128660; // type:func
 printf                                           = 0x001286C0; // type:func
+
+// sbrkr.o
 _sbrk_r                                          = 0x00128730; // type:func
+
+// signal.o
 _init_signal_r                                   = 0x00128788; // type:func
 _signal_r                                        = 0x001287F8; // type:func
 _raise_r                                         = 0x00128878; // type:func
@@ -913,10 +921,16 @@ raise                                            = 0x001289E8; // type:func
 signal                                           = 0x00128A08; // type:func
 _init_signal                                     = 0x00128A30; // type:func
 __sigtramp                                       = 0x00128A50; // type:func
+
+// signalr.o
 _kill_r                                          = 0x00128A70; // type:func
 _getpid_r                                        = 0x00128AD0; // type:func
+
+// sprintf.o
 _sprintf_r                                       = 0x00128AE8; // type:func
 sprintf                                          = 0x00128B70; // type:func
+
+// sscanf.o
 sscanf                                           = 0x00128C08; // type:func
 
 // strcat.o
@@ -1032,6 +1046,8 @@ _mprec_log10                                     = 0x0012F890; // type:func
 __srefill                                        = 0x0012F938; // type:func
 isinf                                            = 0x0012FAB8; // type:func
 isnan                                            = 0x0012FB00; // type:func
+
+// stdio.o
 __sread                                          = 0x0012FB40; // type:func
 __swrite                                         = 0x0012FBA8; // type:func
 __sseek                                          = 0x0012FC28; // type:func
