@@ -829,6 +829,7 @@ sce_call_rpc                                     = 0x00123360; // type:func
 sce_sync                                         = 0x001233F0; // type:func
 
 // libgcc.a
+// one .o file for each
 __divdi3                                         = 0x00123480; // type:func
 __moddi3                                         = 0x00123B18; // type:func
 __udivdi3                                        = 0x001241A8; // type:func
