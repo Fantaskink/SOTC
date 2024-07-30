@@ -41,6 +41,7 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm, sdk/crt0] # .text, .text_nop
+        - [0x10d0, asm, os/loadersys]
     ###########
     # Library #
     ###########
@@ -142,11 +143,11 @@ segments:
 
 
         #- [0x32CB4, databin] # .reginfo
-        - [0x32D00, data] # .data
+        - [0x32D00, data, os/loadersys] # .data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-        - [0x37200, rodata] # .rodata
+        - [0x37200, rodata, os/loadersys]
         - [0x38D88, rodata, libkernl/intr]
         - [0x38DB0, rodata, libkernl/thread]
         - [0x38FA8, rodata, libkernl/sifrpc]
