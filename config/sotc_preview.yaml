@@ -22,7 +22,7 @@ options:
     #ld_bss_contains_common: True
     ld_bss_is_noload: true
 
-    #migrate_rodata_to_functions: true
+    #migrate_rodata_to_functions: True
     
     #string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
@@ -40,142 +40,19 @@ segments:
       bss_size: 0x301A8
       subalign: 4
       subsegments:
-        - [0x1000, asm, sdk/crt0] # .text, .text_nop
-        - [0x10d0, c, os/loadersys]
-        
-    ###########
-    # Library #
-    ###########
-        # libkernl.a
-        - [0x7cc0, asm, libkernl/klib]
-        - [0x8560, asm, libkernl/intr]
-        - [0x8868, asm, libkernl/thread]
-        - [0xa0f8, asm, libkernl/sifrpc]
-        - [0xb1b0, asm, libkernl/filestub]
-        - [0xede8, asm, libkernl/iopheap]
-        - [0xf338, asm, libkernl/eeloadfile]
-        - [0x10098, asm, libkernl/iopreset]
-        - [0x10378, asm, libkernl/tlbfunc]
-        - [0x108c0, asm, libkernl/tlbtrap]
-        - [0x10c88, asm, libkernl/initsys]
-        - [0x110b0, asm, libkernl/exit]
-        - [0x11350, asm, libkernl/alarm]
-
-        - [0x12e50, asm, libkernl/glue]
-        - [0x13220, asm, libkernl/deci2]
-        - [0x13458, asm, libkernl/tty]
-        - [0x139d0, asm, libkernl/sifcmd]
-
-        # libgraph.a
-        - [0x14620, asm, libgraph]
-    
-        - [0x158c0, asm, libdma]
-        - [0x16108, asm, libpad2]
-        - [0x169c0, asm, libvib]
-
-        # libcdvd.a
-        - [0x17d58, asm, libcdvd/cdvd000]
-        - [0x192d0, asm, libcdvd/cdvd035]
-
-        - [0x19480, asm, libnet]
-        - [0x24480, asm, libgcc/__divdi3]
-        - [0x24B18, asm, libgcc/__moddi3]
-        - [0x251A8, asm, libgcc/__udivdi3]
-        - [0x25728, asm, libgcc/__umoddi3]
-        - [0x25C90, asm, libgcc/__floatdisf]
-        - [0x25D78, asm, libgcc/__fixunsdfdi]
-        - [0x25E90, asm, libgcc/__fixunssfdi]
-        - [0x25fB8, asm, libgcc/__main]
-        
-        - [0x271A8, asm, libgcc/frame]
-        - [0x28028, asm, libgcc/__muldi3]
-        - [0x280A0, asm, libgcc/__floatdidf]
-        - [0x28548, asm, libc/abort]
-        
-        
-        # libc.a
-        - [0x28600, asm, libc/atoi]
-        - [0x28868, asm, libc/malloc]
-        - [0x28b60, asm, libc/malloc_r]
-        - [0x29288, asm, libc/memcmp]
-        - [0x2931c, asm, libc/memcpy]
-        - [0x294d0, asm, libc/memset]
-        - [0x29590, asm, libc/mlock]
-        - [0x29660, asm, libc/printf]
-        - [0x29730, asm, libc/sbrkr]
-        - [0x29788, asm, libc/signal]
-        - [0x29a70, asm, libc/signalr]
-        - [0x29ae8, asm, libc/sprintf]
-        - [0x29c08, asm, libc/sscanf]
-        - [0x29CB0, asm, libc/strcat]
-        - [0x29DDC, asm, libc/strchr]
-        - [0x29F6C, asm, libc/strcmp]
-        - [0x2A0B0, asm, libc/strcpy]
-        - [0x2A1C4, asm, libc/strlen]
-        - [0x2A300, asm, libc/strncmp]
-        - [0x2A4B8, asm, libc/strncpy]
-        - [0x2A678, asm, libc/strrchr]
-        - [0x2A6C8, asm, libc/_strtol_r]
-        - [0x2A930, asm, libc/vprintf]
-        - [0x2C3b8, asm, libc/vscanf]
-        - [0x2D148, asm, libc/vsprintf]
-
-        - [0x2D1F8, asm, libc/swsetup]
-        - [0x2D308, asm, libc/atof]
-        - [0x2D320, asm, libc/atol]
-
-        - [0x2D570, asm, libc/dtoa]
-        - [0x2E7D8, asm, libc/fflush]
-        - [0x2E8F0, asm, libc/findfp]
-        - [0x2eb90, asm, libc/fread]
-        - [0x2f118, asm, libc/fvwrite]
-        - [0x2f4f8, asm, libc/fwalk]
-        - [0x2f590, asm, libc/locale]
-        - [0x2f678, asm, libc/makebuf]
-
-        - [0x30b40, asm, libc/stdio]
-        - [0x30cb0, asm, libc/strtod]
-        - [0x31c18, asm, libc/strtoul]
-        - [0x31e78, asm, libc/ungetc]
-        - [0x320e8, asm, libc/writer]
-
-        # libkernl.a
-        - [0x32918, asm, libkernl/cache]
-
-        - [0x32CB4, databin] # .reginfo
-        - [0x32D00, data, os/loadersys] # .data
-
+        - [0x1000, asm] # .text, .text_nop
+        #- [0x32CB4, databin] # .reginfo
+        - [0x32D00, data] # .data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-
-        - [0x37200, .rodata, os/loadersys]
-        - [0x38D88, rodata, libkernl/intr]
-        - [0x38DB0, rodata, libkernl/thread]
-        - [0x38FA8, rodata, libkernl/sifrpc]
-        - [0x38FE0, rodata, libkernl/filestub]
-        - [0x39298, rodata, libkernl/eeloadfile]
-        - [0x392A0, rodata, libkernl/iopreset]
-        - [0x392D0, rodata, libkernl/tlbfunc]
-        - [0x39350, rodata, libkernl/initsys]
-        - [0x39378, rodata, libkernl/tty]
-        
-
-        - [0x393E8, rodata, libgraph]
-        - [0x39660, rodata, libpad2]
-        - [0x396C0, rodata, libvib]
-        - [0x39968, rodata, libcdvd/cdvd000]
-        - [0x39B98, rodata, libcdvd/cdvd035]
-        - [0x39BC0, rodata, libnet]
-        - [0x3A550, rodata, libc/strlen]
-        
-        - [0x3AE80, lit4, os/loadersys] # .lit4
-        - [0x3AE84, sdata] # .data_nop, .sdata
-        - [0x3B100, sdata, os/loadersys] 
-        
-        - {start: 0x3B284, type: sbss, vram: 0x0013A300}
-        - {start: 0x3B284, type: bss, vram: 0x0013A380, name: os/loadersys} 
-    - [0x3B284, databin] # padding
+        - [0x37200, rodata] # .rodata
+        - [0x3AE80, rodatabin] # .lit4
+        #- [0x3AE84, databin] # .data_nop
+        - [0x3AF00, rodatabin] # .sdata
+        - {start: 0x3b300, type: sbss, vram: 0x0013A300}
+        - {start: 0x3b370, type: bss, vram: 0x0013A380} 
+    - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
-    - [0x3B670] # end of file
+    - [0x3B67C] # end of file
