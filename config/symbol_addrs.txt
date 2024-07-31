@@ -426,7 +426,7 @@ ExecOSD                                          = 0x00110300; // type:func
 // alarm.o
 InitAlarm                                        = 0x001103B8; // type:func
 
-// 
+// libtimer.o
 SetT2_COUNT                                      = 0x00110500; // type:func
 SetT2_MODE                                       = 0x00110510; // type:func
 SetT2_COMP                                       = 0x00110520; // type:func
@@ -458,6 +458,8 @@ TimerBusClock2USec                               = 0x00111658; // type:func
 TimerUSec2BusClock                               = 0x00111700; // type:func
 TimerBusClock2Freq                               = 0x00111770; // type:func
 TimerFreq2BusClock                               = 0x001117C8; // type:func
+
+// 
 _InitAlarm                                       = 0x00111800; // type:func
 SetTimerAlarm                                    = 0x001118B0; // type:func
 iSetTimerAlarm                                   = 0x001119E0; // type:func
@@ -526,17 +528,37 @@ isceSifSendCmd                                   = 0x00112F40; // type:func
 _sceSifCmdIntrHdlr                               = 0x00112F80; // type:func
 sceSifWriteBackDCache                            = 0x001130C8; // type:func
 
-
+// vifpk025.o
 sceVif1PkInit                                    = 0x00113178; // type:func
+
+// vifpk026.o
 sceVif1PkReset                                   = 0x00113188; // type:func
+
+// vifpk027.o
 sceVif1PkTerminate                               = 0x00113198; // type:func
+
+// vifpk030.o
 sceVif1PkCnt                                     = 0x001131F0; // type:func
+
+// vifpk036.o
 sceVif1PkEnd                                     = 0x00113248; // type:func
+
+// vifpk039.o
 sceVif1PkOpenDirectCode                          = 0x001132A0; // type:func
+
+// vifpk040.o
 sceVif1PkCloseDirectCode                         = 0x001132F8; // type:func
+
+// vifpk041.o
 sceVif1PkOpenGifTag                              = 0x00113328; // type:func
+
+// vifpk042.o
 sceVif1PkCloseGifTag                             = 0x00113340; // type:func
+
+// vifpk044.o
 sceVif1PkAlign                                   = 0x001133E8; // type:func
+
+// vifpk053.o
 sceVif1PkAddGsData                               = 0x00113468; // type:func
 sceGsResetGraph                                  = 0x00113490; // type:func
 

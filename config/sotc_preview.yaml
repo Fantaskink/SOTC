@@ -40,7 +40,7 @@ segments:
       bss_size: 0x301A8
       subalign: 4
       subsegments:
-        - [0x1000, asm, sdk/crt0] # .text, .text_nop
+        - [0x1000, asm, sdk/crt0]
         - [0x10d0, asm, os/loadersys]
     ###########
     # Library #
@@ -56,9 +56,11 @@ segments:
         - [0x10098, asm, libkernl/iopreset]
         - [0x10378, asm, libkernl/tlbfunc]
         - [0x108c0, asm, libkernl/tlbtrap]
+        - [0x10c20, asm, libkernl/diei]
         - [0x10c88, asm, libkernl/initsys]
         - [0x110b0, asm, libkernl/exit]
-        - [0x11350, asm, libkernl/alarm]
+        - [0x113b8, asm, libkernl/alarm]
+        - [0x11350, asm, libkernl/libtimer]
 
         - [0x12e50, asm, libkernl/glue]
         - [0x13220, asm, libkernl/deci2]
@@ -170,9 +172,27 @@ segments:
         #- [0x3AE84, databin] # .data_nop
         - [0x3AF00, rodatabin] # .sdata
         - [0x3B100, sdata, os/loadersys] 
-        - {start: 0x3b300, type: sbss, vram: 0x0013A300}
-        - {start: 0x3b370, type: bss, vram: 0x0013A380} 
+        - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: sdk/crt0}
+        - {start: 0x3b370, type: bss, vram: 0x0013A380, name: sdk/crt0}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
     - [0x3B67C] # end of file
+# Section Headers:
+#   [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+#   [ 0]                   NULL            00000000 000000 000000 00       0   0 0
+#   [ 1] .text             PROGBITS        00100000 001000 031cac 00  AX   0   0 64
+#   [ 2] .text_nop         PROGBITS        00131cac 032cac 000008 00  WA   0   0 1
+#   [ 3] .reginfo          MIPS_REGINFO    00131cb4 032cb4 000018 01   A   0   0 4
+#   [ 4] .data             PROGBITS        00131d00 032d00 0044cc 00  WA   0   0 128
+#   [ 5] .ctors            PROGBITS        001361cc 0371cc 000008 00  WA   0   0 4
+#   [ 6] .dtors            PROGBITS        001361d4 0371d4 000008 00  WA   0   0 4
+#   [ 7] .eh_frame         PROGBITS        001361e0 0371e0 000004 00  WA   0   0 8
+#   [ 8] .rodata           PROGBITS        00136200 037200 003c58 00   A   0   0 16
+#   [ 9] .lit4             PROGBITS        00139e80 03ae80 000004 00 WAp   0   0 4
+#   [10] .data_nop         PROGBITS        00139e84 03ae84 000008 00  WA   0   0 1
+#   [11] .sdata            PROGBITS        00139f00 03af00 000384 00 WAp   0   0 8
+#   [12] .sbss             NOBITS          0013a300 03b300 000010 00 WAp   0   0 4
+#   [13] .bss              NOBITS          0013a380 03b370 030198 00  WA   0   0 128
+#   [14] .mdebug.eabi64    PROGBITS        00000000 03b370 000000 00       0   0 1
+#   [15] .shstrtab         STRTAB          00000000 03b370 00008b 00       0   0 1
