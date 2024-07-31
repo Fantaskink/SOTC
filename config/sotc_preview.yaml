@@ -60,7 +60,7 @@ segments:
         - [0x10c88, asm, libkernl/initsys]
         - [0x110b0, asm, libkernl/exit]
         - [0x113b8, asm, libkernl/alarm]
-        - [0x11350, asm, libkernl/libtimer]
+        - [0x11500, asm, libkernl/libtimer]
 
         - [0x12e50, asm, libkernl/glue]
         - [0x13220, asm, libkernl/deci2]
