@@ -93,16 +93,12 @@ segments:
         - [0x152b8, asm, libgraph/graph003]
         - [0x15630, asm, libgraph/graph004]
         - [0x156f0, asm, libgraph/graph005]
-
         # libdma.a
         - [0x158c0, asm, libdma]
-
         # libpad2.a
         - [0x16108, asm, libpad2]
-
         # libvib.a
         - [0x169c0, asm, libvib]
-
         # libcdvd.a
         - [0x17d58, asm, libcdvd/cdvd000]
         - [0x192d0, asm, libcdvd/cdvd035]
@@ -119,13 +115,19 @@ segments:
         - [0x25D78, asm, libgcc/__fixunsdfdi]
         - [0x25E90, asm, libgcc/__fixunssfdi]
         - [0x25fB8, asm, libgcc/__main]
-        
+
+        - [0x263e0, asm, libgcc/_addsub_df]
+        - [0x264a0, asm, libgcc/_mul_df]
+        - [0x26728, asm, libgcc/_div_df]
+        - [0x26868, asm, libgcc/_compare_df]
+        - [0x268b8, asm, libgcc/_si_to_df]
+
+        - [0x269a0, asm, libgcc/_df_to_sf]
+        - [0x269f8, asm, libgcc/_df_to_usi]
         - [0x271A8, asm, libgcc/frame]
         - [0x28028, asm, libgcc/__muldi3]
         - [0x280A0, asm, libgcc/__floatdidf]
         - [0x28548, asm, libc/abort]
-        
-        
         # libc.a
         - [0x28600, asm, libc/atoi]
         - [0x28868, asm, libc/malloc]
