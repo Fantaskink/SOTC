@@ -560,12 +560,14 @@ sceVif1PkAlign                                   = 0x001133E8; // type:func
 
 // vifpk053.o
 sceVif1PkAddGsData                               = 0x00113468; // type:func
-sceGsResetGraph                                  = 0x00113490; // type:func
+
 
 //=============================
 // libgraph.a
 //=============================
+
 // graph001.o
+sceGsResetGraph                                  = 0x00113490; // type:func
 sceGsGetGParam                                   = 0x00113620; // type:func
 
 // graph002.o
