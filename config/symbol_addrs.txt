@@ -430,6 +430,7 @@ Exit                                             = 0x001102D8; // type:func
 ExecOSD                                          = 0x00110300; // type:func
 
 // alarm.o
+//GetEntryAddress                                  = 0x001103A8; // type:func
 InitAlarm                                        = 0x001103B8; // type:func
 
 // timer.o
