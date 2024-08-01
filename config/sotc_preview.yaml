@@ -61,7 +61,7 @@ segments:
         - [0x110b0, asm, libkernl/exit]
         - [0x113b8, asm, libkernl/alarm]
         - [0x11500, asm, libkernl/libtimer]
-
+        - [0x12800, asm, libkernl/alarmtimer]
         - [0x12e50, asm, libkernl/glue]
         - [0x13220, asm, libkernl/deci2]
         - [0x13458, asm, libkernl/tty]
@@ -77,7 +77,6 @@ segments:
         - [0x14340, asm, libkernl/vifpk042]
         - [0x143e8, asm, libkernl/vifpk044]
         - [0x14468, asm, libkernl/vifpk053]
-
         # libgraph.a
         - [0x14490, asm, libgraph/graph001]
         - [0x14630, asm, libgraph/graph002]
@@ -102,10 +101,9 @@ segments:
         # libcdvd.a
         - [0x17d58, asm, libcdvd/cdvd000]
         - [0x192d0, asm, libcdvd/cdvd035]
-
+        - [0x19458, asm, libcdvd/cdvd036]
         # libnet.a
         - [0x19480, asm, libnet]
-
         # libgcc.a
         - [0x24480, asm, libgcc/__divdi3]
         - [0x24B18, asm, libgcc/__moddi3]
@@ -115,20 +113,26 @@ segments:
         - [0x25D78, asm, libgcc/__fixunsdfdi]
         - [0x25E90, asm, libgcc/__fixunssfdi]
         - [0x25fB8, asm, libgcc/__main]
-
+        - [0x26140, asm, libgcc/_sf_to_df]
         - [0x263e0, asm, libgcc/_addsub_df]
         - [0x264a0, asm, libgcc/_mul_df]
         - [0x26728, asm, libgcc/_div_df]
         - [0x26868, asm, libgcc/_compare_df]
         - [0x268b8, asm, libgcc/_si_to_df]
-
+        - [0x26970, asm, libgcc/_make_df]
         - [0x269a0, asm, libgcc/_df_to_sf]
         - [0x269f8, asm, libgcc/_df_to_usi]
         - [0x271A8, asm, libgcc/frame]
         - [0x28028, asm, libgcc/__muldi3]
         - [0x280A0, asm, libgcc/__floatdidf]
-        - [0x28548, asm, libc/abort]
+        - [0x28148, asm, libgcc/_unpack_sf]
+        - [0x281a8, asm, libgcc/_make_sf]
+        - [0x281d8, asm, libgcc/_pack_df]
+        - [0x282b0, asm, libgcc/_unpack_df]
+        - [0x28370, asm, libgcc/_fpcmp_parts_df]
+        - [0x28490, asm, libgcc/_pack_sf]
         # libc.a
+        - [0x28548, asm, libc/abort]
         - [0x28600, asm, libc/atoi]
         - [0x28868, asm, libc/malloc]
         - [0x28b60, asm, libc/malloc_r]

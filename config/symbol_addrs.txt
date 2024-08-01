@@ -459,7 +459,7 @@ TimerUSec2BusClock                               = 0x00111700; // type:func
 TimerBusClock2Freq                               = 0x00111770; // type:func
 TimerFreq2BusClock                               = 0x001117C8; // type:func
 
-// 
+// timeralarm.o
 _InitAlarm                                       = 0x00111800; // type:func
 SetTimerAlarm                                    = 0x001118B0; // type:func
 iSetTimerAlarm                                   = 0x001119E0; // type:func
@@ -691,11 +691,11 @@ sceCdInit                                        = 0x00117BB0; // type:func
 sceCdDiskReady_old                               = 0x00117E98; // type:func
 sceCdDiskReady                                   = 0x001180B0; // type:func
 
-// cdv035.o
+// cdvd035.o
 sceCdPowerOff                                    = 0x001182D0; // type:func
-
-
 sceCdMmode                                       = 0x00118388; // type:func
+
+// cdvd036.o
 sceCdChgSys                                      = 0x00118458; // type:func
 
 // libnet.o
@@ -882,7 +882,7 @@ __do_global_dtors                                = 0x00124FB8; // type:func
 __do_global_ctors                                = 0x00125048; // type:func
 __main                                           = 0x00125108; // type:func
 
-// 
+// _sf_to_df.o
 fptodp                                           = 0x00125140; // type:func
 
 // _addsub_df.o
@@ -901,6 +901,7 @@ dpcmp                                            = 0x00125868; // type:func
 // _si_to_df.o
 litodp                                           = 0x001258B8; // type:func
 
+// _make_df.o
 __make_dp                                        = 0x00125970; // type:func
 
 // _df_to_sf.o
@@ -922,8 +923,10 @@ __frame_state_for                                = 0x00126E70; // type:func
 __muldi3                                         = 0x00127028; // type:func
 __floatdidf                                      = 0x001270A0; // type:func
 
-// 
+// _unpack_sf.o
 __unpack_f                                       = 0x00127148; // type:func
+
+// _make_sf.o
 __make_fp                                        = 0x001271A8; // type:func
 __pack_d                                         = 0x001271D8; // type:func
 __unpack_d                                       = 0x001272B0; // type:func
