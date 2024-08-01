@@ -158,29 +158,34 @@ segments:
         - [0x2A930, asm, libc/vprintf]
         - [0x2C3b8, asm, libc/vscanf]
         - [0x2D148, asm, libc/vsprintf]
-
         - [0x2D1F8, asm, libc/swsetup]
         - [0x2D308, asm, libc/atof]
         - [0x2D320, asm, libc/atol]
-
         - [0x2D570, asm, libc/dtoa]
         - [0x2E7D8, asm, libc/fflush]
         - [0x2E8F0, asm, libc/findfp]
         - [0x2eb90, asm, libc/fread]
+        - [0x2ecb0, asm, libc/freer]
         - [0x2f118, asm, libc/fvwrite]
         - [0x2f4f8, asm, libc/fwalk]
         - [0x2f590, asm, libc/locale]
         - [0x2f678, asm, libc/makebuf]
-
+        - [0x2f7d0, asm, libc/mbtowc_r]
+        - [0x2f804, asm, libc/memchr]
+        - [0x2f8e8, asm, libc/mprec]
+        - [0x30938, asm, libc/refill]
+        - [0x30ab8, asm, libc/sf_isinf]
+        - [0x30b00, asm, libc/s_isnan]
         - [0x30b40, asm, libc/stdio]
         - [0x30cb0, asm, libc/strtod]
         - [0x31c18, asm, libc/strtoul]
         - [0x31e78, asm, libc/ungetc]
         - [0x320e8, asm, libc/writer]
-
         # libkernl.a
         - [0x32918, asm, libkernl/cache]
-
+        # libgcc.a
+        - [0x32b98, asm, libgcc/_fixdfdi]
+        - [0x32c10, asm, libgcc/_df_to_si]
 
         #- [0x32CB4, databin] # .reginfo
         - [0x32D00, data, os/loadersys] # .data

@@ -928,9 +928,17 @@ __unpack_f                                       = 0x00127148; // type:func
 
 // _make_sf.o
 __make_fp                                        = 0x001271A8; // type:func
+
+// _pack_df.o
 __pack_d                                         = 0x001271D8; // type:func
+
+// _unpack_df.o
 __unpack_d                                       = 0x001272B0; // type:func
+
+// _fpcmp_parts_df.o
 __fpcmp_parts_d                                  = 0x00127370; // type:func
+
+// _pack_sf.o
 __pack_f                                         = 0x00127490; // type:func
 
 //=============================
@@ -1038,8 +1046,6 @@ __sccl                                           = 0x0012C048; // type:func
 
 // vsprintf.o
 vsprintf                                         = 0x0012C148; // type:func
-
-
 vsprintf_r                                       = 0x0012C1A0; // type:func
 
 // wsetup.o
@@ -1068,7 +1074,7 @@ __sinit                                          = 0x0012DB00; // type:func
 // fread.o
 fread                                            = 0x0012DB90; // type:func
 
-// 
+// freer.o
 _free_r                                          = 0x0012DCB0; // type:func
 _malloc_trim_r                                   = 0x0012DFA8; // type:func
 
@@ -1086,9 +1092,13 @@ localeconv                                       = 0x0012E658; // type:func
 // makebuf.o
 __smakebuf                                       = 0x0012E678; // type:func
 
-
+// mbtowc_r.o
 _mbtowc_r                                        = 0x0012E7D0; // type:func
+
+// memchr.o
 memchr                                           = 0x0012E804; // type:func
+
+mprec.o
 _Balloc                                          = 0x0012E8E8; // type:func
 _Bfree                                           = 0x0012E990; // type:func
 _multadd                                         = 0x0012E9C0; // type:func
@@ -1106,8 +1116,14 @@ _b2d                                             = 0x0012F4A0; // type:func
 _d2b                                             = 0x0012F638; // type:func
 _ratio                                           = 0x0012F7C0; // type:func
 _mprec_log10                                     = 0x0012F890; // type:func
+
+// refill.o
 __srefill                                        = 0x0012F938; // type:func
+
+// sf_isinf.o
 isinf                                            = 0x0012FAB8; // type:func
+
+// s_isnan.o
 isnan                                            = 0x0012FB00; // type:func
 
 // stdio.o
@@ -1138,6 +1154,7 @@ _lseek_r                                         = 0x001312B8; // type:func
 _read_r                                          = 0x00131318; // type:func
 _realloc_r                                       = 0x00131378; // type:func
 
+// libkernl.a
 // cache.o
 _sceSDC                                          = 0x00131918; // type:func
 SyncDCache                                       = 0x001319C0; // type:func
@@ -1146,6 +1163,8 @@ _sceIDC                                          = 0x00131A58; // type:func
 InvalidDCache                                    = 0x00131B00; // type:func
 iInvalidDCache                                   = 0x00131B80; // type:func
 
+// libgcc.a
+// _fixdfdi.o
 __fixdfdi                                        = 0x00131B98; // type:func
 
 // _df_to_si.o
