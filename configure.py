@@ -217,6 +217,7 @@ if __name__ == "__main__":
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
+
     split.main([YAML_FILE], modes="all", verbose=False)
 
     linker_entries = split.linker_writer.entries
@@ -225,9 +226,9 @@ if __name__ == "__main__":
 
     write_permuter_settings()
 
-    gp_value = split.config["options"]["gp_value"]
-
-    fix_gp_main(gp_value)
+    if not args.no_gprel_removing:
+        gp_value = split.config["options"]["gp_value"]
+        fix_gp_main(gp_value)
 
     if not os.path.isfile("compile_commands.json"):
         exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
