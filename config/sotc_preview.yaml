@@ -42,6 +42,8 @@ segments:
       subsegments:
         - [0x1000, asm, sdk/crt0]
         - [0x10d0, asm, os/loadersys]
+        - [0x7C8C, asm] # padding
+        
     ###########
     # Library #
     ###########
