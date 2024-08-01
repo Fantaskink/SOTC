@@ -650,6 +650,9 @@ scePad2StateIntToStr                             = 0x00115988; // type:func
 sceVibGetProfile                                 = 0x001159C0; // type:func
 sceVibSetActParam                                = 0x00115A40; // type:func
 
+//=============================
+// libdbc.a
+//=============================
 // libdbc.o but assembly does not match 
 sceDbcInit                                       = 0x00115B88; // type:func
 sceDbcEnd                                        = 0x00115E28; // type:func
@@ -1154,7 +1157,9 @@ _lseek_r                                         = 0x001312B8; // type:func
 _read_r                                          = 0x00131318; // type:func
 _realloc_r                                       = 0x00131378; // type:func
 
+//=============================
 // libkernl.a
+//=============================
 // cache.o
 _sceSDC                                          = 0x00131918; // type:func
 SyncDCache                                       = 0x001319C0; // type:func
@@ -1163,7 +1168,9 @@ _sceIDC                                          = 0x00131A58; // type:func
 InvalidDCache                                    = 0x00131B00; // type:func
 iInvalidDCache                                   = 0x00131B80; // type:func
 
+//=============================
 // libgcc.a
+//=============================
 // _fixdfdi.o
 __fixdfdi                                        = 0x00131B98; // type:func
 

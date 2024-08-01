@@ -43,7 +43,6 @@ segments:
         - [0x1000, asm, sdk/crt0]
         - [0x10d0, asm, os/loadersys]
         - [0x7C8C, asm] # padding
-        
     ###########
     # Library #
     ###########
@@ -100,6 +99,8 @@ segments:
         - [0x16108, asm, libpad2]
         # libvib.a
         - [0x169c0, asm, libvib]
+        # libdbc.a
+        - [0x16b88, asm, libdbc]
         # libcdvd.a
         - [0x17d58, asm, libcdvd/cdvd000]
         - [0x192d0, asm, libcdvd/cdvd035]
