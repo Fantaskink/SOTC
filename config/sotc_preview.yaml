@@ -208,7 +208,7 @@ segments:
 
         - [0x393E8, rodata, libgraph/graph008]
         - [0x39660, rodata, libpad2]
-        - [0x396C0, rodata, libvib]
+        - [0x396C0, rodata, libdbc]
         - [0x39968, rodata, libcdvd/cdvd000]
         - [0x39B98, rodata, libcdvd/cdvd035]
         - [0x39BC0, rodata, libnet]
