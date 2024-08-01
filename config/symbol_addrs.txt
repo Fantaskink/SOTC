@@ -1098,7 +1098,7 @@ _mbtowc_r                                        = 0x0012E7D0; // type:func
 // memchr.o
 memchr                                           = 0x0012E804; // type:func
 
-mprec.o
+// mprec.o
 _Balloc                                          = 0x0012E8E8; // type:func
 _Bfree                                           = 0x0012E990; // type:func
 _multadd                                         = 0x0012E9C0; // type:func
