@@ -268,15 +268,21 @@ iEnableDmac                                      = 0x00107750; // type:func
 iDisableDmac                                     = 0x00107770; // type:func
 
 // thread.o
+topThread                                        = 0x00107790; // type:func
 InitThread                                       = 0x00107868; // type:func
 iWakeupThread                                    = 0x00107958; // type:func
 iRotateThreadReadyQueue                          = 0x001079F0; // type:func
 iSuspendThread                                   = 0x00107A70; // type:func
 DelayThread                                      = 0x00107B08; // type:func
 StartThread                                      = 0x00107BD0; // type:func
+_DelayThreadHandler                              = 0x00107D48; // type:func
+
+// unknown
 sioPutc                                          = 0x00107D70; // type:func
 sioPutcNL                                        = 0x00107E58; // type:func
 sioPutcSkipNull                                  = 0x00108E90; // type:func
+
+// kprintf2.o
 sceVsnprintf                                     = 0x00108F08; // type:func
 sceSnprintf                                      = 0x00108F40; // type:func
 sceVprintf                                       = 0x00108F88; // type:func
@@ -426,7 +432,8 @@ ExecOSD                                          = 0x00110300; // type:func
 // alarm.o
 InitAlarm                                        = 0x001103B8; // type:func
 
-// libtimer.o
+// timer.o
+SetT2                                            = 0x00110490; // type:func
 SetT2_COUNT                                      = 0x00110500; // type:func
 SetT2_MODE                                       = 0x00110510; // type:func
 SetT2_COMP                                       = 0x00110520; // type:func

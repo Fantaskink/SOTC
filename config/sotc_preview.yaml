@@ -49,7 +49,9 @@ segments:
         # libkernl.a
         - [0x7cc0, asm, libkernl/klib]
         - [0x8560, asm, libkernl/intr]
-        - [0x8868, asm, libkernl/thread]
+        - [0x8790, asm, libkernl/thread]
+
+        - [0x9f08, asm, libkernl/kprintf2]
         - [0xa0f8, asm, libkernl/sifrpc]
         - [0xb1b0, asm, libkernl/filestub]
         - [0xede8, asm, libkernl/iopheap]
@@ -61,7 +63,7 @@ segments:
         - [0x10c88, asm, libkernl/initsys]
         - [0x110b0, asm, libkernl/exit]
         - [0x113b8, asm, libkernl/alarm]
-        - [0x11500, asm, libkernl/libtimer]
+        - [0x11490, asm, libkernl/timer]
         - [0x12800, asm, libkernl/alarmtimer]
         - [0x12e50, asm, libkernl/glue]
         - [0x13220, asm, libkernl/deci2]
