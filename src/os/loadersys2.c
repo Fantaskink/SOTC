@@ -24,10 +24,12 @@ INCLUDE_ASM(const s32, "os/loadersys2", RelocateSelfSymbol);
 
 INCLUDE_ASM(const s32, "os/loadersys2", DisposeRelocationElement);
 
-void SetHeapStartPoint(u32 start_address) {
+void SetHeapStartPoint(u32 start_address)
+{
     D_00139F04 = (start_address + 0xF) & ~0xF;
 }
 
-int GetHeapCurrentPoint(void) {
+int GetHeapCurrentPoint(void)
+{
     return D_00139F04;
 }

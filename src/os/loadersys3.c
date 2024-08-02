@@ -3,7 +3,7 @@
 #define SEMA_LIST_LEN 256
 #define THREAD_LIST_LEN 256
 
-extern s32 D_0013BD10[SEMA_LIST_LEN]; // sema_list
+extern s32 D_0013BD10[SEMA_LIST_LEN];   // sema_list
 extern s32 D_0013B910[THREAD_LIST_LEN]; // thread_list
 
 // Function prototypes
@@ -14,16 +14,20 @@ INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlign0x100Mempool);
 
-s32 _checkExistString(char* string, char** strings)
+s32 _checkExistString(char *string, char **strings)
 {
-    s32 i;
-    for (i = 0; strings[i] != 0; i++) {
-      if (strcmp(strings[i], string) == 0) {
-          return 1;
-      }
+    s32 i = 0;
+
+    while (strings[i] != 0)
+    {
+        if (strcmp(strings[i], string) == 0)
+        {
+            return 1;
+        }
+        i++;
     }
-    
-  return 0;
+
+    return 0;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", func_00101B88);
@@ -58,11 +62,14 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalIopMemoryList);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIntcHandlerList);
 
-s32 LoaderSysDeleteExternalThreadList(s32 thread_id) {
+s32 LoaderSysDeleteExternalThreadList(s32 thread_id)
+{
     s32 i;
 
-    for (i = 0; i < THREAD_LIST_LEN; i++) {
-        if (D_0013B910[i] == thread_id) {
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        if (D_0013B910[i] == thread_id)
+        {
             D_0013B910[i] = -1;
             return thread_id;
         }
@@ -73,15 +80,15 @@ s32 LoaderSysDeleteExternalThreadList(s32 thread_id) {
 s32 LoaderSysDeleteExternalSemaList(s32 sema_id)
 {
     s32 i;
-    for (i = 0; i < SEMA_LIST_LEN; i++) 
+    for (i = 0; i < SEMA_LIST_LEN; i++)
     {
-        if (D_0013BD10[i] == sema_id) 
+        if (D_0013BD10[i] == sema_id)
         {
-        D_0013BD10[i] = -1;
-        return sema_id;
+            D_0013BD10[i] = -1;
+            return sema_id;
         }
     }
-  return -1;
+    return -1;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIopMemoryList);
@@ -94,22 +101,20 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalThreadList);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysExternalThreadListCallBack);
 
-
-
 void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 {
     s32 i;
     s32 thread_id;
-  
+
     thread_id = GetThreadId();
-    for (i = 0; i < THREAD_LIST_LEN; i++) 
+    for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if ((D_0013B910[i] != thread_id) && (-1 < D_0013B910[i])) 
+        if ((D_0013B910[i] != thread_id) && (-1 < D_0013B910[i]))
         {
-            ChangeThreadPriority(D_0013B910[i],priority);
+            ChangeThreadPriority(D_0013B910[i], priority);
         }
     }
-  return;
+    return;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalThread);
@@ -154,10 +159,12 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysGetMemoryInfo);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDumpIopModuleIdentifiers);
 
-void LoaderSysSendAbort(void) {
+void LoaderSysSendAbort(void)
+{
 }
 
-void LoaderSysFlushPrint(void) {
+void LoaderSysFlushPrint(void)
+{
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", checkHookDesc);
@@ -176,7 +183,8 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModule);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysUnloadIopModuleByName);
 
-void LoaderSysHookPoint(void) {
+void LoaderSysHookPoint(void)
+{
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysRebootIop);
@@ -189,7 +197,8 @@ INCLUDE_ASM(const s32, "os/loadersys3", memprintf);
 
 INCLUDE_ASM(const s32, "os/loadersys3", imemprintf);
 
-void initmemprintf(void) {
+void initmemprintf(void)
+{
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", func_00104090);
