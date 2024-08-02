@@ -95,9 +95,23 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIopMemoryList);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalIntcHandlerList);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalSemaList);
+void LoaderSysInitExternalSemaList(void)
+{
+    int i;
+    for (i = 0; i < SEMA_LIST_LEN; i++)
+    {
+        D_0013BD10[i] = -1;
+    }
+}
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalThreadList);
+void LoaderSysInitExternalThreadList(void)
+{
+    int i;
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        D_0013B910[i] = -1;
+    }
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysExternalThreadListCallBack);
 
