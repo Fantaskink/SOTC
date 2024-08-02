@@ -14,7 +14,22 @@ INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlign0x100Mempool);
 
-INCLUDE_ASM(const s32, "os/loadersys3", _checkExistString);
+s32 _checkExistString(char* string, char** strings)
+{
+  s32 i;
+  s32 exists;
+  
+  if (*strings == 0) {
+    exists = 0;
+  }
+    for (i = 0; strings[i] != 0; i++) {
+      if (strcmp(strings[i],string) == 0) {
+          return exists = 1;
+      }
+    }
+    
+  return 0;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", func_00101B88);
 
