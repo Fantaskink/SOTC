@@ -376,21 +376,21 @@ struct xSectHdr_t
 
     // 14 flags:
     // The section will still be copied(moved) (even if not configured to be) if its initial allignemt(0C) is wrong (bad).
-    u32 flags; // 14 flags - of =0 the section is used as is in the file, else it is moved.
+    s32 flags; // 14 flags - of =0 the section is used as is in the file, else it is moved.
     // 18 moved flag
     // on Sects with sz=0, this is written 0 by the parser
     // 0 not copied/written
     // 1 copied only to fix allignment (?)
     // 2 moved to a new area (according to set type, flags, addr)
-    u32 moved; // 18  1=not copied(or copied only to fix allignment)
+    s32 moved; // 18  1=not copied(or copied only to fix allignment)
     // 1C This offset (usually =0) is addred to the start of file in RAM
     // to get the value (start of section in RAM) to write to field 04
-    u32 addr_Rel; // 1C Relative to start of file offset
+    s32 addr_Rel; // 1C Relative to start of file offset
 };
 
 struct xSectStrPnt_t
 {
-    u32 offs;
+    s32 offs;
 };
 
 struct xSectStr_t

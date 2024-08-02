@@ -28,7 +28,7 @@ enum
 
 struct t_xffSymEnt
 {
-    int nameOffs;    // 00  Name string offset in Symbol Strings Table - symTabStr.
+    s32 nameOffs;    // 00  Name string offset in Symbol Strings Table - symTabStr.
     void *addr;      // 04  Symbol address - initially relative(never read by parser) and overwritten to absolute
     u32 size;        // 08  Symbol size in bytes
     u8 type : 4;     // 0C 3:0  info = Type & Binding attributes
@@ -66,7 +66,7 @@ struct t_xffSymRelEnt
 // Array of the indices of imported symbols (from symTab)
 struct t_xffImpSymIxs
 {
-    int stIx; // 00	SymTab Index
+    s32 stIx; // 00	SymTab Index
 };
 // Array of the indices in SymTab of the symbols of it that should be imported. All other symbols are either internal (created and used only in this file) or exported (also available to external files). Growing numbers - 7, 8, 9, 0xC, 0xF, .. some are skipped
 
@@ -217,11 +217,11 @@ struct t_xffSectEnt
     // else - overlayData
     // 0=null
     // 2=symtab
-    int type; // 10 type: checked for =8
+    u32 type; // 10 type: checked for =8
 
     // 14 flags:
     // The section will still be copied(moved) (even if not configured to be) if its initial allignemt(0C) is wrong (bad).
-    int flags; // 14 flags: 0=UseAlignmentSetting(align) / other=UseMaxAlignment=0x100   - this also seems to be a force-allocate (alloc flag) flag. See DecodeSection() in xffFuncs.c. - of =0 the section is used as is in the file, else it is moved. Nobits section is always allocated, as it is not present in the file.
+    s32 flags; // 14 flags: 0=UseAlignmentSetting(align) / other=UseMaxAlignment=0x100   - this also seems to be a force-allocate (alloc flag) flag. See DecodeSection() in xffFuncs.c. - of =0 the section is used as is in the file, else it is moved. Nobits section is always allocated, as it is not present in the file.
     // Flags:
     //	0: Alignment setting(align) is used and the loader writes moved = 1;
     //	!=0: Max alignment setting = 0x100bytes is used and the loader writes moved = 2;
@@ -239,7 +239,7 @@ struct t_xffSectEnt
 
 struct t_xffSectStrOffs
 {
-    int offs;
+    s32 offs;
 };
 
 /*XXX: maybe custom local use...  don't remember why I added this
@@ -581,7 +581,7 @@ struct t_xffEntPntHdr
     u32 u04;   // 04   0   type, machine ? - never read
     // File can contain multiple XFF headers for Tab7 (relocation stuff)
     u32 nextXffHdr;  // 08   0   offset? ->? Pointer to another XFF header with Tab7 within file XXXNOT:version?
-    int specSectNrE; // 0C   6=exe; 9=script/text? 0xF (iosKernel = ?) //type;  read as u8 - 001B44D0
+    s32 specSectNrE; // 0C   6=exe; 9=script/text? 0xF (iosKernel = ?) //type;  read as u8 - 001B44D0
     // 10 writen by DecodeSection_sub_100278
     void *entryPnt; // 10   entry point function addr. Written on load, before that is =0
     //(about the following:) +0x00010000 ??
