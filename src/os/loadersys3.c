@@ -97,7 +97,7 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalIntcHandlerList);
 
 void LoaderSysInitExternalSemaList(void)
 {
-    int i;
+    s32 i;
     for (i = 0; i < SEMA_LIST_LEN; i++)
     {
         D_0013BD10[i] = -1;
@@ -106,7 +106,7 @@ void LoaderSysInitExternalSemaList(void)
 
 void LoaderSysInitExternalThreadList(void)
 {
-    int i;
+    s32 i;
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
         D_0013B910[i] = -1;
@@ -133,7 +133,23 @@ void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalThread);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalThreadExceptMe);
+void LoaderSysDeleteAllExternalThreadExceptMe(void)
+{
+    s32 thread_id;
+    s32 i;
+
+    thread_id = GetThreadId();
+
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        if ((D_0013B910[i] != thread_id) && (D_0013B910[i] >= 0))
+        {
+            TerminateThread(D_0013B910[i]);
+            DeleteThread(D_0013B910[i]);
+            D_0013B910[i] = -1;
+        }
+    }
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalIopMemoryList);
 
