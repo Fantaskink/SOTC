@@ -16,15 +16,10 @@ INCLUDE_ASM(const s32, "os/loadersys3", mallocAlign0x100Mempool);
 
 s32 _checkExistString(char* string, char** strings)
 {
-  s32 i;
-  s32 exists;
-  
-  if (*strings == 0) {
-    exists = 0;
-  }
+    s32 i;
     for (i = 0; strings[i] != 0; i++) {
-      if (strcmp(strings[i],string) == 0) {
-          return exists = 1;
+      if (strcmp(strings[i], string) == 0) {
+          return 1;
       }
     }
     
