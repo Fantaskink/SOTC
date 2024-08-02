@@ -78,6 +78,8 @@ LoaderSysHookPoint                               = 0x00103E90; // type:func
 LoaderSysRebootIop                               = 0x00103E98; // type:func
 loaderExecResetCallback                          = 0x00103F28; // type:func
 loaderSetResetCallback                           = 0x00103F98; // type:func
+
+// maybe a separate .o?
 memprintf                                        = 0x00103FF8; // type:func
 imemprintf                                       = 0x00104040; // type:func
 initmemprintf                                    = 0x00104088; // type:func
@@ -573,7 +575,6 @@ sceVif1PkAlign                                   = 0x001133E8; // type:func
 // vifpk053.o
 sceVif1PkAddGsData                               = 0x00113468; // type:func
 
-
 //=============================
 // libgraph.a
 //=============================
@@ -661,7 +662,7 @@ sceVibSetActParam                                = 0x00115A40; // type:func
 //=============================
 // libdbc.a
 //=============================
-// libdbc.o but assembly does not match 
+// libdbc.o
 sceDbcInit                                       = 0x00115B88; // type:func
 sceDbcEnd                                        = 0x00115E28; // type:func
 sceDbcSetWorkAddr                                = 0x00115ED0; // type:func

@@ -22,7 +22,7 @@ options:
     #ld_bss_contains_common: True
     ld_bss_is_noload: true
 
-    #migrate_rodata_to_functions: False
+    migrate_rodata_to_functions: False
     
     #string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
@@ -41,8 +41,15 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm, sdk/crt0]
-        - [0x10d0, asm, os/loadersys]
-        - [0x7C8C, asm] # padding
+        - [0x10d0, c, os/loadersys1]
+        - [0x1590, asm] # OutputLinkerScriptFile, short loop bug
+        - [0x1a58, c, os/loadersys2]
+        - [0x2A50, asm] # LoaderSysResetSystem, short loop bug
+        - [0x2AC0, c, os/loadersys3]
+        - [0x6A60, asm] # func_00105A60, short loop bug
+        - [0x6c50, c, os/loadersys4]
+        
+        
     ###########
     # Library #
     ###########
@@ -194,34 +201,18 @@ segments:
 
         #- [0x32CB4, databin] # .reginfo
         - [0x32D00, data, os/loadersys] # .data
+        - [0x33370, data] # library data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
         - [0x37200, rodata, os/loadersys]
-        - [0x38D88, rodata, libkernl/intr]
-        - [0x38DB0, rodata, libkernl/thread]
-        - [0x38FA8, rodata, libkernl/sifrpc]
-        - [0x38FE0, rodata, libkernl/filestub]
-        - [0x39298, rodata, libkernl/eeloadfile]
-        - [0x392A0, rodata, libkernl/iopreset]
-        - [0x392D0, rodata, libkernl/tlbfunc]
-        - [0x39350, rodata, libkernl/initsys]
-        - [0x39378, rodata, libkernl/tty]
-
-        - [0x393E8, rodata, libgraph/graph008]
-        - [0x39660, rodata, libpad2]
-        - [0x396C0, rodata, libdbc]
-        - [0x39968, rodata, libcdvd/cdvd000]
-        - [0x39B98, rodata, libcdvd/cdvd035]
-        - [0x39BC0, rodata, libnet]
-        - [0x3A550, rodata, libc/strlen]
-
+        - [0x38D88, rodatabin] # SDK rodata
         - [0x3AE80, rodatabin] # .lit4
         #- [0x3AE84, databin] # .data_nop
         - [0x3AF00, rodatabin] # .sdata
         - [0x3B100, sdata, os/loadersys] 
-        - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: sdk/crt0}
-        - {start: 0x3b370, type: bss, vram: 0x0013A380, name: sdk/crt0}
+        - {start: 0x3b300, type: sbss, vram: 0x0013A300}
+        - {start: 0x3b370, type: bss, vram: 0x0013A380}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
