@@ -1,12 +1,17 @@
 #include "common.h"
 
+// Define macros for accessing the extern arrays
+#define SEMAPHORE_LIST D_0013BD10
+#define THREAD_LIST D_0013B910
+#define IOP_MEMORY_LIST D_0013C910
+
 #define SEMA_LIST_LEN 256
 #define THREAD_LIST_LEN 256
 #define IOP_MEM_LIST_LEN 256
 
-extern s32 D_0013BD10[SEMA_LIST_LEN];    // sema_list
-extern s32 D_0013B910[THREAD_LIST_LEN];  // thread_list
-extern s32 D_0013C910[IOP_MEM_LIST_LEN]; // iop_mem_list
+extern s32 D_0013BD10[SEMA_LIST_LEN];
+extern s32 D_0013B910[THREAD_LIST_LEN];
+extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 
 struct unk
 {
@@ -91,7 +96,23 @@ void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalThreadList);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalSemaList);
+static inline int findIndex(void)
+{
+    int i;
+    for (i = 0; i < SEMA_LIST_LEN; i++)
+    {
+        if (SEMAPHORE_LIST[i] < 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void LoaderSysEntryExternalSemaList(s32 arg1)
+{
+    SEMAPHORE_LIST[findIndex()] = arg1;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalIopMemoryList);
 
@@ -103,9 +124,9 @@ s32 LoaderSysDeleteExternalThreadList(s32 thread_id)
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if (D_0013B910[i] == thread_id)
+        if (THREAD_LIST[i] == thread_id)
         {
-            D_0013B910[i] = -1;
+            THREAD_LIST[i] = -1;
             return thread_id;
         }
     }
@@ -117,9 +138,9 @@ s32 LoaderSysDeleteExternalSemaList(s32 sema_id)
     s32 i;
     for (i = 0; i < SEMA_LIST_LEN; i++)
     {
-        if (D_0013BD10[i] == sema_id)
+        if (SEMAPHORE_LIST[i] == sema_id)
         {
-            D_0013BD10[i] = -1;
+            SEMAPHORE_LIST[i] = -1;
             return sema_id;
         }
     }
@@ -143,7 +164,7 @@ void LoaderSysInitExternalSemaList(void)
     s32 i;
     for (i = 0; i < SEMA_LIST_LEN; i++)
     {
-        D_0013BD10[i] = -1;
+        SEMAPHORE_LIST[i] = -1;
     }
 }
 
@@ -152,7 +173,7 @@ void LoaderSysInitExternalThreadList(void)
     s32 i;
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        D_0013B910[i] = -1;
+        THREAD_LIST[i] = -1;
     }
 }
 
@@ -166,9 +187,9 @@ void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
     thread_id = GetThreadId();
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if ((D_0013B910[i] != thread_id) && (-1 < D_0013B910[i]))
+        if ((THREAD_LIST[i] != thread_id) && (-1 < THREAD_LIST[i]))
         {
-            ChangeThreadPriority(D_0013B910[i], priority);
+            ChangeThreadPriority(THREAD_LIST[i], priority);
         }
     }
     return;
@@ -180,11 +201,11 @@ void LoaderSysDeleteAllExternalThread(void)
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if (D_0013B910[i] >= 0)
+        if (THREAD_LIST[i] >= 0)
         {
-            TerminateThread(D_0013B910[i]);
-            DeleteThread(D_0013B910[i]);
-            D_0013B910[i] = -1;
+            TerminateThread(THREAD_LIST[i]);
+            DeleteThread(THREAD_LIST[i]);
+            THREAD_LIST[i] = -1;
         }
     }
 }
@@ -198,11 +219,11 @@ void LoaderSysDeleteAllExternalThreadExceptMe(void)
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if ((D_0013B910[i] != thread_id) && (D_0013B910[i] >= 0))
+        if ((THREAD_LIST[i] != thread_id) && (THREAD_LIST[i] >= 0))
         {
-            TerminateThread(D_0013B910[i]);
-            DeleteThread(D_0013B910[i]);
-            D_0013B910[i] = -1;
+            TerminateThread(THREAD_LIST[i]);
+            DeleteThread(THREAD_LIST[i]);
+            THREAD_LIST[i] = -1;
         }
     }
 }
@@ -213,7 +234,7 @@ void LoaderSysInitExternalIopMemoryList(void)
 
     for (i = 0; i < IOP_MEM_LIST_LEN; i++)
     {
-        D_0013C910[i] = 0;
+        IOP_MEMORY_LIST[i] = 0;
     }
 }
 
@@ -226,10 +247,10 @@ void LoaderSysDeleteAllExternalIopMemory(void)
 
     for (i = 0; i < IOP_MEM_LIST_LEN; i++)
     {
-        if (D_0013C910[i] != 0)
+        if (IOP_MEMORY_LIST[i] != 0)
         {
-            sceSifFreeIopHeap(D_0013C910[i]);
-            D_0013C910[i] = 0;
+            sceSifFreeIopHeap(IOP_MEMORY_LIST[i]);
+            IOP_MEMORY_LIST[i] = 0;
         }
     }
 }
