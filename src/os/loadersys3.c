@@ -23,7 +23,7 @@ extern struct unk D_0013C110[256];
 
 // Function prototypes
 extern s32 GetThreadId();
-extern s32 ChangeThreadPriority(s32 thread_id, s32 priority);
+extern s32 ChangeThreadPriority(s32 threadId, s32 priority);
 extern s32 sceMkdir(u8 *name, s32 mode);
 extern s32 sceRmdir(const char *name);
 extern s32 sceRead(s32 fd, void *buf, s32 count);
@@ -96,7 +96,7 @@ void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalThreadList);
 
-static inline int findIndex(void)
+static inline int FindSemaIndex(void)
 {
     int i;
     for (i = 0; i < SEMA_LIST_LEN; i++)
@@ -111,37 +111,37 @@ static inline int findIndex(void)
 
 void LoaderSysEntryExternalSemaList(s32 arg1)
 {
-    SEMAPHORE_LIST[findIndex()] = arg1;
+    SEMAPHORE_LIST[FindSemaIndex()] = arg1;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalIopMemoryList);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIntcHandlerList);
 
-s32 LoaderSysDeleteExternalThreadList(s32 thread_id)
+s32 LoaderSysDeleteExternalThreadList(s32 threadId)
 {
     s32 i;
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if (THREAD_LIST[i] == thread_id)
+        if (THREAD_LIST[i] == threadId)
         {
             THREAD_LIST[i] = -1;
-            return thread_id;
+            return threadId;
         }
     }
     return -1;
 }
 
-s32 LoaderSysDeleteExternalSemaList(s32 sema_id)
+s32 LoaderSysDeleteExternalSemaList(s32 semaId)
 {
     s32 i;
     for (i = 0; i < SEMA_LIST_LEN; i++)
     {
-        if (SEMAPHORE_LIST[i] == sema_id)
+        if (SEMAPHORE_LIST[i] == semaId)
         {
             SEMAPHORE_LIST[i] = -1;
-            return sema_id;
+            return semaId;
         }
     }
     return -1;
@@ -182,12 +182,12 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysExternalThreadListCallBack);
 void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 {
     s32 i;
-    s32 thread_id;
+    s32 threadId;
 
-    thread_id = GetThreadId();
+    threadId = GetThreadId();
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if ((THREAD_LIST[i] != thread_id) && (-1 < THREAD_LIST[i]))
+        if ((THREAD_LIST[i] != threadId) && (-1 < THREAD_LIST[i]))
         {
             ChangeThreadPriority(THREAD_LIST[i], priority);
         }
@@ -212,14 +212,14 @@ void LoaderSysDeleteAllExternalThread(void)
 
 void LoaderSysDeleteAllExternalThreadExceptMe(void)
 {
-    s32 thread_id;
+    s32 threadId;
     s32 i;
 
-    thread_id = GetThreadId();
+    threadId = GetThreadId();
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
     {
-        if ((THREAD_LIST[i] != thread_id) && (THREAD_LIST[i] >= 0))
+        if ((THREAD_LIST[i] != threadId) && (THREAD_LIST[i] >= 0))
         {
             TerminateThread(THREAD_LIST[i]);
             DeleteThread(THREAD_LIST[i]);
