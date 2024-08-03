@@ -23,8 +23,10 @@ options:
     ld_bss_is_noload: true
 
     migrate_rodata_to_functions: False
+
+    use_legacy_include_asm: True
     
-    #string_encoding: EUC-JP
+    string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
     disasm_unknown: True
     named_regs_for_c_funcs: False
