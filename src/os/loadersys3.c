@@ -13,6 +13,9 @@ extern s32 D_0013BD10[SEMA_LIST_LEN];
 extern s32 D_0013B910[THREAD_LIST_LEN];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 
+extern const char *D_0013D110[]; // boot args?
+extern const char D_0013A0F8[];
+
 struct unk
 {
     s32 unk0;
@@ -47,6 +50,7 @@ extern s32 sceOpen(const char *name, s32 flags);
 extern s32 sceClose(s32 fd);
 extern s32 sceGetstat(const char *name, struct sce_stat *buf);
 extern s32 sceChstat(const char *name, struct sce_stat *buf, u32 cbit);
+extern s32 printf(const char *string, ...);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
@@ -285,9 +289,6 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModuleFromEEBuffer);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysCheckCDBootMode);
 
-extern const char D_0013A0F8[];
-extern s32 printf(const char *string, ...);
-
 void LoaderSysPutString(char *string)
 {
     printf(D_0013A0F8, string);
@@ -378,8 +379,6 @@ INCLUDE_ASM(const s32, "os/loadersys3", func_001033B0);
 INCLUDE_ASM(const s32, "os/loadersys3", loaderLoop);
 
 INCLUDE_ASM(const s32, "os/loadersys3", main);
-
-extern const char *D_0013D110[];
 
 const char *LoaderSysGetBootArg(void)
 {
