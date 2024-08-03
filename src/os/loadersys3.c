@@ -19,6 +19,18 @@ struct unk
     s32 unk4;
 };
 
+struct sce_stat
+{
+    u32 st_mode;
+    u32 st_attr;
+    u32 st_size;
+    u8 st_ctime[8];
+    u8 st_atime[8];
+    u8 st_mtime[8];
+    u32 st_hisize;
+    u32 st_private[6];
+};
+
 extern struct unk D_0013C110[256];
 
 // Function prototypes
@@ -33,6 +45,8 @@ extern s32 sceLseek(s32 fd, s32 offset, s32 where);
 extern s64 sceLseek64(s32 fd, s64 offset, s32 whence);
 extern s32 sceOpen(const char *name, s32 flags);
 extern s32 sceClose(s32 fd);
+extern s32 sceGetstat(const char *name, struct sce_stat *buf);
+extern s32 sceChstat(const char *name, struct sce_stat *buf, u32 cbit);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
@@ -177,7 +191,17 @@ void LoaderSysInitExternalThreadList(void)
     }
 }
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysExternalThreadListCallBack);
+void LoaderSysExternalThreadListCallBack(void (*fun_ptr)(int))
+{
+    s32 i;
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        if (THREAD_LIST[i] != -1)
+        {
+            (*fun_ptr)(THREAD_LIST[i]);
+        }
+    }
+}
 
 void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 {
@@ -323,9 +347,15 @@ s32 LoaderSysMkdir(u8 *name, s32 mode)
     return success;
 }
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysGetstat);
+s32 LoaderSysGetstat(const char *name, struct sce_stat *buf)
+{
+    return sceGetstat(name, buf);
+}
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysChstat);
+s32 LoaderSysChstat(const char *name, struct sce_stat *buf, u32 cbit)
+{
+    return sceChstat(name, buf, cbit);
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysGetMemoryInfo);
 
@@ -349,7 +379,12 @@ INCLUDE_ASM(const s32, "os/loadersys3", loaderLoop);
 
 INCLUDE_ASM(const s32, "os/loadersys3", main);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysGetBootArg);
+extern const char *D_0013D110[];
+
+const char *LoaderSysGetBootArg(void)
+{
+    return (char *)D_0013D110;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModule);
 
