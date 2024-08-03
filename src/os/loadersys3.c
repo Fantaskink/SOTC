@@ -8,6 +8,14 @@ extern s32 D_0013BD10[SEMA_LIST_LEN];    // sema_list
 extern s32 D_0013B910[THREAD_LIST_LEN];  // thread_list
 extern s32 D_0013C910[IOP_MEM_LIST_LEN]; // iop_mem_list
 
+struct unk
+{
+    s32 unk0;
+    s32 unk4;
+};
+
+extern struct unk D_0013C110[256];
+
 // Function prototypes
 s32 GetThreadId();
 s32 ChangeThreadPriority(s32 thread_id, s32 priority);
@@ -95,7 +103,15 @@ s32 LoaderSysDeleteExternalSemaList(s32 sema_id)
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIopMemoryList);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalIntcHandlerList);
+void LoaderSysInitExternalIntcHandlerList(void)
+{
+    int i;
+
+    for (i = 0; i < 256; i++)
+    {
+        D_0013C110[i].unk0 = D_0013C110[i].unk4 = -1;
+    }
+}
 
 void LoaderSysInitExternalSemaList(void)
 {
@@ -213,13 +229,32 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFSeek64);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFRead);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFWrite);
+s32 sceWrite(s32 fd, const void *buf, s32 count);
+
+s32 LoaderSysFWrite(s32 fd, const void *buf, s32 count)
+
+{
+    s32 success = sceWrite(fd, buf, count);
+    return success;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysRemove);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysRmdir);
+s32 sceRmdir(const char *name);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysMkdir);
+s32 LoaderSysRmdir(const char *name)
+{
+    s32 success = sceRmdir(name);
+    return success;
+}
+
+s32 sceMkdir(u8 *name, s32 mode);
+
+s32 LoaderSysMkdir(u8 *name, s32 mode)
+{
+    s32 success = sceMkdir(name, mode);
+    return success;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysGetstat);
 
