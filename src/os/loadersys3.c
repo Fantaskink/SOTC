@@ -5,12 +5,12 @@
 #define THREAD_LIST D_0013B910
 #define IOP_MEMORY_LIST D_0013C910
 
-#define SEMA_LIST_LEN 256
-#define THREAD_LIST_LEN 256
+#define MAX_SEMAPHORES 256
+#define MAX_THREADS 256
 #define IOP_MEM_LIST_LEN 256
 
-extern s32 D_0013BD10[SEMA_LIST_LEN];
-extern s32 D_0013B910[THREAD_LIST_LEN];
+extern s32 D_0013BD10[MAX_SEMAPHORES];
+extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 
 extern const char *D_0013D110[]; // boot args?
@@ -117,7 +117,7 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalThreadList);
 static inline int FindSemaIndex(void)
 {
     int i;
-    for (i = 0; i < SEMA_LIST_LEN; i++)
+    for (i = 0; i < MAX_SEMAPHORES; i++)
     {
         if (SEMAPHORE_LIST[i] < 0)
         {
@@ -134,13 +134,25 @@ void LoaderSysEntryExternalSemaList(s32 arg1)
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalIopMemoryList);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteExternalIntcHandlerList);
+s32 LoaderSysDeleteExternalIntcHandlerList(s32 arg)
+{
+    s32 i;
+    for (i = 0; i < 256; i++)
+    {
+        if (D_0013C110[i].unk4 == arg)
+        {
+            D_0013C110[i].unk0 = D_0013C110[i].unk4 = -1;
+            return arg;
+        }
+    }
+    return -1;
+}
 
 s32 LoaderSysDeleteExternalThreadList(s32 threadId)
 {
     s32 i;
 
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         if (THREAD_LIST[i] == threadId)
         {
@@ -154,7 +166,7 @@ s32 LoaderSysDeleteExternalThreadList(s32 threadId)
 s32 LoaderSysDeleteExternalSemaList(s32 semaId)
 {
     s32 i;
-    for (i = 0; i < SEMA_LIST_LEN; i++)
+    for (i = 0; i < MAX_SEMAPHORES; i++)
     {
         if (SEMAPHORE_LIST[i] == semaId)
         {
@@ -180,7 +192,7 @@ void LoaderSysInitExternalIntcHandlerList(void)
 void LoaderSysInitExternalSemaList(void)
 {
     s32 i;
-    for (i = 0; i < SEMA_LIST_LEN; i++)
+    for (i = 0; i < MAX_SEMAPHORES; i++)
     {
         SEMAPHORE_LIST[i] = -1;
     }
@@ -189,7 +201,7 @@ void LoaderSysInitExternalSemaList(void)
 void LoaderSysInitExternalThreadList(void)
 {
     s32 i;
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         THREAD_LIST[i] = -1;
     }
@@ -198,7 +210,7 @@ void LoaderSysInitExternalThreadList(void)
 void LoaderSysExternalThreadListCallBack(void (*fun_ptr)(int))
 {
     s32 i;
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         if (THREAD_LIST[i] != -1)
         {
@@ -213,7 +225,7 @@ void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
     s32 threadId;
 
     threadId = GetThreadId();
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         if ((THREAD_LIST[i] != threadId) && (-1 < THREAD_LIST[i]))
         {
@@ -227,7 +239,7 @@ void LoaderSysDeleteAllExternalThread(void)
 {
     s32 i;
 
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         if (THREAD_LIST[i] >= 0)
         {
@@ -245,7 +257,7 @@ void LoaderSysDeleteAllExternalThreadExceptMe(void)
 
     threadId = GetThreadId();
 
-    for (i = 0; i < THREAD_LIST_LEN; i++)
+    for (i = 0; i < MAX_THREADS; i++)
     {
         if ((THREAD_LIST[i] != threadId) && (THREAD_LIST[i] >= 0))
         {
