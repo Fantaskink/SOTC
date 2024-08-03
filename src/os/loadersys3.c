@@ -24,7 +24,10 @@ extern s32 sceRmdir(const char *name);
 extern s32 sceRead(s32 fd, void *buf, s32 count);
 extern s32 sceWrite(s32 fd, const void *buf, s32 count);
 extern s32 sceRemove(const char *name);
-extern s32 sceLseek64(s32 fd, s64 offset, s32 whence);
+extern s32 sceLseek(s32 fd, s32 offset, s32 where);
+extern s64 sceLseek64(s32 fd, s64 offset, s32 whence);
+extern s32 sceOpen(const char *name, s32 flags);
+extern s32 sceClose(s32 fd);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
@@ -68,7 +71,23 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalSema);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysExecuteRecoveryFirstProcess);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalIntcHandlerList);
+static inline s32 getStA()
+{
+    s32 i;
+    for (i = 0; i < 256; i++)
+    {
+        if (D_0013C110[i].unk4 < 0)
+            return i;
+    }
+    return -1;
+}
+
+void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
+{
+    s32 i = getStA();
+    D_0013C110[i].unk4 = param_1;
+    D_0013C110[i].unk0 = param_2;
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalThreadList);
 
@@ -221,17 +240,35 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModuleFromEEBuffer);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysCheckCDBootMode);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysPutString);
+extern const char D_0013A0F8[];
+extern s32 printf(const char *string, ...);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFOpen);
-
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFClose);
-
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFSeek);
-
-s32 LoaderSysFSeek64(s32 fd, s64 offset, s32 whence)
+void LoaderSysPutString(char *string)
 {
-    s32 success = sceLseek64(fd, offset, whence);
+    printf(D_0013A0F8, string);
+}
+
+s32 LoaderSysFOpen(const char *name, s32 flags)
+{
+    s32 success = sceOpen(name, flags);
+    return success;
+}
+
+s32 LoaderSysFClose(s32 fd)
+{
+    s32 success = sceClose(fd);
+    return success;
+}
+
+s32 LoaderSysFSeek(s32 fd, s32 offset, s32 whence)
+{
+    s32 success = sceLseek(fd, offset, whence);
+    return success;
+}
+
+s64 LoaderSysFSeek64(s32 fd, s64 offset, s32 whence)
+{
+    s64 success = sceLseek64(fd, offset, whence);
     return success;
 }
 
