@@ -48,7 +48,7 @@ segments:
         - [0x1a58, c, os/loadersys2]
         - [0x2A50, asm] # LoaderSysResetSystem, short loop bug
         - [0x2AC0, c, os/loadersys3]
-        - [0x6A60, asm] # func_00105A60, short loop bug
+        - [0x66d8, asm] # func_00105A60, short loop bug
         - [0x6c50, c, os/loadersys4]
         - [0x7C8C, asm] # padding
         

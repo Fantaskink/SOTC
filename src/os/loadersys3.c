@@ -17,8 +17,14 @@ struct unk
 extern struct unk D_0013C110[256];
 
 // Function prototypes
-s32 GetThreadId();
-s32 ChangeThreadPriority(s32 thread_id, s32 priority);
+extern s32 GetThreadId();
+extern s32 ChangeThreadPriority(s32 thread_id, s32 priority);
+extern s32 sceMkdir(u8 *name, s32 mode);
+extern s32 sceRmdir(const char *name);
+extern s32 sceRead(s32 fd, void *buf, s32 count);
+extern s32 sceWrite(s32 fd, const void *buf, s32 count);
+extern s32 sceRemove(const char *name);
+extern s32 sceLseek64(s32 fd, s64 offset, s32 whence);
 
 INCLUDE_ASM(const s32, "os/loadersys3", mallocAlignMempool);
 
@@ -151,7 +157,6 @@ void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 
 void LoaderSysDeleteAllExternalThread(void)
 {
-
     s32 i;
 
     for (i = 0; i < THREAD_LIST_LEN; i++)
@@ -185,7 +190,6 @@ void LoaderSysDeleteAllExternalThreadExceptMe(void)
 
 void LoaderSysInitExternalIopMemoryList(void)
 {
-
     s32 i;
 
     for (i = 0; i < IOP_MEM_LIST_LEN; i++)
@@ -225,30 +229,35 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFClose);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFSeek);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFSeek64);
+s32 LoaderSysFSeek64(s32 fd, s64 offset, s32 whence)
+{
+    s32 success = sceLseek64(fd, offset, whence);
+    return success;
+}
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysFRead);
-
-s32 sceWrite(s32 fd, const void *buf, s32 count);
+s32 LoaderSysFRead(s32 fd, void *buf, s32 count)
+{
+    s32 success = sceRead(fd, buf, count);
+    return success;
+}
 
 s32 LoaderSysFWrite(s32 fd, const void *buf, s32 count)
-
 {
     s32 success = sceWrite(fd, buf, count);
     return success;
 }
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysRemove);
-
-s32 sceRmdir(const char *name);
+s32 LoaderSysRemove(const char *name)
+{
+    s32 success = sceRemove(name);
+    return success;
+}
 
 s32 LoaderSysRmdir(const char *name)
 {
     s32 success = sceRmdir(name);
     return success;
 }
-
-s32 sceMkdir(u8 *name, s32 mode);
 
 s32 LoaderSysMkdir(u8 *name, s32 mode)
 {
@@ -341,9 +350,3 @@ INCLUDE_ASM(const s32, "os/loadersys3", usbSerialSysInit);
 INCLUDE_ASM(const s32, "os/loadersys3", func_001053F0);
 
 INCLUDE_ASM(const s32, "os/loadersys3", PutFont);
-
-INCLUDE_ASM(const s32, "os/loadersys3", _putString);
-
-INCLUDE_ASM(const s32, "os/loadersys3", PutString);
-
-INCLUDE_ASM(const s32, "os/loadersys3", PutStringS);
