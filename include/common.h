@@ -32,4 +32,8 @@ typedef float f32;
 #define FALSE 0
 #endif
 
+#define CONST_ARR_NRE(a) ((const)(sizeof((a)) / sizeof(*(a))))
+
+#define CONST_ARR_ENTSZ(a) (sizeof(*(a)))
+
 #endif /* COMMON_H */

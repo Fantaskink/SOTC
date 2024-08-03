@@ -4,14 +4,17 @@
 #define SEMAPHORE_LIST D_0013BD10
 #define THREAD_LIST D_0013B910
 #define IOP_MEMORY_LIST D_0013C910
+#define INTC_HANDLER_LIST D_0013C110
 
 #define MAX_SEMAPHORES 256
 #define MAX_THREADS 256
+#define MAX_INTC_HANDLERS 256
 #define IOP_MEM_LIST_LEN 256
 
 extern s32 D_0013BD10[MAX_SEMAPHORES];
 extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
+extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
 extern const char *D_0013D110[]; // boot args?
 extern const char D_0013A0F8[];
@@ -33,8 +36,6 @@ struct sce_stat
     u32 st_hisize;
     u32 st_private[6];
 };
-
-extern struct unk D_0013C110[256];
 
 // Function prototypes
 extern s32 GetThreadId();
@@ -99,7 +100,7 @@ static inline s32 getStA()
     s32 i;
     for (i = 0; i < 256; i++)
     {
-        if (D_0013C110[i].unk4 < 0)
+        if (INTC_HANDLER_LIST[i].unk4 < 0)
             return i;
     }
     return -1;
@@ -108,8 +109,8 @@ static inline s32 getStA()
 void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
 {
     s32 i = getStA();
-    D_0013C110[i].unk4 = param_1;
-    D_0013C110[i].unk0 = param_2;
+    INTC_HANDLER_LIST[i].unk4 = param_1;
+    INTC_HANDLER_LIST[i].unk0 = param_2;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysEntryExternalThreadList);
@@ -139,9 +140,9 @@ s32 LoaderSysDeleteExternalIntcHandlerList(s32 arg)
     s32 i;
     for (i = 0; i < 256; i++)
     {
-        if (D_0013C110[i].unk4 == arg)
+        if (INTC_HANDLER_LIST[i].unk4 == arg)
         {
-            D_0013C110[i].unk0 = D_0013C110[i].unk4 = -1;
+            INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
             return arg;
         }
     }
@@ -183,9 +184,9 @@ void LoaderSysInitExternalIntcHandlerList(void)
 {
     int i;
 
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < MAX_INTC_HANDLERS; i++)
     {
-        D_0013C110[i].unk0 = D_0013C110[i].unk4 = -1;
+        INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
     }
 }
 
@@ -299,7 +300,10 @@ INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysPrintf);
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModuleFromEEBuffer);
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysCheckCDBootMode);
+s32 LoaderSysCheckCDBootMode()
+{
+    return 2;
+}
 
 void LoaderSysPutString(char *string)
 {
