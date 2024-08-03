@@ -2,9 +2,11 @@
 
 #define SEMA_LIST_LEN 256
 #define THREAD_LIST_LEN 256
+#define IOP_MEM_LIST_LEN 256
 
-extern s32 D_0013BD10[SEMA_LIST_LEN];   // sema_list
-extern s32 D_0013B910[THREAD_LIST_LEN]; // thread_list
+extern s32 D_0013BD10[SEMA_LIST_LEN];    // sema_list
+extern s32 D_0013B910[THREAD_LIST_LEN];  // thread_list
+extern s32 D_0013C910[IOP_MEM_LIST_LEN]; // iop_mem_list
 
 // Function prototypes
 s32 GetThreadId();
@@ -131,7 +133,21 @@ void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
     return;
 }
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalThread);
+void LoaderSysDeleteAllExternalThread(void)
+{
+
+    s32 i;
+
+    for (i = 0; i < THREAD_LIST_LEN; i++)
+    {
+        if (D_0013B910[i] >= 0)
+        {
+            TerminateThread(D_0013B910[i]);
+            DeleteThread(D_0013B910[i]);
+            D_0013B910[i] = -1;
+        }
+    }
+}
 
 void LoaderSysDeleteAllExternalThreadExceptMe(void)
 {
@@ -151,9 +167,33 @@ void LoaderSysDeleteAllExternalThreadExceptMe(void)
     }
 }
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysInitExternalIopMemoryList);
+void LoaderSysInitExternalIopMemoryList(void)
+{
 
-INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysDeleteAllExternalIopMemory);
+    s32 i;
+
+    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
+    {
+        D_0013C910[i] = 0;
+    }
+}
+
+void LoaderSysDeleteAllExternalIopMemory(void)
+{
+    s32 i;
+
+    sceSifInitRpc(0);
+    sceSifInitIopHeap();
+
+    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
+    {
+        if (D_0013C910[i] != 0)
+        {
+            sceSifFreeIopHeap(D_0013C910[i]);
+            D_0013C910[i] = 0;
+        }
+    }
+}
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysPrintf);
 
