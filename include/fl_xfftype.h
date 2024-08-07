@@ -1,6 +1,12 @@
 #include "common.h"
 
 /*
+###############
+BY WISI
+###############
+*/
+
+/*
 New XFF file type definitions.
 The old one in xffType.h is mostly deprecated, but should be kept for reference, but best not be included in new projects.
 

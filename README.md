@@ -2,8 +2,10 @@
 We are currently targeting the main ELF (``SCPS_150.97``) of the Preview version.
 
 ## Setup
-1. Run ``python3 -m pip install -U -r requirements.txt``
-2. Create an ``iso`` directory in the root directory
-3. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
-4. Run ``configure.py``
-5. ``ninja``
+1. ``sudo apt install gcc-mipsel-linux-gnu binutils-mips-linux-gnu ninja-build``
+2. ``sudo apt install python3-pip``
+3. ``python3 -m pip install -U -r requirements.txt``
+4. Create an ``iso`` directory in the root directory
+5. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
+6. ``configure.py``
+7. ``ninja``

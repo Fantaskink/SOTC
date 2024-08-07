@@ -1,4 +1,11 @@
 #include "common.h"
+
+/*
+###############
+BY WISI
+###############
+*/
+
 // XXX: WARNING: This is (very) old and shouldn't be used for new code. Use fl_xffType.h instead!
 
 // Relocated by RelocateElfInfoHeader_sub_1004b8
