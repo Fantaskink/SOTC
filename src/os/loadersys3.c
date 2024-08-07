@@ -16,10 +16,10 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
-extern char D_0013A100[];
+extern char D_0013A100[]; // "host0:"
 
-extern const char *D_0013D110[]; // boot args?
-extern const char D_0013A0F8[];
+extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15."
+extern const char D_0013A0F8[]; // "%s"
 
 struct unk
 {
@@ -412,7 +412,7 @@ INCLUDE_ASM(const s32, "os/loadersys3", main);
 
 const char *LoaderSysGetBootArg(void)
 {
-    return (char *)D_0013D110;
+    return D_0013D110;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", LoaderSysLoadIopModule);

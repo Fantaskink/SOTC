@@ -2,6 +2,8 @@
 
 extern u32 D_00139F04; // heap pointer
 
+#define HEAP_START D_00139F04
+
 INCLUDE_ASM(const s32, "os/loadersys2", func_00100A58);
 
 INCLUDE_ASM(const s32, "os/loadersys2", LoaderSysJumpRecoverPointNoStateSetting);
@@ -26,10 +28,10 @@ INCLUDE_ASM(const s32, "os/loadersys2", DisposeRelocationElement);
 
 void SetHeapStartPoint(u32 start_address)
 {
-    D_00139F04 = (start_address + 0xF) & ~0xF;
+    HEAP_START = (start_address + 0xF) & ~0xF;
 }
 
 int GetHeapCurrentPoint(void)
 {
-    return D_00139F04;
+    return HEAP_START;
 }

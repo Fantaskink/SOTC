@@ -4,11 +4,16 @@
 
 extern void *memcpy(void *dest, const void *src, u64 n);
 extern void *memset(void *s, s32 c, u64 n);
-extern char *D_00131DC0[]; // Array of strings
+extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 extern char D_00136318[];  // "ld:\t\tdecode section\n"
 extern char D_00136330[];  // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
 extern char D_00136358[];  // "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"
 extern char D_00136388[];  // "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"
+
+#define DECODE_SECTION_STRING D_00136318
+#define PROGBIT_INFO_STRING D_00136330
+#define OVERLAYDATA_INFO_STRING D_00136358
+#define NOBIT_INFO_STRING D_00136388
 
 INCLUDE_ASM(const s32, "os/loadersys1", ResolveRelocation);
 
@@ -31,7 +36,7 @@ void DecodeSection(
     nmOffs = &xffEp->ssNamesOffs[0];
 
     if (ldrDbgPrintf != NULL)
-        ldrDbgPrintf(D_00136318);
+        ldrDbgPrintf(DECODE_SECTION_STRING);
 
     // The zero section is not processed as it is all 0.
     for (; i--; sect++, nmOffs++)
@@ -71,12 +76,12 @@ void DecodeSection(
                     if (sect->type == 1)
                     { // .text
                         // The moved-types are actually allocation types (or used in file as is).
-                        ldrDbgPrintf(D_00136330, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                        ldrDbgPrintf(PROGBIT_INFO_STRING, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                     }
                     else
                     { // VU code/data
                         // The moved-types are actually allocation types (or used in file as is).
-                        ldrDbgPrintf(D_00136358, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                        ldrDbgPrintf(OVERLAYDATA_INFO_STRING, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                     }
                 }
                 break;
@@ -97,7 +102,7 @@ void DecodeSection(
                 if (ldrDbgPrintf != NULL)
                 {
                     // The moved-types are actually allocation types (or used in file as is).
-                    ldrDbgPrintf(D_00136388, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                    ldrDbgPrintf(NOBIT_INFO_STRING, &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                 }
                 break;
             }

@@ -211,10 +211,9 @@ segments:
         - [0x38D88, rodatabin] # SDK rodata
         - [0x3AE80, rodatabin] # .lit4
         #- [0x3AE84, databin] # .data_nop
-        - [0x3AF00, rodatabin] # .sdata
-        - [0x3B100, sdata, os/loadersys] 
-        - {start: 0x3b300, type: sbss, vram: 0x0013A300}
-        - {start: 0x3b370, type: bss, vram: 0x0013A380}
+        - [0x3AF00, sdata, os/loadersys] # .sdata
+        - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: os/loadersys}
+        - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loadersys}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
