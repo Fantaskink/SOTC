@@ -3,7 +3,7 @@
 
 <!-- Contributors shield -->
 [contributors-url]: https://github.com/Fantaskink/SOTC/graphs/contributors
-[contributors-badge]: https://img.shields.io/github/contributors/Fantaskink/SOTC
+[contributors-badge]: https://img.shields.io/github/contributors/Fantaskink/SOTC?color=green
 
 <!-- Shields -->
 ![code-progress-badge] [![Contributors][contributors-badge]][contributors-url]
