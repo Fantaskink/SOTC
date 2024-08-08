@@ -25,9 +25,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U -r requirements.txt
 
-      - name: Setup wine
+      - name: Setup Ninja
         run: |
           sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install ninja-build
           sudo apt-get update
 
       - name: Setup build environment
