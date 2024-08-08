@@ -48,9 +48,9 @@ segments:
         - [0x5f58, c, os/powerOff]
         - [0x60b8, c, os/usbSerialSys]
         - [0x6408, c, os/putString]
-    ###########
-    # Library #
-    ###########
+    #################
+    # SDK Libraries #
+    #################
         # libkernl.a
         - [0x7cc0, asm, libkernl/klib]
         - [0x8560, asm, libkernl/intr]
