@@ -1,5 +1,5 @@
 #include "common.h"
-#include "xfftype.h"
+// #include "xfftype.h"
 #include "fl_xfftype.h"
 
 extern void *memcpy(void *dest, const void *src, u64 n);
@@ -14,7 +14,6 @@ extern u32 D_00139F04; // heap pointer
 
 #define HEAP_START D_00139F04
 
-// Define macros for accessing the extern arrays
 #define SEMAPHORE_LIST D_0013BD10
 #define THREAD_LIST D_0013B910
 #define IOP_MEMORY_LIST D_0013C910
@@ -32,7 +31,7 @@ extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
 extern char D_0013A100[]; // "host0:"
 
-extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15."
+extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
 extern const char D_0013A0F8[]; // "%s"
 
 struct unk
@@ -603,71 +602,3 @@ INCLUDE_ASM(const s32, "os/loadersys", func_00104668);
 INCLUDE_ASM(const s32, "os/loadersys", func_00104818);
 
 INCLUDE_ASM(const s32, "os/loadersys", LoaderSysInitTCP);
-
-INCLUDE_ASM(const s32, "os/loadersys", padSysTickProc);
-
-INCLUDE_ASM(const s32, "os/loadersys", padsysInit);
-
-INCLUDE_ASM(const s32, "os/loadersys", padSysGet);
-
-INCLUDE_ASM(const s32, "os/loadersys", padSysReadForLoader);
-
-INCLUDE_ASM(const s32, "os/loadersys", padSysVibSetAcrParam);
-
-INCLUDE_ASM(const s32, "os/loadersys", LoaderSysSetPowerOffCallBackFunc);
-
-INCLUDE_ASM(const s32, "os/loadersys", PreparePowerOff);
-
-INCLUDE_ASM(const s32, "os/loadersys", func_00104FF0);
-
-INCLUDE_ASM(const s32, "os/loadersys", usbSerialSysPutString);
-
-INCLUDE_ASM(const s32, "os/loadersys", usbSerialSysPrintf);
-
-INCLUDE_ASM(const s32, "os/loadersys", usbSerialSysInit);
-
-INCLUDE_ASM(const s32, "os/loadersys", func_001053F0);
-
-INCLUDE_ASM(const s32, "os/loadersys", PutFont);
-
-INCLUDE_ASM(const s32, "os/loadersys", _putString);
-
-INCLUDE_ASM(const s32, "os/loadersys", PutString);
-
-INCLUDE_ASM(const s32, "os/loadersys", PutStringS);
-
-INCLUDE_ASM(const s32, "os/loadersys", func_00105A60);
-
-INCLUDE_ASM(const s32, "os/loadersys", func_00105C50);
-
-INCLUDE_ASM(const s32, "os/loadersys", Sync);
-
-INCLUDE_ASM(const s32, "os/loadersys", ReinitDisp);
-
-INCLUDE_ASM(const s32, "os/loadersys", LoaderSysDrawSprite);
-
-INCLUDE_ASM(const s32, "os/loadersys", ExecBaseProc);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetLocate);
-
-INCLUDE_ASM(const s32, "os/loadersys", ScrollDisplay);
-
-INCLUDE_ASM(const s32, "os/loadersys", ClearDisplay);
-
-INCLUDE_ASM(const s32, "os/loadersys", InitDisp);
-
-INCLUDE_ASM(const s32, "os/loadersys", RestoreNormalDrawEnvironment);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetTextureWithFrameBuffer);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetTexDrawEnvironment);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetDrawnTextureEnvironment);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetDrawEnvironment);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetPrimColor);
-
-INCLUDE_ASM(const s32, "os/loadersys", SetPrimColorTex);
-
-INCLUDE_ASM(const s32, "os/loadersys", PutChar);

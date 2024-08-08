@@ -78,22 +78,28 @@ LoaderSysHookPoint                               = 0x00103E90; // type:func
 LoaderSysRebootIop                               = 0x00103E98; // type:func
 loaderExecResetCallback                          = 0x00103F28; // type:func
 loaderSetResetCallback                           = 0x00103F98; // type:func
-
-// maybe a separate .o?
 memprintf                                        = 0x00103FF8; // type:func
 imemprintf                                       = 0x00104040; // type:func
 initmemprintf                                    = 0x00104088; // type:func
 LoaderSysInitTCP                                 = 0x00104990; // type:func
+
+// os/padsys.c
 padSysTickProc                                   = 0x00104CC0; // type:func
 padsysInit                                       = 0x00104DF8; // type:func
 padSysGet                                        = 0x00104E78; // type:func
 padSysReadForLoader                              = 0x00104E98; // type:func
 padSysVibSetAcrParam                             = 0x00104EF8; // type:func
+
+// os/powerOff.c
 LoaderSysSetPowerOffCallBackFunc                 = 0x00104F58; // type:func
 PreparePowerOff                                  = 0x00104F60; // type:func
+
+// os/usbSerialSys.c
 usbSerialSysPutString                            = 0x001050B8; // type:func
 usbSerialSysPrintf                               = 0x00105268; // type:func
 usbSerialSysInit                                 = 0x001052D8; // type:func
+
+// os/putString.c
 PutFont                                          = 0x00105408; // type:func
 _putString                                       = 0x001056D8; // type:func
 PutString                                        = 0x00105948; // type:func
