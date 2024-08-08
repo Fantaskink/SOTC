@@ -309,7 +309,7 @@ s32 LoaderSysCheckCDBootMode()
 
 void LoaderSysPutString(char *string)
 {
-    printf(D_0013A0F8, string);
+    printf(GSTR(D_0013A0F8, "%s"), string);
 }
 
 s32 LoaderSysFOpen(const char *name, s32 flags)
@@ -388,18 +388,18 @@ void LoaderSysFlushPrint(void)
 {
 }
 
-s32 checkHookDesc(char *hook_desc)
+char *checkHookDesc(char *hook_desc)
 {
-    s32 is_match;
-    s32 iVar2;
+    int hasDiff;
+    char *desc;
 
-    is_match = strncmp(hook_desc, D_0013A100, 6);
-    iVar2 = (int)hook_desc + 6;
-    if (is_match == 0)
+    hasDiff = strncmp(hook_desc, GSTR(D_0013A100, "host0:"), 6);
+    desc = hook_desc + 6;
+    if (hasDiff == 0)
     {
-        return iVar2;
+        return desc;
     }
-    return 0;
+    return NULL;
 }
 
 INCLUDE_ASM(const s32, "os/loadersys3", setNewIopIdentifier);

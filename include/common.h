@@ -36,4 +36,12 @@ typedef float f32;
 
 #define CONST_ARR_ENTSZ(a) (sizeof(*(a)))
 
+#define GSTR_USE_PTR_REF
+
+#ifdef GSTR_USE_PTR_REF
+#define GSTR(ptr, str) ((ptr))
+#else
+#define GSTR(ptr, str) ((str))
+#endif
+
 #endif /* COMMON_H */
