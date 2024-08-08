@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install binutils-mips-linux-gnu
           scripts/setup_ee_gcc_linux.sh
           mkdir -p iso
-          curl -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
+          curl -L -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
       - name: Run build script
         run: |
           python configure.py
