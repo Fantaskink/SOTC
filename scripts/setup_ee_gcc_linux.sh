@@ -30,7 +30,7 @@ download "https://github.com/decompme/compilers/releases/download/compilers/ee-g
 
 # Extract the compiler into the tools dir
 echo "Extracting compiler to $TOP/tools..."
-tar -xzf /tmp/ee-gcc2.96.tar.xz -C $TOP/tools
+tar -xJf /tmp/ee-gcc2.96.tar.xz -C $TOP/tools
 
 echo "Removing temporary files..."
 rm /tmp/ee-gcc2.96.tar.xz
