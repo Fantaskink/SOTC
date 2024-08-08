@@ -4,7 +4,7 @@ set -e
 
 TOP=$(cd "$(dirname "$0")"; pwd)/..
 
-# The SDK (Runtime Library) version to install.
+
 SDK_VER=242
 
 die() { # perl-style `die` expressions.
