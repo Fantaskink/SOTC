@@ -1,4 +1,10 @@
 # Shadow of the Colossus Decompilation Project
+![Endpoint Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Fprogress.deco.mp%2Fdata%2Fsotc%2Fpreview%2Fdefault%2F%3Fmode%3Dshield%26measure%3Dos&style=flat&label=code)
+
+<!-- Contributors shield -->
+[contributors-url]: https://github.com/Fantaskink/SOTC/graphs/contributors
+[contributors-badge]: https://img.shields.io/github/contributors/Fantaskink/SOTC
+
 We are currently targeting the main ELF (``SCPS_150.97``) of the Preview version.
 
 <a href="https://discord.gg/3nmDn6p7" target="_blank">
