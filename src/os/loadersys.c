@@ -1,4 +1,6 @@
 #include "common.h"
+#include "sdk/ee/eekernel.h"
+#include "sdk/ee/sifdev.h"
 // #include "xfftype.h"
 #include "fl_xfftype.h"
 
@@ -19,8 +21,6 @@ extern u32 D_00139F04; // heap pointer
 #define IOP_MEMORY_LIST D_0013C910
 #define INTC_HANDLER_LIST D_0013C110
 
-#define MAX_SEMAPHORES 256
-#define MAX_THREADS 256
 #define MAX_INTC_HANDLERS 256
 #define IOP_MEM_LIST_LEN 256
 
@@ -40,32 +40,7 @@ struct unk
     s32 unk4;
 };
 
-struct sce_stat
-{
-    u32 st_mode;
-    u32 st_attr;
-    u32 st_size;
-    u8 st_ctime[8];
-    u8 st_atime[8];
-    u8 st_mtime[8];
-    u32 st_hisize;
-    u32 st_private[6];
-};
-
 // Function prototypes
-extern s32 GetThreadId();
-extern s32 ChangeThreadPriority(s32 threadId, s32 priority);
-extern s32 sceMkdir(u8 *name, s32 mode);
-extern s32 sceRmdir(const char *name);
-extern s32 sceRead(s32 fd, void *buf, s32 count);
-extern s32 sceWrite(s32 fd, const void *buf, s32 count);
-extern s32 sceRemove(const char *name);
-extern s32 sceLseek(s32 fd, s32 offset, s32 where);
-extern s64 sceLseek64(s32 fd, s64 offset, s32 whence);
-extern s32 sceOpen(const char *name, s32 flags);
-extern s32 sceClose(s32 fd);
-extern s32 sceGetstat(const char *name, struct sce_stat *buf);
-extern s32 sceChstat(const char *name, struct sce_stat *buf, u32 cbit);
 extern s32 printf(const char *string, ...);
 
 INCLUDE_ASM(const s32, "os/loadersys", ResolveRelocation);
@@ -448,7 +423,7 @@ void LoaderSysDeleteAllExternalIopMemory(void)
     {
         if (IOP_MEMORY_LIST[i] != 0)
         {
-            sceSifFreeIopHeap(IOP_MEMORY_LIST[i]);
+            sceSifFreeIopHeap((void *)IOP_MEMORY_LIST[i]);
             IOP_MEMORY_LIST[i] = 0;
         }
     }
