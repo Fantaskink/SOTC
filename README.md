@@ -7,6 +7,7 @@ We are currently targeting the main ELF (``SCPS_150.97``) of the Preview version
 
 
 ## Setup
+Disclaimer: Linux or WSL2 required
 1. ``sudo apt install gcc-mipsel-linux-gnu binutils-mips-linux-gnu ninja-build``
 2. ``sudo apt install python3-pip``
 3. ``python3 -m pip install -U -r requirements.txt``
