@@ -43,7 +43,7 @@ segments:
       subalign: 4
       subsegments:
         - [0x1000, asm, sdk/crt0]
-        - [0x10d0, c, os/loadersys]
+        - [0x10d0, c, os/loaderSys]
         - [0x5cc0, c, os/padSys]
         - [0x5f58, c, os/powerOff]
         - [0x60b8, c, os/usbSerialSys]
@@ -198,26 +198,26 @@ segments:
         - [0x32c10, asm, libgcc/_df_to_si]
 
         #- [0x32CB4, databin] # .reginfo
-        - [0x32D00, data, os/loadersys]
+        - [0x32D00, data, os/loaderSys]
         - [0x33340, data, os/putString]
         - [0x33370, data] # library data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-        - [0x37200, rodata, os/loadersys]
+        - [0x37200, rodata, os/loaderSys]
         - [0x38510, rodata, os/usbSerialSys]
         - [0x38540, rodata, os/putString]
         
         - [0x38D88, rodatabin] # SDK rodata
         - [0x3AE80, rodatabin] # .lit4
         #- [0x3AE84, databin] # .data_nop
-        - [0x3AF00, sdata, os/loadersys]
+        - [0x3AF00, sdata, os/loaderSys]
         - [0x3b218, sdata, os/powerOff]
         - [0x3b230, sdata, os/putString]
         
-        - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: os/loadersys}
+        - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: os/loaderSys}
         - {start: 0x3b300, type: sbss, vram: 0x0013A308, name: os/usbSerialSys}
-        - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loadersys}
+        - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loaderSys}
         - {start: 0x3b370, type: bss, vram: 0x0013D9C0, name: os/padSys}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
