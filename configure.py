@@ -183,6 +183,39 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     )
 
 
+opcode_pattern = re.compile(
+    r"\/\* [0-9A-Z]+ [0-9A-Z]+ ([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2}) .*"
+)  # Pattern for removing %gp_rel accesses
+nop_bugged_funcs = set(
+    [
+        "OutputLinkerScriptFile.s",
+        "LoaderSysResetSystem.s",
+        "func_00105A60.s"
+    ]
+)
+
+
+def replace_instructions_with_opcodes() -> None:
+    for root, dirs, files in os.walk("asm/nonmatchings/"):
+        for filename in files:
+            if filename not in nop_bugged_funcs:
+                continue
+
+            filepath = os.path.join(root, filename)
+
+            with open(filepath, "r") as file:
+                content = file.read()
+
+            if re.search(opcode_pattern, content):
+                # Reference found, replace
+                # Embed the opcode, we have to swap byte order for correct endianness
+                content = re.sub(opcode_pattern, r".long 0x\4\3\2\1", content)
+
+                # Write the updated content back to the file
+                with open(filepath, "w") as file:
+                    file.write(content)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Configure the project")
     parser.add_argument(
@@ -209,6 +242,12 @@ if __name__ == "__main__":
         help="Do not convert to EUC-JP the disassembly strings",
         action="store_true",
     )
+    parser.add_argument(
+        "-noop",
+        "--no-opcode-hack",
+        help="Do not replace asm instructions with raw opcodes for functions that trigger the short loop bug",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.clean:
@@ -230,6 +269,8 @@ if __name__ == "__main__":
         gp_value = split.config["options"]["gp_value"]
         fix_gp_main(gp_value)
 
+    if not args.no_opcode_hack:
+        replace_instructions_with_opcodes()
+
     if not os.path.isfile("compile_commands.json"):
         exec_shell(["ninja", "-t", "compdb"], open("compile_commands.json", "w"))
-    
