@@ -34,7 +34,7 @@ jobs:
         run: |
           sudo apt-get install binutils-mips-linux-gnu
           scripts/setup_ee_gcc_linux.sh
-          curl -o disc/SCPS_150.97 "${{ secrets.FILE_URL }}"
+          curl -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
 
       - name: Run build script
         run: |
