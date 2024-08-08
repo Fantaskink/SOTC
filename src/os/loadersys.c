@@ -1,11 +1,9 @@
 #include "common.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
-// #include "xfftype.h"
+#include "gcc/string.h"
 #include "fl_xfftype.h"
 
-extern void *memcpy(void *dest, const void *src, u64 n);
-extern void *memset(void *s, s32 c, u64 n);
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 extern char D_00136318[];  // "ld:\t\tdecode section\n"
 extern char D_00136330[];  // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
@@ -81,7 +79,7 @@ void DecodeSection(
                 {
                     // Forced max alignment
                     sect->memPt = mallocMaxAlign(sect->size);
-                    memcpy((void *)sect->memPt, (void *)sect->filePt, sect->size);
+                    memcpy(sect->memPt, sect->filePt, sect->size);
                     sect->moved = 2;
                 }
                 else
@@ -91,7 +89,7 @@ void DecodeSection(
                     {
                         // Insufficient alignment, so alloicate
                         sect->memPt = mallocAlign(sect->size, sect->align);
-                        memcpy((void *)sect->memPt, (void *)sect->filePt, sect->size);
+                        memcpy(sect->memPt, sect->filePt, sect->size);
                         sect->moved = 1;
                     }
                     else
@@ -126,7 +124,7 @@ void DecodeSection(
                     sect->moved = 1;
                 }
 
-                memset(sect->memPt, 0x00, (u64)sect->size);
+                memset(sect->memPt, 0x00, sect->size);
                 if (ldrDbgPrintf != NULL)
                 {
                     // The moved-types are actually allocation types (or used in file as is).
@@ -231,7 +229,7 @@ INCLUDE_ASM(const s32, "os/loadersys", LoaderSysExecuteRecoveryFirstProcess);
 static inline s32 getStA()
 {
     s32 i;
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < MAX_INTC_HANDLERS; i++)
     {
         if (INTC_HANDLER_LIST[i].unk4 < 0)
             return i;
@@ -271,7 +269,7 @@ INCLUDE_ASM(const s32, "os/loadersys", LoaderSysEntryExternalIopMemoryList);
 s32 LoaderSysDeleteExternalIntcHandlerList(s32 arg)
 {
     s32 i;
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < MAX_INTC_HANDLERS; i++)
     {
         if (INTC_HANDLER_LIST[i].unk4 == arg)
         {
