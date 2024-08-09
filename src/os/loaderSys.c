@@ -50,11 +50,11 @@ INCLUDE_ASM(const s32, "os/loaderSys", ResolveRelocation);
 
 void DecodeSection(
     void *xffBuf,
-    void *(*mallocAlign)(int sz, int align),
-    void *(*mallocMaxAlign)(int sz),
+    void *(*mallocAlign)(s32 sz, s32 align),
+    void *(*mallocMaxAlign)(s32 sz),
     void (*ldrDbgPrintf)(char *fmt, ...))
 {
-    int i;
+    s32 i;
     struct t_xffEntPntHdr *xffEp;
     void *entPntSectBs = NULL;
     struct t_xffSsNmOffs *nmOffs;
@@ -182,7 +182,7 @@ void SetHeapStartPoint(u32 start_address)
     HEAP_START = (start_address + 0xF) & ~0xF;
 }
 
-int GetHeapCurrentPoint(void)
+s32 GetHeapCurrentPoint(void)
 {
     return HEAP_START;
 }
@@ -251,9 +251,9 @@ void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
 
 INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysEntryExternalThreadList);
 
-static inline int FindSemaIndex(void)
+static inline s32 FindSemaIndex(void)
 {
-    int i;
+    s32 i;
     for (i = 0; i < MAX_SEMAPHORES; i++)
     {
         if (SEMAPHORE_LIST[i] < 0)
@@ -318,7 +318,7 @@ INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysDeleteExternalIopMemoryList);
 
 void LoaderSysInitExternalIntcHandlerList(void)
 {
-    int i;
+    s32 i;
 
     for (i = 0; i < MAX_INTC_HANDLERS; i++)
     {
@@ -524,7 +524,7 @@ void LoaderSysFlushPrint(void)
 
 char *checkHookDesc(char *hook_desc)
 {
-    int hasDiff;
+    s32 hasDiff;
     char *desc;
 
     hasDiff = strncmp(hook_desc, GSTR(D_0013A100, "host0:"), 6);
@@ -549,9 +549,9 @@ const char *LoaderSysGetBootArg(void)
     return D_0013D110;
 }
 
-int LoaderSysLoadIopModule(const char *path, int arg_count, void *args)
+s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 {
-    int result;
+    s32 result;
     PutString(0x4080FF00, GSTR(D_00136C00, "\t\tLoading "));
     PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), path);
     PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
