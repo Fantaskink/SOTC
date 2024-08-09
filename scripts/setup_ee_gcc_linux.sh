@@ -32,6 +32,11 @@ download "https://github.com/decompme/compilers/releases/download/compilers/ee-g
 echo "Extracting compiler to $TOP/tools..."
 tar -xJf /tmp/ee-gcc2.96.tar.xz -C $TOP/tools
 
+# Change to the extracted directory
+EXTRACTED_DIR="$TOP/tools/ee-gcc2.96"
+echo "Changing permissions for binaries in $EXTRACTED_DIR..."
+find "$EXTRACTED_DIR" -type f -exec chmod +x {} +
+
 echo "Removing temporary files..."
 rm /tmp/ee-gcc2.96.tar.xz
 
