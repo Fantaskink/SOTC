@@ -32,10 +32,17 @@ download "https://github.com/decompme/compilers/releases/download/compilers/ee-g
 echo "Extracting compiler to $TOP/tools..."
 tar -xJf /tmp/ee-gcc2.96.tar.xz -C $TOP/tools
 
-pwd
+# Check the directory structure
+echo "Listing contents of $TOP/tools:"
+ls -l $TOP/tools
 
-# Change to the extracted directory
-EXTRACTED_DIR="$TOP/tools/ee-gcc2.96"
+# Find the extracted directory
+EXTRACTED_DIR=$(find $TOP/tools -maxdepth 1 -type d -name 'ee-gcc2.96')
+if [ -z "$EXTRACTED_DIR" ]; then
+    echo "Error: Extracted directory 'ee-gcc2.96' not found."
+    exit 1
+fi
+
 echo "Changing permissions for binaries in $EXTRACTED_DIR..."
 find "$EXTRACTED_DIR" -type f -exec chmod +x {} +
 
