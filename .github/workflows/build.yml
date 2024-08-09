@@ -46,3 +46,7 @@ jobs:
         run: |
           python configure.py
           ninja
+
+      - name: Post to frogress endpoint
+        run: |
+          python3 scripts/upload_progress.py --frogress_api_key ${{ secrets.FROGRESS_API_KEY }}
