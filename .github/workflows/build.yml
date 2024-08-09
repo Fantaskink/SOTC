@@ -37,6 +37,11 @@ jobs:
           sudo apt-get install binutils-mips-linux-gnu
           mkdir -p iso
           curl -L -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
+          
+      - name: Fix permissions for all binaries in ee-gcc2.96
+        run: |
+          find /home/runner/work/SOTC/SOTC/tools/cc/ee-gcc2.96 -type f -exec chmod +x {} \;
+
       - name: Run build script
         run: |
           python configure.py
