@@ -5,12 +5,14 @@
 #include "fl_xfftype.h"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
-extern char D_00136318[];  // "ld:\t\tdecode section\n"
-extern char D_00136330[];  // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
-extern char D_00136358[];  // "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"
-extern char D_00136388[];  // "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"
-extern char D_00136C00[];  // "\t\tLoading "
-extern char D_00136C10[];  // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
+
+// const char *next_header = "ld:\t\x1B[34mnext header: %p\x1Bh[m\n";
+extern char D_00136318[]; // "ld:\t\tdecode section\n"
+extern char D_00136330[]; // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
+extern char D_00136358[]; // "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"
+extern char D_00136388[]; // "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"
+extern char D_00136C00[]; // "\t\tLoading "
+extern char D_00136C10[]; // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
 
 extern u32 D_00139F04; // heap pointer
 
