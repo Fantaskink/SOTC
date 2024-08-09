@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import os
 import shutil
@@ -9,7 +11,6 @@ from   pathlib import Path
 from   typing  import Dict, List, Set, Union
 
 from fix_gp import main as fix_gp_main
-
 
 import ninja_syntax
 
