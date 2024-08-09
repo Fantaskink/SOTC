@@ -9,8 +9,8 @@ extern char D_00136318[];  // "ld:\t\tdecode section\n"
 extern char D_00136330[];  // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
 extern char D_00136358[];  // "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"
 extern char D_00136388[];  // "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"
-extern char D_00136C00[];
-extern char D_00136C10[];
+extern char D_00136C00[];  // "\t\tLoading "
+extern char D_00136C10[];  // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
 
 extern u32 D_00139F04; // heap pointer
 
@@ -29,10 +29,10 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
-extern char D_0013A100[]; // "host0:"
-extern const char D_0013A118[];
-extern const char D_0013A120[];
-extern const char D_0013A128[];
+extern char D_0013A100[];       // "host0:"
+extern const char D_0013A118[]; // ""%s""
+extern const char D_0013A120[]; // "... "
+extern const char D_0013A128[]; // "Done.\n"
 
 extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
 extern const char D_0013A0F8[]; // "%s"
@@ -549,21 +549,22 @@ const char *LoaderSysGetBootArg(void)
     return D_0013D110;
 }
 
-int LoaderSysLoadIopModule(const char* path, int arg_count, void* args)
+int LoaderSysLoadIopModule(const char *path, int arg_count, void *args)
 {
     int result;
-    PutString(0x4080FF00, D_00136C00);
-    PutString(0x80C0FF00, D_0013A118, path);
-    PutStringS(0x4080FF00, D_0013A120);
+    PutString(0x4080FF00, GSTR(D_00136C00, "\t\tLoading "));
+    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), path);
+    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
 
     result = sceSifLoadModule(path, arg_count, args);
 
-    if (result < 0) {
-        PutStringS(0xFF804000, D_00136C10, path, result);
+    if (result < 0)
+    {
+        PutStringS(0xFF804000, GSTR(D_00136C10, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"), path, result);
         return -1;
     }
 
-    PutStringS(0x4080FF00, D_0013A128);
+    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
     return 0;
 }
 
