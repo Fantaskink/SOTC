@@ -6,16 +6,12 @@
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 
-// const char *next_header = "ld:\t\x1B[34mnext header: %p\x1Bh[m\n";
-extern char D_00136318[]; // "ld:\t\tdecode section\n"
-extern char D_00136330[]; // "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"
-extern char D_00136358[]; // "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"
-extern char D_00136388[]; // "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"
-extern char D_00136C00[]; // "\t\tLoading "
-extern char D_00136C10[]; // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
+extern char D_0013A100[];       // "host0:"
+extern const char D_0013A118[]; // "\"%s\""
+extern const char D_0013A120[]; // "... "
+extern const char D_0013A128[]; // "Done.\n"
 
 extern u32 D_00139F04; // heap pointer
-
 #define HEAP_START D_00139F04
 
 #define SEMAPHORE_LIST D_0013BD10
@@ -31,24 +27,21 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
-extern char D_0013A100[];       // "host0:"
-extern const char D_0013A118[]; // ""%s""
-extern const char D_0013A120[]; // "... "
-extern const char D_0013A128[]; // "Done.\n"
-
-extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
-extern const char D_0013A0F8[]; // "%s"
-
 struct unk
 {
     s32 unk0;
     s32 unk4;
 };
 
-// Function prototypes
-extern s32 printf(const char *string, ...);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136200);
 
-INCLUDE_ASM(const s32, "os/loaderSys", ResolveRelocation);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", ResolveRelocation);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001362D0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001362E8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136308);
 
 void DecodeSection(
     void *xffBuf,
@@ -69,7 +62,7 @@ void DecodeSection(
     nmOffs = &xffEp->ssNamesOffs[0];
 
     if (ldrDbgPrintf != NULL)
-        ldrDbgPrintf(GSTR(D_00136318, "ld:\t\tdecode section\n"));
+        ldrDbgPrintf("ld:\t\tdecode section\n");
 
     // The zero section is not processed as it is all 0.
     for (; i--; sect++, nmOffs++)
@@ -109,12 +102,12 @@ void DecodeSection(
                     if (sect->type == 1)
                     { // .text
                         // The moved-types are actually allocation types (or used in file as is).
-                        ldrDbgPrintf(GSTR(D_00136330, "ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n"), &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                        ldrDbgPrintf("ld:\t%15s(progbit): 0x%08x(0x%08x) %s\n", &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                     }
                     else
                     { // VU code/data
                         // The moved-types are actually allocation types (or used in file as is).
-                        ldrDbgPrintf(GSTR(D_00136358, "ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n"), &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                        ldrDbgPrintf("ld:\t%15s(overlaydata): 0x%08x(0x%08x) %s\n", &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                     }
                 }
                 break;
@@ -135,7 +128,7 @@ void DecodeSection(
                 if (ldrDbgPrintf != NULL)
                 {
                     // The moved-types are actually allocation types (or used in file as is).
-                    ldrDbgPrintf(GSTR(D_00136388, "ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n"), &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
+                    ldrDbgPrintf("ld:\t%15s(nobit)  : 0x%08x(0x%08x) %s\n", &xffEp->ssNamesBase[nmOffs->nmOffs], sect->memPt, sect->size, D_00131DC0[sect->moved]);
                 }
                 break;
             }
@@ -153,31 +146,33 @@ void DecodeSection(
     return;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", RelocateElfInfoHeader);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateElfInfoHeader);
 
-INCLUDE_ASM(const s32, "os/loaderSys", OutputLinkerScriptFile);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001363B0);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00100A58);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", OutputLinkerScriptFile);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysJumpRecoverPointNoStateSetting);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100A58);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysJumpRecoverPoint);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPointNoStateSetting);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00100D48);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
 
-INCLUDE_ASM(const s32, "os/loaderSys", MoveElf);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100D48);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_001013C8);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", MoveElf);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysRelocateOnlineElfInfo);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
 
-INCLUDE_ASM(const s32, "os/loaderSys", RelocateCode);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysRelocateOnlineElfInfo);
 
-INCLUDE_ASM(const s32, "os/loaderSys", FreeDecodedSection);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateCode);
 
-INCLUDE_ASM(const s32, "os/loaderSys", RelocateSelfSymbol);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", FreeDecodedSection);
 
-INCLUDE_ASM(const s32, "os/loaderSys", DisposeRelocationElement);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateSelfSymbol);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", DisposeRelocationElement);
 
 void SetHeapStartPoint(u32 start_address)
 {
@@ -189,11 +184,11 @@ s32 GetHeapCurrentPoint(void)
     return HEAP_START;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysResetSystem);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysResetSystem);
 
-INCLUDE_ASM(const s32, "os/loaderSys", mallocAlignMempool);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlignMempool);
 
-INCLUDE_ASM(const s32, "os/loaderSys", mallocAlign0x100Mempool);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlign0x100Mempool);
 
 s32 _checkExistString(char *string, char **strings)
 {
@@ -211,27 +206,69 @@ s32 _checkExistString(char *string, char **strings)
     return 0;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00101B88);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00101B88);
 
-INCLUDE_ASM(const s32, "os/loaderSys", _execProgWithThread);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", _execProgWithThread);
 
-INCLUDE_ASM(const s32, "os/loaderSys", execProgWithThread);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", execProgWithThread);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00101EC0);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136630);
 
-INCLUDE_ASM(const s32, "os/loaderSys", InitException);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136640);
 
-INCLUDE_ASM(const s32, "os/loaderSys", setCop0Epc);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136660);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_001021E0);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136680);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00102360);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001366A0);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysDeleteAllExternalIntcHandler);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001366B8);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysDeleteAllExternalSema);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001366D0);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysExecuteRecoveryFirstProcess);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001366F8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136718);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136738);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136768);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136788);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001367B8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001367D0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001367E0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001367F0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136800);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136810);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136820);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136830);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136840);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00101EC0);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", InitException);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", setCop0Epc);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001021E0);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00102360);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalIntcHandler);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalSema);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysExecuteRecoveryFirstProcess);
 
 static inline s32 getStA()
 {
@@ -251,7 +288,7 @@ void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
     INTC_HANDLER_LIST[i].unk0 = param_2;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysEntryExternalThreadList);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysEntryExternalThreadList);
 
 static inline s32 FindSemaIndex(void)
 {
@@ -271,7 +308,7 @@ void LoaderSysEntryExternalSemaList(s32 arg1)
     SEMAPHORE_LIST[FindSemaIndex()] = arg1;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysEntryExternalIopMemoryList);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysEntryExternalIopMemoryList);
 
 s32 LoaderSysDeleteExternalIntcHandlerList(s32 arg)
 {
@@ -316,7 +353,7 @@ s32 LoaderSysDeleteExternalSemaList(s32 semaId)
     return -1;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysDeleteExternalIopMemoryList);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteExternalIopMemoryList);
 
 void LoaderSysInitExternalIntcHandlerList(void)
 {
@@ -434,15 +471,16 @@ void LoaderSysDeleteAllExternalIopMemory(void)
     }
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysPrintf);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysPrintf);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysLoadIopModuleFromEEBuffer);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysLoadIopModuleFromEEBuffer);
 
 s32 LoaderSysCheckCDBootMode()
 {
     return 2;
 }
 
+extern const char D_0013A0F8[]; // "%s"
 void LoaderSysPutString(char *string)
 {
     printf(GSTR(D_0013A0F8, "%s"), string);
@@ -512,9 +550,11 @@ s32 LoaderSysChstat(const char *name, struct sce_stat *buf, u32 cbit)
     return sceChstat(name, buf, cbit);
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysGetMemoryInfo);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysGetMemoryInfo);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysDumpIopModuleIdentifiers);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A80);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDumpIopModuleIdentifiers);
 
 void LoaderSysSendAbort(void)
 {
@@ -538,19 +578,28 @@ char *checkHookDesc(char *hook_desc)
     return NULL;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", setNewIopIdentifier);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", setNewIopIdentifier);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_001033B0);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136BE8);
 
-INCLUDE_ASM(const s32, "os/loaderSys", loaderLoop);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C00);
 
-INCLUDE_ASM(const s32, "os/loaderSys", main);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C10);
 
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001033B0);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
+
+extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
 const char *LoaderSysGetBootArg(void)
 {
     return D_0013D110;
 }
 
+extern char D_00136C00[]; // "\t\tLoading "
+extern char D_00136C10[]; // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
 s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 {
     s32 result;
@@ -570,32 +619,50 @@ s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
     return 0;
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysUnloadIopModuleByName);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysUnloadIopModuleByName);
 
 void LoaderSysHookPoint(void)
 {
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysRebootIop);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysRebootIop);
 
-INCLUDE_ASM(const s32, "os/loaderSys", loaderExecResetCallback);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
 
-INCLUDE_ASM(const s32, "os/loaderSys", loaderSetResetCallback);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderSetResetCallback);
 
-INCLUDE_ASM(const s32, "os/loaderSys", memprintf);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", memprintf);
 
-INCLUDE_ASM(const s32, "os/loaderSys", imemprintf);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", imemprintf);
 
 void initmemprintf(void)
 {
 }
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00104090);
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104090);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00104428);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00104668);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F88);
 
-INCLUDE_ASM(const s32, "os/loaderSys", func_00104818);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370B8);
 
-INCLUDE_ASM(const s32, "os/loaderSys", LoaderSysInitTCP);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104428);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137130);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137140);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137150);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137160);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137170);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104668);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104818);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysInitTCP);

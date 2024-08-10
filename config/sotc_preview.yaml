@@ -12,7 +12,10 @@ options:
     
     extensions_path: tools/splat_ext
     symbol_addrs_path: config/symbol_addrs.txt
+
+    create_undefined_funcs_auto: True
     undefined_funcs_auto_path: config/undefined_funcs_auto.txt
+    create_undefined_syms_auto: True
     undefined_syms_auto_path:  config/undefined_syms_auto.txt
     
     # compiler 
@@ -24,7 +27,7 @@ options:
 
     migrate_rodata_to_functions: True
 
-    use_legacy_include_asm: True
+    include_macro_inc: False
     
     string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
@@ -204,10 +207,10 @@ segments:
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
-        - [0x37200, rodata, os/loaderSys]
-        - [0x384f0, rodata, os/powerOff]
+        - [0x37200, .rodata, os/loaderSys]
+        - [0x384f0, .rodata, os/powerOff]
         - [0x38510, .rodata, os/usbSerialSys] 
-        - [0x38540, rodata, os/putString]
+        - [0x38540, .rodata, os/putString]
         
         - [0x38D88, rodatabin] # SDK rodata
         - [0x3AE80, rodatabin] # .lit4
