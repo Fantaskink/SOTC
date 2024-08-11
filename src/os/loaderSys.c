@@ -160,6 +160,18 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100D48);
 
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364A8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364D0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136500);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136548);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136560);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136588);
+
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", MoveElf);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
@@ -185,6 +197,8 @@ s32 GetHeapCurrentPoint(void)
 }
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysResetSystem);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", undefined_func_00101aa0);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlignMempool);
 
@@ -552,7 +566,13 @@ s32 LoaderSysChstat(const char *name, struct sce_stat *buf, u32 cbit)
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysGetMemoryInfo);
 
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A00);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A48);
+
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A80);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136AC0);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDumpIopModuleIdentifiers);
 
@@ -580,15 +600,57 @@ char *checkHookDesc(char *hook_desc)
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", setNewIopIdentifier);
 
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001033B0);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
+
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136BE8);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C00);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C10);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001033B0);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C48);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C58);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C98);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CB8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CC8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CD8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CF8);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D10);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D30);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D50);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D70);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D90);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DB0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DD0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DE0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DF0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E00);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E10);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E30);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E60);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E78);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
 
@@ -639,15 +701,39 @@ void initmemprintf(void)
 {
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104090);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136EE0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F00);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20);
 
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F68);
+
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F88);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FA0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FC0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FE0);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137000);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137020);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137040);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137060);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137078);
+
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137098);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370B8);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
+
+INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104090);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104428);
 
