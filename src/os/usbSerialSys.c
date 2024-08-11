@@ -1,9 +1,9 @@
 #include "common.h"
 
-INCLUDE_ASM(const s32, "os/usbSerialSys", usbSerialSysPutString);
+INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysPutString);
 
-INCLUDE_ASM(const s32, "os/usbSerialSys", usbSerialSysPrintf);
+INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysPrintf);
 
-INCLUDE_ASM(const s32, "os/usbSerialSys", usbSerialSysInit);
+INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysInit);
 
-INCLUDE_ASM(const s32, "os/usbSerialSys", func_001053F0);
+INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", func_001053F0);

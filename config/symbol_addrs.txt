@@ -83,6 +83,52 @@ imemprintf                                       = 0x00104040; // type:func
 initmemprintf                                    = 0x00104088; // type:func
 LoaderSysInitTCP                                 = 0x00104990; // type:func
 
+D_00136548 = 0x00136548; // force_not_migration:True
+D_00136560 = 0x00136560; // force_not_migration:True
+D_00136588 = 0x00136588; // force_not_migration:True
+D_001364A8 = 0x001364A8; // force_not_migration:True
+D_001364D0 = 0x001364D0; // force_not_migration:True
+D_00136500 = 0x00136500; // force_not_migration:True
+D_00136A00 = 0x00136A00; // force_not_migration:True
+D_00136A48 = 0x00136A48; // force_not_migration:True
+D_00136AC0 = 0x00136AC0; // force_not_migration:True
+
+D_00136C98 = 0x00136C98; // force_not_migration:True
+D_00136CB8 = 0x00136CB8; // force_not_migration:True
+D_00136CC8 = 0x00136CC8; // force_not_migration:True
+D_00136CD8 = 0x00136CD8; // force_not_migration:True
+D_00136CF8 = 0x00136CF8; // force_not_migration:True
+D_00136D10 = 0x00136D10; // force_not_migration:True
+D_00136D30 = 0x00136D30; // force_not_migration:True
+D_00136D50 = 0x00136D50; // force_not_migration:True
+D_00136D70 = 0x00136D70; // force_not_migration:True
+D_00136D90 = 0x00136D90; // force_not_migration:True
+D_00136DB0 = 0x00136DB0; // force_not_migration:True
+D_00136C48 = 0x00136C48; // force_not_migration:True
+D_00136C58 = 0x00136C58; // force_not_migration:True
+D_00136E30 = 0x00136E30; // force_not_migration:True
+
+D_00136EE0 = 0x00136EE0; // force_not_migration:True
+D_00136F00 = 0x00136F00; // force_not_migration:True
+D_00136F68 = 0x00136F68; // force_not_migration:True
+D_00136FA0 = 0x00136FA0; // force_not_migration:True
+D_00136FC0 = 0x00136FC0; // force_not_migration:True
+D_00136FE0 = 0x00136FE0; // force_not_migration:True
+D_00137000 = 0x00137000; // force_not_migration:True
+D_00137020 = 0x00137020; // force_not_migration:True
+D_00137040 = 0x00137040; // force_not_migration:True
+D_00137060 = 0x00137060; // force_not_migration:True
+D_00137078 = 0x00137078; // force_not_migration:True
+D_00137098 = 0x00137098; // force_not_migration:True
+
+D_00136DD0 = 0x00136DD0; // force_not_migration:True
+D_00136DE0 = 0x00136DE0; // force_not_migration:True
+D_00136DF0 = 0x00136DF0; // force_not_migration:True
+D_00136E00 = 0x00136E00; // force_not_migration:True
+D_00136E10 = 0x00136E10; // force_not_migration:True
+D_00136E60 = 0x00136E60; // force_not_migration:True
+D_00136E78 = 0x00136E78; // force_not_migration:True
+
 // os/padsys.c
 padSysTickProc                                   = 0x00104CC0; // type:func
 padsysInit                                       = 0x00104DF8; // type:func
