@@ -706,8 +706,6 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F68);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F88);
-
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FA0);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FC0);
@@ -730,7 +728,113 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370B8);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104090);
+// These are likely const char* (string literals)
+extern const char D_00136F20[];
+extern const char D_001370B8[];
+extern const char D_001370D8[];
+
+// These are likely also const char*, used for identifiers
+extern const char D_0013A188[];
+extern const char D_0013A190[];
+extern const char D_0013A198[];
+extern const char D_0013A1A0[];
+extern const char D_0013A1A8[];
+extern const char D_0013A1B0[];
+extern const char D_0013A1B8[];
+extern const char D_0013A1C0[];
+extern const char D_0013A1C8[];
+extern const char D_0013A1D0[];
+extern const char D_0013A1D8[];
+extern const char D_0013A1E0[];
+
+extern void setNewIopIdentifier(const char *identifier);
+
+int func_00104090(int mode)
+{
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INET.IRX;1", 0, NULL) < 0)
+        return -1;
+    setNewIopIdentifier(D_0013A188);
+
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\NETCNF.IRX;1", 0x46, D_00136F20) < 0)
+        return -1;
+    setNewIopIdentifier(D_0013A190);
+
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 0x14, "-no_auto") < 0)
+        return -1;
+    setNewIopIdentifier(D_0013A198);
+
+    switch (mode)
+    {
+    case 1:
+    case 2:
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1A0);
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1A8);
+        break;
+    case 5:
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1A0);
+        break;
+    case 3:
+    case 4:
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1B0);
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1B8);
+        break;
+    case 0:
+        break;
+    }
+
+    switch (mode)
+    {
+    case 2:
+    case 4:
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1C0);
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1C8);
+        break;
+    case 5:
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1C0);
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\.IRX;1", 1, D_0013A1D0) < 0)
+            return -1;
+        setNewIopIdentifier(D_0013A1D0);
+        break;
+    case 0:
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL);
+        break;
+    }
+
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\MSIFRPC.IRX;1", 0, NULL) < 0)
+        return -1;
+    setNewIopIdentifier(D_0013A1D8);
+
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\LIBNET.IRX;1", 0, NULL) < 0)
+        return -1;
+    setNewIopIdentifier(D_0013A1E0);
+
+    if (LoaderSysLoadIopModule(D_001370B8, 0, NULL) < 0)
+        return -1;
+    setNewIopIdentifier(D_001370D8);
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104428);
 
