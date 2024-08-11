@@ -198,8 +198,6 @@ s32 GetHeapCurrentPoint(void)
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysResetSystem);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", undefined_func_00101aa0);
-
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlignMempool);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlign0x100Mempool);
@@ -493,8 +491,7 @@ s32 LoaderSysCheckCDBootMode()
 {
     return 2;
 }
-
-extern const char D_0013A0F8[]; // "%s"
+extern const char D_0013A0F8[]; // "%s", .sdata
 void LoaderSysPutString(char *string)
 {
     printf(GSTR(D_0013A0F8, "%s"), string);
@@ -655,13 +652,13 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E78);
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
 
 extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
+extern const char D_00136C10[];
+extern const char D_00136C00[];
 const char *LoaderSysGetBootArg(void)
 {
     return D_0013D110;
 }
 
-extern char D_00136C00[]; // "\t\tLoading "
-extern char D_00136C10[]; // "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"
 s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 {
     s32 result;
