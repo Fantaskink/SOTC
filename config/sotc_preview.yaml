@@ -26,6 +26,7 @@ options:
     ld_bss_is_noload: true
 
     migrate_rodata_to_functions: True
+    use_gp_rel_macro_nonmatching: False
 
     include_macro_inc: False
     
