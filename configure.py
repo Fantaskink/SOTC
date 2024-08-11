@@ -185,13 +185,15 @@ def build_stuff(linker_entries: List[LinkerEntry]):
 
 
 opcode_pattern = re.compile(
-    r"\/\* [0-9A-Z]+ [0-9A-Z]+ ([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2}) .*"
-)  # Pattern for removing %gp_rel accesses
+    r"\/\* ([0-9A-Z]+) ([0-9A-Z]+) ([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2})([0-9A-Z]{2}) \*\/  (\b(bne|bnel|beq|beql|bnez|bnezl|beqzl|bgez|bgezl|bgtz|bgtzl|blez|blezl|bltz|bltzl|b)\b.*)"
+)  # Pattern to workaround unintended nops around loops
 nop_bugged_funcs = set(
     [
         "OutputLinkerScriptFile.s",
         "LoaderSysResetSystem.s",
-        "func_00105A60.s"
+        "func_00105A60.s",
+        "_putString.s",
+        "InitDisp.s"
     ]
 )
 
@@ -210,7 +212,7 @@ def replace_instructions_with_opcodes() -> None:
             if re.search(opcode_pattern, content):
                 # Reference found, replace
                 # Embed the opcode, we have to swap byte order for correct endianness
-                content = re.sub(opcode_pattern, r".long 0x\4\3\2\1", content)
+                content = re.sub(opcode_pattern, r"/* \1 \2 \3\4\5\6 */  .word      0x\6\5\4\3 /* \7 */", content)
 
                 # Write the updated content back to the file
                 with open(filepath, "w") as file:
@@ -229,12 +231,6 @@ if __name__ == "__main__":
         "-csrc",
         "--cleansrc",
         help="Clean the 'src' folder",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-nogp",
-        "--no-gprel-removing",
-        help="Do not remove gp_rel references on the disassembly",
         action="store_true",
     )
     parser.add_argument(
@@ -266,9 +262,8 @@ if __name__ == "__main__":
 
     write_permuter_settings()
 
-    if not args.no_gprel_removing:
-        gp_value = split.config["options"]["gp_value"]
-        fix_gp_main(gp_value)
+    if not split.config["options"]["use_gp_rel_macro_nonmatching"]:
+        fix_gp_main()
 
     if not args.no_opcode_hack:
         replace_instructions_with_opcodes()
