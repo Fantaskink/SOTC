@@ -706,6 +706,8 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F68);
 
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F88);
+
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FA0);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FC0);
@@ -730,6 +732,7 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
 
 // These are likely const char* (string literals)
 extern const char D_00136F20[];
+extern const char D_00136F88[];
 extern const char D_001370B8[];
 extern const char D_001370D8[];
 
@@ -759,7 +762,7 @@ int func_00104090(int mode)
         return -1;
     setNewIopIdentifier(D_0013A190);
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 0x14, "-no_auto") < 0)
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 0x14, D_00136F88) < 0)
         return -1;
     setNewIopIdentifier(D_0013A198);
 
