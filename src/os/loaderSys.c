@@ -698,11 +698,11 @@ void initmemprintf(void)
 {
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136EE0);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136EE0); // INET.IRX
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F00);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F00); // NETCNF.IRX
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20);
+INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20); // icon=cdrom
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F68);
 
@@ -731,7 +731,7 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370B8);
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
 
 // These are likely const char* (string literals)
-extern const char D_00136F20[];
+extern const char D_00136F20[]; // "icon=cdrom"
 extern const char D_00136F88[];
 extern const char D_001370B8[];
 extern const char D_001370D8[];
@@ -750,19 +750,33 @@ extern const char D_0013A1D0[];
 extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
 
+// These are likely also const char*, used for identifiers
+extern const char D_00136EE0[];
+extern const char D_00136F00[];
+extern const char D_00136F68[];
+extern const char D_00136FA0[];
+extern const char D_00136FC0[];
+extern const char D_00136FE0[];
+extern const char D_00137000[];
+extern const char D_00137020[];
+extern const char D_00137040[];
+extern const char D_00137060[];
+extern const char D_00137078[];
+extern const char D_00137098[];
+
 extern void setNewIopIdentifier(const char *identifier);
 
 int func_00104090(int mode)
 {
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INET.IRX;1", 0, NULL) < 0)
+    if (LoaderSysLoadIopModule(D_00136EE0, 0, NULL) < 0)
         return -1;
     setNewIopIdentifier(D_0013A188);
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\NETCNF.IRX;1", 0x46, D_00136F20) < 0)
+    if (LoaderSysLoadIopModule(D_00136F00, 0x46, D_00136F20) < 0)
         return -1;
     setNewIopIdentifier(D_0013A190);
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 0x14, D_00136F88) < 0)
+    if (LoaderSysLoadIopModule(D_00136F68, 0x14, D_00136F88) < 0)
         return -1;
     setNewIopIdentifier(D_0013A198);
 
@@ -770,24 +784,24 @@ int func_00104090(int mode)
     {
     case 1:
     case 2:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00136FA0, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1A0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00136FC0, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1A8);
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00136FA0, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1A0);
         break;
     case 3:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00136FE0, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1B0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00137000, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1B8);
         break;
@@ -799,36 +813,36 @@ int func_00104090(int mode)
     {
     case 2:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00137020, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00137040, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1C8);
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
+        if (LoaderSysLoadIopModule(D_00137020, 0, NULL) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\.IRX;1", 1, D_0013A1D0) < 0)
+        if (LoaderSysLoadIopModule(D_00137060, 1, D_0013A1D0) < 0)
             return -1;
         setNewIopIdentifier(D_0013A1D0);
         break;
     case 0:
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL);
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL);
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL);
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL);
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL);
-        LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL);
+        LoaderSysLoadIopModule(D_00136FA0, 0, NULL);
+        LoaderSysLoadIopModule(D_00136FC0, 0, NULL);
+        LoaderSysLoadIopModule(D_00136FE0, 0, NULL);
+        LoaderSysLoadIopModule(D_00137000, 0, NULL);
+        LoaderSysLoadIopModule(D_00137020, 0, NULL);
+        LoaderSysLoadIopModule(D_00137040, 0, NULL);
         break;
     }
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\MSIFRPC.IRX;1", 0, NULL) < 0)
+    if (LoaderSysLoadIopModule(D_00137078, 0, NULL) < 0)
         return -1;
     setNewIopIdentifier(D_0013A1D8);
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\LIBNET.IRX;1", 0, NULL) < 0)
+    if (LoaderSysLoadIopModule(D_00137098, 0, NULL) < 0)
         return -1;
     setNewIopIdentifier(D_0013A1E0);
 
