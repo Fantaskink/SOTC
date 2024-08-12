@@ -698,43 +698,43 @@ void initmemprintf(void)
 {
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136EE0); // INET.IRX
+const char inet[] = "cdrom0:\\MODULES\\INET.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F00); // NETCNF.IRX
+const char netCnf[] = "cdrom0:\\MODULES\\NETCNF.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F20); // icon=cdrom
+const char D_00136F20[] = "icon=cdrom0:\\SETTING\\SYS_NET.ICO;1\0iconsys=cdrom0:\\SETTING\\ICON.SYS;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F68);
+const char D_00136F68[] = "cdrom0:\\MODULES\\INETCTL.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136F88);
+const char D_00136F88[] = "-no_auto\0-no_decode";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FA0);
+const char D_00136FA0[] = "cdrom0:\\MODULES\\USBD.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FC0);
+const char D_00136FC0[] = "cdrom0:\\MODULES\\AN986.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136FE0);
+const char D_00136FE0[] = "cdrom0:\\MODULES\\DEV9.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137000);
+const char D_00137000[] = "cdrom0:\\MODULES\\SMAP.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137020);
+const char D_00137020[] = "cdrom0:\\MODULES\\PPP.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137040);
+const char D_00137040[] = "cdrom0:\\MODULES\\PPPOE.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137060);
+const char D_00137060[] = "cdrom0:\\MODULES\\.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137078);
+const char D_00137078[] = "cdrom0:\\MODULES\\MSIFRPC.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137098);
+const char D_00137098[] = "cdrom0:\\MODULES\\LIBNET.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370B8);
+const char D_001370B8[] = "cdrom0:\\MODULES2\\NETCNFIF.IRX;1";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001370D8);
+const char D_001370D8[] = "NETCNFIF";
 
 // These are likely const char* (string literals)
-extern const char D_00136F20[]; // "icon=cdrom"
-extern const char D_00136F88[];
-extern const char D_001370B8[];
-extern const char D_001370D8[];
+// extern const char D_00136F20[]; // "icon=cdrom"
+// extern const char D_00136F88[];
+// extern const char D_001370B8[];
+// extern const char D_001370D8[];
 
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];
@@ -751,32 +751,31 @@ extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
 
 // These are likely also const char*, used for identifiers
-extern const char D_00136EE0[];
-extern const char D_00136F00[];
-extern const char D_00136F68[];
-extern const char D_00136FA0[];
-extern const char D_00136FC0[];
-extern const char D_00136FE0[];
-extern const char D_00137000[];
-extern const char D_00137020[];
-extern const char D_00137040[];
-extern const char D_00137060[];
-extern const char D_00137078[];
-extern const char D_00137098[];
+// extern const char D_00136F00[];
+// extern const char D_00136F68[];
+// extern const char D_00136FA0[];
+// extern const char D_00136FC0[];
+// extern const char D_00136FE0[];
+// extern const char D_00137000[];
+// extern const char D_00137020[];
+// extern const char D_00137040[];
+// extern const char D_00137060[];
+// extern const char D_00137078[];
+// extern const char D_00137098[];
 
 extern void setNewIopIdentifier(const char *identifier);
 
 int func_00104090(int mode)
 {
-    if (LoaderSysLoadIopModule(D_00136EE0, 0, NULL) < 0)
+    if (LoaderSysLoadIopModule(inet, 0, NULL) < 0)
         return -1;
     setNewIopIdentifier(D_0013A188);
 
-    if (LoaderSysLoadIopModule(D_00136F00, 0x46, D_00136F20) < 0)
+    if (LoaderSysLoadIopModule(netCnf, 70, D_00136F20) < 0)
         return -1;
     setNewIopIdentifier(D_0013A190);
 
-    if (LoaderSysLoadIopModule(D_00136F68, 0x14, D_00136F88) < 0)
+    if (LoaderSysLoadIopModule(D_00136F68, 20, D_00136F88) < 0)
         return -1;
     setNewIopIdentifier(D_0013A198);
 
