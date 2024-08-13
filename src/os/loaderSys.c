@@ -3,6 +3,7 @@
 #include "sdk/ee/sifdev.h"
 #include "gcc/string.h"
 #include "fl_xfftype.h"
+#include "loaderSys.h"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 
@@ -698,9 +699,6 @@ void initmemprintf(void)
 {
 }
 
-const char D_001370B8[] = "cdrom0:\\MODULES2\\NETCNFIF.IRX;1"; // Referenced in func_00104428
-const char D_001370D8[] = "NETCNFIF";                          // Referenced in func_00104428
-
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];
 extern const char D_0013A190[];
@@ -714,8 +712,6 @@ extern const char D_0013A1C8[];
 extern const char D_0013A1D0[];
 extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
-
-extern void setNewIopIdentifier(const char *identifier);
 
 int func_00104090(int mode)
 {
@@ -797,14 +793,126 @@ int func_00104090(int mode)
         return -1;
     setNewIopIdentifier(D_0013A1E0);
 
-    if (LoaderSysLoadIopModule(D_001370B8, 0, NULL) < 0)
+    if (LoaderSysLoadIopModule("cdrom0:\\MODULES2\\NETCNFIF.IRX;1", 0, NULL) < 0)
         return -1;
-    setNewIopIdentifier(D_001370D8);
+    setNewIopIdentifier("NETCNFIF");
 
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00104428);
+int LoadSetConfiguration(sceSifMClientData *cd, unsigned int *net_buf, sceNetcnfifData_t *p_data, char *fname, char *usr_name, unsigned int flags)
+{
+    sceNetcnfifArg_t if_arg;
+    int addr;
+    int id;
+    int ret;
+
+    printf("ldnet: network resource info: \"%s\"\n", fname);
+    if (flags & sceLIBNETF_AUTO_LOADMODULE)
+    {
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES2\\NETCNFIF.IRX;1", 0, (void *)0) < 0)
+        {
+            return (-1);
+        }
+        setNewIopIdentifier("NETCNFIF");
+    }
+
+    /* Setup Netcnfif. */
+    sceNetcnfifSetup();
+    /* Prepare workarea in IOP. */
+    sceNetcnfifAllocWorkarea(WORKAREA_SIZE);
+    {
+        sceNetcnfifArg_t *parg = &if_arg;
+        while (sceNetcnfifCheck())
+            ;
+        sceNetcnfifGetResult(parg);
+        if (parg->data < 0)
+        {
+            return (sceLIBNETE_NG);
+        }
+    }
+    if (flags & sceLIBNETF_DECODE)
+    {
+        sceNetcnfifSetFNoDecode(sceNetcnfifArg_f_no_decode_off);
+    }
+    else
+    {
+        sceNetcnfifSetFNoDecode(sceNetcnfifArg_f_no_decode_on);
+    }
+
+    /* Get setting information. */
+    FlushCache(0);
+    sceNetcnfifLoadEntry(fname, sceNetcnfifArg_type_net, usr_name, p_data);
+    {
+        sceNetcnfifArg_t *parg = &if_arg;
+        while (sceNetcnfifCheck())
+            ;
+        sceNetcnfifGetResult(parg);
+        if (parg->data < 0)
+        {
+            return (sceLIBNETE_NG);
+        }
+
+        /* Get a destination address of sceNetcnfifData(). */
+        sceNetcnfifGetAddr(parg->data);
+    }
+    {
+        sceNetcnfifArg_t *parg = &if_arg;
+        while (sceNetcnfifCheck())
+            ;
+        sceNetcnfifGetResult(parg);
+        if (parg->data < 0)
+        {
+            return (sceLIBNETE_NG);
+        }
+
+        addr = if_arg.addr;
+
+        /* Transfer sceNetcnfifData() to IOP. */
+        id = sceNetcnfifSendIOP((unsigned int)p_data, (unsigned int)addr, (unsigned int)sizeof(sceNetcnfifData_t));
+        if (id == 0)
+        {
+            return (sceLIBNETE_NG);
+        }
+        while (sceNetcnfifDmaCheck(id))
+            ;
+    }
+
+    /* Set env. */
+    sceNetcnfifSetEnv(sceNetcnfifArg_type_net);
+    {
+        sceNetcnfifArg_t *parg = &if_arg;
+        while (sceNetcnfifCheck())
+            ;
+        sceNetcnfifGetResult(parg);
+        if (parg->data < 0)
+        {
+            return (sceLIBNETE_NG);
+        }
+    }
+    addr = if_arg.addr;
+
+    if (flags & sceLIBNETF_AUTO_UPIF)
+    {
+        ret = sceInetCtlSetAutoMode(cd, net_buf, !0);
+    }
+    else
+    {
+        ret = sceInetCtlSetAutoMode(cd, net_buf, 0);
+    }
+    if (ret < 0)
+    {
+        return (ret);
+    }
+
+    ret = sceLibnetSetConfiguration(cd, net_buf, (unsigned int)addr);
+    if (ret < 0)
+    {
+        return (ret);
+    }
+
+    return (sceLIBNETE_OK);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00137130);
 
