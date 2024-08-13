@@ -29,11 +29,6 @@ jobs:
         run: |
             scripts/setup_compiler.sh
 
-      - name: Verify Compiler Installation
-        run: |
-              echo "Checking contents of tools/cc/ee-gcc2.96/bin/"
-              ls -la tools/cc/ee-gcc2.96/bin/
-
       - name: Setup Ninja
         run: |
           sudo apt-get update
