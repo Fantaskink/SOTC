@@ -62,6 +62,8 @@ SCPS_150.97.*
 /asm
 /assets
 
+/tools/cc/*
+
 permuter_settings.toml
 undefined_funcs_auto.txt
 undefined_syms_auto.txt

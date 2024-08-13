@@ -25,22 +25,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U -r requirements.txt
 
+      - name: Install compiler
+        run: |
+            scripts/setup_compiler.sh
+
+      - name: Verify Compiler Installation
+        run: |
+              echo "Checking contents of tools/cc/ee-gcc2.96/bin/"
+              ls -la tools/cc/ee-gcc2.96/bin/
+
       - name: Setup Ninja
         run: |
-          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install ninja-build
-          sudo apt-get update
+          sudo apt-get install -y ninja-build
 
+            
       - name: Setup build environment
         run: |
-          sudo apt-get install binutils-mips-linux-gnu
+          sudo apt-get install -y binutils-mips-linux-gnu
           mkdir -p iso
           curl -L -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
-          
-      - name: Fix permissions for all binaries in ee-gcc2.96
-        run: |
-          find /home/runner/work/SOTC/SOTC/tools/cc/ee-gcc2.96 -type f -exec chmod +x {} \;
 
       - name: Run build script
         run: |
