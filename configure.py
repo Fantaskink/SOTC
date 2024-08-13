@@ -34,7 +34,7 @@ COMPILER = "ee-gcc2.96"
 GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
 LIB_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
 
-GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g3"
+GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2"
 
 LIB_COMPILE_CMD = f"{LIB_CC_DIR}/ee-gcc -c -I include/gcc-9.26 {COMMON_INCLUDES} -O2 -G8 -g -x c++"
 
