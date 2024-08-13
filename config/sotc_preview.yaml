@@ -48,6 +48,7 @@ segments:
       subsegments:
         - [0x1000, asm, sdk/crt0]
         - [0x10d0, c, os/loaderSys]
+        - [0x5090, c, os/netSys]
         - [0x5cc0, c, os/padSys]
         - [0x5f58, c, os/powerOff]
         - [0x60b8, c, os/usbSerialSys]
@@ -203,12 +204,14 @@ segments:
 
         #- [0x32CB4, databin] # .reginfo
         - [0x32D00, data, os/loaderSys]
+        - [0x330a0, data, os/netSys]
         - [0x33340, data, os/putString]
         - [0x33370, data] # library data
         - [0x371CC, databin] # .ctors
         - [0x371D4, databin] # .dtors
         - [0x371E0, databin] # .eh_frame
         - [0x37200, .rodata, os/loaderSys]
+        - [0x37ee0, .rodata, os/netSys]
         - [0x384f0, .rodata, os/powerOff]
         - [0x38510, .rodata, os/usbSerialSys] 
         - [0x38540, .rodata, os/putString]
@@ -217,6 +220,7 @@ segments:
         - [0x3AE80, rodatabin] # .lit4
         #- [0x3AE84, databin] # .data_nop
         - [0x3AF00, sdata, os/loaderSys]
+        - [0x3b188, sdata, os/netSys]
         - [0x3b218, sdata, os/powerOff]
         - [0x3b230, sdata, os/putString]
         
