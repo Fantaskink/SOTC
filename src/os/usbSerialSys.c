@@ -1,6 +1,9 @@
 #include "common.h"
 #include "usbSerialSys.h"
 
+extern int semaId;
+extern int iSignalSema(int sema_id);
+
 INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysPutString);
 
 s32 usbSerialSysPrintf(char *format, ...)
@@ -19,4 +22,7 @@ s32 usbSerialSysPrintf(char *format, ...)
 
 INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysInit);
 
-INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", func_001053F0);
+void usbSerialSysISignalSema__sub_1053F0(void)
+{
+    iSignalSema(semaId);
+}
