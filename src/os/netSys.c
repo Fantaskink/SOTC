@@ -15,7 +15,7 @@ extern const char D_0013A1D0[];
 extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
 
-s32 func_00104090(s32 mode)
+static s32 func_00104090(s32 mode)
 {
     if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INET.IRX;1", 0, NULL) < 0)
         return -1;
@@ -102,7 +102,7 @@ s32 func_00104090(s32 mode)
     return 0;
 }
 
-s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, char *fname, char *usr_name, u32 flags)
+static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, char *fname, char *usr_name, u32 flags)
 {
     sceNetcnfifArg_t if_arg;
     s32 addr;

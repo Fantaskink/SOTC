@@ -22,7 +22,7 @@ s32 usbSerialSysPrintf(char *format, ...)
 
 INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysInit);
 
-void usbSerialSysISignalSema__sub_1053F0(void)
+static void usbSerialSysISignalSema__sub_1053F0(void)
 {
     iSignalSema(semaId);
 }
