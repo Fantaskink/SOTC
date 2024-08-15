@@ -39,7 +39,7 @@ jobs:
         run: |
           sudo apt-get install -y binutils-mips-linux-gnu
           mkdir -p iso
-          curl -L -o iso/SCPS_150.97 "${{ secrets.FILE_URL }}"
+          wget --no-check-certificate "${{ secrets.FILE_URL }}" -o iso/SCPS_150.97 
 
       - name: Run build script
         run: |
