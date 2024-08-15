@@ -16,7 +16,7 @@ curl -L -o "$TAR_FILE" "$FILE_URL"
 tar -xf "$TAR_FILE" -C "$TARGET_DIR"
 
 # Set executable permissions for binaries in the cc directory
-find "$TARGET_DIR" -type f -exec chmod +x {} \;
+chmod +x -R "$TARGET_DIR"
 
 # Clean up by removing the downloaded file
 rm "$TAR_FILE"

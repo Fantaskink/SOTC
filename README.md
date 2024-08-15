@@ -8,19 +8,22 @@
 <!-- Shields -->
 ![code-progress-badge] [![Contributors][contributors-badge]][contributors-url]
 
-We are currently targeting the main ELF (``SCPS_150.97``) of the Preview version.
+We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1: ``c4d5576d1cae3721c411a746c7845f5c6f026dbb``).
 
 <a href="https://discord.gg/3nmDn6p7" target="_blank">
   <img src="https://discord.com/api/guilds/465610776762384394/widget.png?style=banner2" alt="Discord Banner">
 </a>
 
-
-## Setup
-Disclaimer: Linux or WSL2 required
+## Getting Started
+### Requirements
+**Disclaimer**: Linux or WSL2 required
 1. ``sudo apt install gcc-mipsel-linux-gnu binutils-mips-linux-gnu ninja-build``
 2. ``sudo apt install python3-pip``
 3. ``python3 -m pip install -U -r requirements.txt``
-4. Create an ``iso`` directory in the root directory
-5. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
-6. ``configure.py``
-7. ``ninja``
+4. ``scripts/setup_compiler.sh``
+
+### Setup
+1. Create an ``iso`` directory in the root directory
+2. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
+3. ``configure.py`` (optionally pass ``-c`` to do a clean split)
+4. ``ninja``
