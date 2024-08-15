@@ -19,7 +19,7 @@ We use the following aliases (defined in ``common.h``) for primitive data types.
 1. Function names are written in Upper Camel Case, e.g. ``LoaderSysResetSystem``.
 2. Variable names are written in Camel Case, e.g. ``threadId``.
 3. Constant names are written in Upper Snake Case, e.g. ``INTC_HANDLER_LIST``.
-4. Functions without a known name use a special naming convention, using the suffix ``__sub_xxxxx``.
+4. Functions without a known name follow a special naming convention using the suffix ``__sub_xxxxx``.
 - E.g. ``func_01234 -> GuessedName__sub_01234``.
 
 ## Style Guidelines
