@@ -53,8 +53,8 @@ def write_permuter_settings():
     rel_cc_dir = Path(GAME_CC_DIR).relative_to(ROOT)
     with open("permuter_settings.toml", "w") as f:
         f.write(
-            f"""compiler_command = "{rel_cc_dir}ee-gcc -c {COMMON_INCLUDES} -O2 -g2"
-assembler_command = "mips-linux-gnu-as -march=r5900 -mabi=eabi -Iinclude"
+            f"""compiler_command = "{rel_cc_dir}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2"
+assembler_command = "mips-linux-gnu-as -march=r5900 -Iinclude"
 compiler_type = "gcc"
 
 [preserve_macros]
