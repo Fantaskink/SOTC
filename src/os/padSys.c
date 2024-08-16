@@ -16,7 +16,7 @@ void padSysTickProc(void)
             switch (padsys->gotProfile)
             {
                 case 0:
-                    scePad2GetButtonProfile(padsys->socket, &padsys->buttonProfile);
+                    scePad2GetButtonProfile(padsys->socket, (unsigned char*)&padsys->buttonProfile);
                     padsys->buttonData.buttonsHi = 0;
                     padsys->buttonData.buttonsLo = 0;
                     padsys->buttonData.analogRHor = 0x7F;
@@ -78,7 +78,7 @@ struct t_padSysData *padSysGet(s32 padId)
 
 int padSysReadForLoader(void)
 {
-    if (scePad2Read(D_0013D9C0[0].socket, &D_0013D9C0[0].buttonData) < 0)
+    if (scePad2Read(D_0013D9C0[0].socket, (unsigned char*)&D_0013D9C0[0].buttonData) < 0)
     {
         return 0;
     }
