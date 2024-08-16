@@ -23,7 +23,7 @@ struct t_scePad2ButtonProfile
 }; // = 0x4
 
 // Usually data structures in sotc are called "data" or "info" or "work"(area), and start with the class/lib name.
-typedef struct t_padSysData
+struct t_padSysData
 {
     scePad2SocketParam sockParam; // 00	sz 0x20
     u32 u20[0xE0 / 4];            // 20
