@@ -8,7 +8,7 @@ void padSysTickProc(void)
     struct t_padSysData* padsys;
     s32 i;
 
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < PAD_SYS_NR_PADS; i++)
     {
         padsys = &D_0013D9C0[i];
         padsys->pad2State = scePad2GetState(padsys->socket);
@@ -54,19 +54,19 @@ void padSysTickProc(void)
 
 void padsysInit(void)
 {
-    scePad2SocketParam pad_socket_param;
+    scePad2SocketParam padSocketParam;
     struct t_padSysData *temp;
     int i;
 
     scePad2Init(0);
 
-    for (i = 0; i < 2; i++)
+    for (i = 0; i < PAD_SYS_NR_PADS; i++)
     {
-        pad_socket_param.port = i != 0;
-        pad_socket_param.option = 2;
-        pad_socket_param.slot = 0;
+        padSocketParam.port = i != 0;
+        padSocketParam.option = 2;
+        padSocketParam.slot = 0;
         temp = &D_0013D9C0[i];
-        temp->socket = scePad2CreateSocket(&pad_socket_param, (void *)temp);
+        temp->socket = scePad2CreateSocket(&padSocketParam, (void *)temp);
         temp->gotProfile = 0;
     }
 }
