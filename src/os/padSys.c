@@ -5,39 +5,40 @@
 
 void padSysTickProc(void)
 {
-    struct t_padSysData* padsys;
+    struct t_padSysData *padsys;
     s32 i;
 
     for (i = 0; i < PAD_SYS_NR_PADS; i++)
     {
         padsys = &D_0013D9C0[i];
         padsys->pad2State = scePad2GetState(padsys->socket);
-        if (padsys->pad2State == 1) {
+        if (padsys->pad2State == 1)
+        {
             switch (padsys->gotProfile)
             {
-                case 0:
-                    scePad2GetButtonProfile(padsys->socket, (unsigned char*)&padsys->buttonProfile);
-                    padsys->buttonData.buttonsHi = 0;
-                    padsys->buttonData.buttonsLo = 0;
+            case 0:
+                scePad2GetButtonProfile(padsys->socket, (unsigned char *)&padsys->buttonProfile);
+                padsys->buttonData.buttonsHi = 0;
+                padsys->buttonData.buttonsLo = 0;
+                padsys->buttonData.analogRHor = 0x7F;
+                padsys->buttonData.analogRVer = 0x7F;
+                padsys->buttonData.analogLHor = 0x7F;
+                padsys->buttonData.analogLVer = 0x7F;
+                padsys->gotProfile++;
+                break;
+            case 1:
+                scePad2Read(padsys->socket, &padsys->buttonData.buttonsLo);
+                padsys->buttonData.buttonsLo = padsys->buttonProfile.buttonsMaskLo & ~padsys->buttonData.buttonsLo;
+                padsys->buttonData.buttonsHi = padsys->buttonProfile.buttonsMaskHi & ~padsys->buttonData.buttonsHi;
+                if (padsys->buttonProfile.hasAnalog == 0)
+                {
                     padsys->buttonData.analogRHor = 0x7F;
                     padsys->buttonData.analogRVer = 0x7F;
                     padsys->buttonData.analogLHor = 0x7F;
                     padsys->buttonData.analogLVer = 0x7F;
-                    padsys->gotProfile++;
-                    break;
-                case 1:
-                    scePad2Read(padsys->socket, &padsys->buttonData.buttonsLo);
-                    padsys->buttonData.buttonsLo = padsys->buttonProfile.buttonsMaskLo & ~padsys->buttonData.buttonsLo;
-                    padsys->buttonData.buttonsHi = padsys->buttonProfile.buttonsMaskHi & ~padsys->buttonData.buttonsHi;
-                    if (padsys->buttonProfile.hasAnalog == 0)
-                    {
-                        padsys->buttonData.analogRHor = 0x7F;
-                        padsys->buttonData.analogRVer = 0x7F;
-                        padsys->buttonData.analogLHor = 0x7F;
-                        padsys->buttonData.analogLVer = 0x7F;
-                    }
-                    break;
-            } 
+                }
+                break;
+            }
         }
         else
         {
@@ -56,7 +57,7 @@ void padsysInit(void)
 {
     scePad2SocketParam padSocketParam;
     struct t_padSysData *temp;
-    int i;
+    s32 i;
 
     scePad2Init(0);
 
@@ -76,16 +77,16 @@ struct t_padSysData *padSysGet(s32 padId)
     return &D_0013D9C0[padId];
 }
 
-int padSysReadForLoader(void)
+s32 padSysReadForLoader(void)
 {
-    if (scePad2Read(D_0013D9C0[0].socket, (unsigned char*)&D_0013D9C0[0].buttonData) < 0)
+    if (scePad2Read(D_0013D9C0[0].socket, (unsigned char *)&D_0013D9C0[0].buttonData) < 0)
     {
         return 0;
     }
     return ((D_0013D9C0[0].buttonData.buttonsLo << 8) | D_0013D9C0[0].buttonData.buttonsHi) ^ 0xFFFF;
 }
 
-void padSysVibSetAcrParam(struct t_padSysData* arg0, struct t_scePad2ButtonProfile* arg1)
+void padSysVibSetAcrParam(struct t_padSysData *arg0, struct t_scePad2ButtonProfile *arg1)
 {
     u8 sp0[2];
     u8 sp10;
