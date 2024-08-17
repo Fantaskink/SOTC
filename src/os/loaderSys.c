@@ -583,8 +583,8 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A80);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136AC0);
 
-extern s32 D_0013A108;
-extern char D_0013CD10[][16];
+extern s32 D_0013A108;        // number of iop modules
+extern char D_0013CD10[][16]; // iop module identifiers
 
 void LoaderSysDumpIopModuleIdentifiers(void)
 {
@@ -623,7 +623,13 @@ char *checkHookDesc(char *hook_desc)
     return NULL;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", setNewIopIdentifier);
+extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n"
+
+void setNewIopIdentifier(const char *newIdentifier)
+{
+    LoaderSysPrintf(D_00136A80, newIdentifier, D_0013A108);
+    strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001033B0);
 
