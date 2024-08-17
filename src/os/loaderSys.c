@@ -623,7 +623,7 @@ char *checkHookDesc(char *hook_desc)
     return NULL;
 }
 
-extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n"
+extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n", Referenced in LoaderSysLoadIopModuleFromEEBuffer
 
 void setNewIopIdentifier(const char *newIdentifier)
 {
@@ -718,7 +718,26 @@ void LoaderSysHookPoint(void)
 {
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysRebootIop);
+extern int sceSifRebootIop(const char *);
+extern int sceSifSyncIop(void);
+
+extern char D_00136BE8[];
+
+void LoaderSysRebootIop(char *arg0)
+{
+    PutString(0xFFFF00, &D_00136BE8);
+    PutString(0x40FFFF80, D_0013A118, arg0);
+    PutStringS(0xFFFF00, &D_0013A120);
+    do
+    {
+
+    } while (sceSifRebootIop(arg0) == 0);
+    do
+    {
+
+    } while (sceSifSyncIop() == 0);
+    PutStringS(0xFFFF00, &D_0013A128);
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
 
