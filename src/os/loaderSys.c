@@ -483,7 +483,20 @@ void LoaderSysDeleteAllExternalIopMemory(void)
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysPrintf);
+s32 LoaderSysPrintf(const char *format, ...)
+{
+    va_list args;
+    char buffer[256];
+    int result;
+
+    va_start(args, format);
+    vsprintf(buffer, format, args);
+    va_end(args);
+
+    printf(buffer);
+
+    return strlen(buffer);
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysLoadIopModuleFromEEBuffer);
 
