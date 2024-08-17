@@ -487,7 +487,6 @@ s32 LoaderSysPrintf(const char *format, ...)
 {
     va_list args;
     char buffer[256];
-    int result;
 
     va_start(args, format);
     vsprintf(buffer, format, args);
@@ -584,7 +583,23 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A80);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136AC0);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDumpIopModuleIdentifiers);
+extern s32 D_0013A108;
+extern char D_0013CD10[][16];
+
+void LoaderSysDumpIopModuleIdentifiers(void)
+{
+    s32 i;
+
+    LoaderSysPrintf("ldsys: LoaderSysDumpIopModuleIdentifiers: dump list of iop identifiers\n");
+    LoaderSysPrintf("ldsys: LoaderSysDumpIopModuleIdentifiers: ----------------------------\n");
+
+    for (i = 0; i < D_0013A108; i++)
+    {
+        LoaderSysPrintf("ldsys: LoaderSysDumpIopModuleIdentifiers: \t% 2d: \"%s\"\n", i, D_0013CD10[i]);
+    }
+
+    LoaderSysPrintf("ldsys: LoaderSysDumpIopModuleIdentifiers: ----------------------------\n");
+}
 
 void LoaderSysSendAbort(void)
 {
