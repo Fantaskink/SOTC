@@ -677,7 +677,7 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E00);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E10);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E30);
+const char D_00136E30[] = "ld: ERROR LOADER_RESET_CALLBACK_NUM over \n";
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E60);
 
@@ -718,8 +718,8 @@ void LoaderSysHookPoint(void)
 {
 }
 
-extern int sceSifRebootIop(const char *);
-extern int sceSifSyncIop(void);
+extern s32 sceSifRebootIop(const char *);
+extern s32 sceSifSyncIop(void);
 
 extern char D_00136BE8[];
 
@@ -728,20 +728,29 @@ void LoaderSysRebootIop(char *arg0)
     PutString(0xFFFF00, &D_00136BE8);
     PutString(0x40FFFF80, D_0013A118, arg0);
     PutStringS(0xFFFF00, &D_0013A120);
-    do
-    {
-
-    } while (sceSifRebootIop(arg0) == 0);
-    do
-    {
-
-    } while (sceSifSyncIop() == 0);
+    while (sceSifRebootIop(arg0) == 0)
+        ;
+    while (sceSifSyncIop() == 0)
+        ;
     PutStringS(0xFFFF00, &D_0013A128);
 }
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderSetResetCallback);
+extern s32 D_0013A17C;
+// extern char D_00136E30[];
+extern s32 D_0013D120[];
+
+void loaderSetResetCallback(s32 a0)
+{
+    if (D_0013A17C == 0xA)
+    {
+        LoaderSysPrintf(D_00136E30);
+        D_0013A17C = 0;
+    }
+
+    D_0013D120[D_0013A17C++] = a0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", memprintf);
 
