@@ -27,3 +27,6 @@ We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1
 2. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
 3. ``configure.py`` (optionally pass ``-c`` to do a clean split)
 4. ``ninja``
+
+## Contributing
+Use our [contribution guide](github.com/Fantaskink/SOTC/blob/main/docs/CONTRIBUTING.md).
