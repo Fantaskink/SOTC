@@ -29,4 +29,4 @@ We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1
 4. ``ninja``
 
 ## Contributing
-Use our [contribution guide](github.com/Fantaskink/SOTC/blob/main/docs/CONTRIBUTING.md).
+Use our [contribution guide](docs/CONTRIBUTING.md).
