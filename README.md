@@ -10,7 +10,7 @@
 
 We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1: ``c4d5576d1cae3721c411a746c7845f5c6f026dbb``).
 
-<a href="https://discord.gg/3nmDn6p7" target="_blank">
+<a href="https://discord.gg/WGSnPQFtHU" target="_blank">
   <img src="https://discord.com/api/guilds/465610776762384394/widget.png?style=banner2" alt="Discord Banner">
 </a>
 
