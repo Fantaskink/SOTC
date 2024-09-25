@@ -840,8 +840,8 @@ s32 LoaderSysUnloadIopModuleByName(const char *arg0, int arg1, int arg2, int *ar
     s32 dummy;
 
     PutString(0x4080FF00, "\t\tUnloading ");
-    PutString(0x80C0FF00, D_0013A118, arg0);
-    PutStringS(0x4080FF00, D_0013A120);
+    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
     modId = sceSifSearchModuleByName(arg0);
 
     if (modId >= 0)
@@ -863,7 +863,7 @@ s32 LoaderSysUnloadIopModuleByName(const char *arg0, int arg1, int arg2, int *ar
         return -1;
     }
 
-    PutStringS(0x4080FF00, D_0013A128);
+    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
     return success;
 }
 
