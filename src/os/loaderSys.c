@@ -658,49 +658,81 @@ extern const char D_0013A160[];
 extern const char D_0013A168[];
 extern const char D_0013A170[];
 
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C48);
+// TODO: Merge with LoaderSysRebootIop once the file is done
+static inline void __inlined_LoaderSysRebootIop(const char *arg0)
+{
+    PutString(0xFFFF00, "\tRebooting Iop\n\t\twith ");
+    PutString(0x40FFFF80, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0xFFFF00, GSTR(D_0013A120, "... "));
 
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C58);
+    while (sceSifRebootIop(arg0) == 0)
+        ;
 
-static s32 func_001033B0()
+    while (sceSifSyncIop() == 0)
+        ;
+
+    PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
+}
+
+// TODO: Merge with LoaderSysLoadIopModule once the file is done
+static inline int __inlined_LoaderSysLoadIopModule(const char *module, s32 arg_count, void *args)
+{
+    int result;
+
+    PutString(0x4080FF00, "\t\tLoading ");
+    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), module);
+    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
+    result = sceSifLoadModule(module, arg_count, args);
+    if (result < 0)
+    {
+        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
+        return -1;
+    }
+    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
+    return 0;
+}
+
+// TODO: Remove once the file is done
+static inline void __rodata_LoaderSysUnloadIopModuleByName()
+{
+    PutStringS(0, "\t\tUnloading ");
+    PutStringS(0, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n");
+}
+
+#define LOAD_MODULE(path, ident)                                  \
+    {                                                             \
+        int result;                                               \
+        result = __inlined_LoaderSysLoadIopModule(path, 0, NULL); \
+        if (result < 0)                                           \
+        {                                                         \
+            while (1)                                             \
+                ;                                                 \
+        }                                                         \
+        setNewIopIdentifier(ident);                               \
+    }
+
+void func_001033B0()
 {
     const char *module;
     int result;
     int r;
 
-    const char *rebooting = "\tRebooting Iop\n\t\twith ";
-    const char *loading = "\t\tLoading ";
-    const char *error_load = "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n";
-    const char *unloading = "\t\tUnloading ";
-    const char *error_unload = "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n";
-
     sceSifInitRpc(0);
     sceSifInitIopHeap();
 
-    // do {} while(0);
-    PutString(0xFFFFFF00, "Initialize loader (Version: ");
-    // PutString(0x80FFC000, D_0013A138, __DATE__, __TIME__);
-    PutString(0x80FFC000, D_0013A138, "Jul 12 2005", "16:20:22");
-    PutStringS(0xFFFFFF00, D_0013A140);
+    PutString(-256, "Initialize loader (Version: ");
+    // PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), __DATE__, __TIME__);
+    PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), "Jul 12 2005", "16:20:22");
+    PutStringS(-256, GSTR(D_0013A140, ")\n\n"));
     PutStringS(0x80C0FF00, "\tWarm up CD/DVD hardware... ");
 
     sceCdInit(0);
     sceCdMmode(2);
 
-    PutStringS(0x80C0FF00, D_0013A128);
+    PutStringS(0x80C0FF00, GSTR(D_0013A128, "Done.\n"));
 
-    module = "cdrom0:\\IOPRP300.IMG;1";
-    PutString(0xFFFF0000, "\tRebooting Iop\n\t\twith ");
-    PutString(0x40FFFF80, D_0013A118, module);
-    PutStringS(0x00FFFF00, D_0013A120);
-
-    while (!sceSifRebootIop(module))
-        ;
-
-    while (!sceSifSyncIop())
-        ;
-
-    PutStringS(0xFFFF00, D_0013A128);
+    // TODO: Use normal LoaderSysRebootIop once the file is done
+    __inlined_LoaderSysRebootIop("cdrom0:\\IOPRP300.IMG;1");
 
     sceSifInitRpc(0);
     sceSifLoadFileReset();
@@ -712,160 +744,24 @@ static s32 func_001033B0()
     sceFsReset();
     sceDmaReset(1);
 
-    module = "cdrom0:\\MODULES\\SIO2MAN.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
+    LOAD_MODULE("cdrom0:\\MODULES\\SIO2MAN.IRX;1", GSTR(D_0013A148, "SIO2MAN"));
 
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
+    LOAD_MODULE("cdrom0:\\MODULES\\DBCMAN.IRX;1", GSTR(D_0013A150, "DBCMAN"));
 
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
+    LOAD_MODULE("cdrom0:\\MODULES\\SIO2D.IRX;1", GSTR(D_0013A158, "SIO2D"));
 
-    setNewIopIdentifier(D_0013A148);
+    LOAD_MODULE("cdrom0:\\MODULES\\DS1O_D.IRX;1", GSTR(D_0013A160, "DS1O_D"));
 
-    module = "cdrom0:\\MODULES\\DBCMAN.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
-
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
-
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
-
-    setNewIopIdentifier(D_0013A150);
-
-    module = "cdrom0:\\MODULES\\SIO2D.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
-
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
-
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
-
-    setNewIopIdentifier(D_0013A158);
-
-    module = "cdrom0:\\MODULES\\DS1O_D.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
-
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
-
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
-
-    setNewIopIdentifier(D_0013A160);
     sceSifLoadFileReset();
     sceFsReset();
     sceDmaReset(1);
     sceDbcInit();
     padsysInit();
 
-    module = "cdrom0:\\MODULES\\USBD.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
+    LOAD_MODULE("cdrom0:\\MODULES\\USBD.IRX;1", GSTR(D_0013A168, "USBD"));
 
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
-
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
-
-    setNewIopIdentifier(D_0013A168);
-    module = "cdrom0:\\MODULES\\PL2303.IRX;1";
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, D_0013A118, module);
-    PutStringS(0x4080FF00, D_0013A120);
-
-    result = sceSifLoadModule(module, 0, NULL);
-    if (result < 0)
-    {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
-        result = -1;
-    }
-    else
-    {
-        PutStringS(0x4080FF00, D_0013A128);
-        result = 0;
-    }
-
-    if (result < 0)
-    {
-        while (1)
-            ;
-    }
-    setNewIopIdentifier(D_0013A170);
-
-    return usbSerialSysInit();
+    LOAD_MODULE("cdrom0:\\MODULES\\PL2303.IRX;1", GSTR(D_0013A170, "PL2303"));
+    usbSerialSysInit();
 }
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
@@ -937,7 +833,7 @@ extern char D_0013A130[];
 int sceSifStopModule(int modid, int args, const char *argp, int *result); /* extern */
 s32 sceSifUnloadModule(s32);
 
-s32 LoaderSysUnloadIopModuleByName(char *arg0, int arg1, int arg2, int *arg3)
+s32 LoaderSysUnloadIopModuleByName(const char *arg0, int arg1, int arg2, int *arg3)
 {
     s32 modId;
     s32 success;
@@ -978,16 +874,19 @@ void LoaderSysHookPoint(void)
 extern s32 sceSifRebootIop(const char *);
 extern s32 sceSifSyncIop(void);
 
-void LoaderSysRebootIop(char *arg0)
+void LoaderSysRebootIop(const char *arg0)
 {
     PutString(0xFFFF00, "\tRebooting Iop\n\t\twith ");
-    PutString(0x40FFFF80, D_0013A118, arg0);
-    PutStringS(0xFFFF00, D_0013A120);
+    PutString(0x40FFFF80, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0xFFFF00, GSTR(D_0013A120, "... "));
+
     while (sceSifRebootIop(arg0) == 0)
         ;
+
     while (sceSifSyncIop() == 0)
         ;
-    PutStringS(0xFFFF00, D_0013A128);
+
+    PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
 }
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
