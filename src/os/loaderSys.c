@@ -400,7 +400,7 @@ void LoaderSysInitExternalThreadList(void)
     }
 }
 
-void LoaderSysExternalThreadListCallBack(void (*fun_ptr)(int))
+void LoaderSysExternalThreadListCallBack(void (*fun_ptr)(s32))
 {
     s32 i;
     for (i = 0; i < MAX_THREADS; i++)
@@ -636,23 +636,23 @@ void setNewIopIdentifier(const char *newIdentifier)
     strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
 }
 
-extern int sceSifInitRpc(int);
-extern int sceSifInitIopHeap(void);
-extern int PutString(int, const char *, ...);
-extern void PutStringS(int, const char *, ...);
-extern int sceCdInit(int);
-extern int sceCdMmode(int);
-extern int sceSifRebootIop(const char *);
-extern int sceSifSyncIop(void);
-extern int sceSifLoadFileReset(void);
-extern int sceFsReset(void);
-extern int sceDmaReset(int);
-extern int PreparePowerOff(void);
-extern int sceSifLoadModule(const char *, int, const char *);
+extern s32 sceSifInitRpc(s32);
+extern s32 sceSifInitIopHeap(void);
+extern s32 PutString(s32, const char *, ...);
+extern void PutStringS(s32, const char *, ...);
+extern s32 sceCdInit(s32);
+extern s32 sceCdMmode(s32);
+extern s32 sceSifRebootIop(const char *);
+extern s32 sceSifSyncIop(void);
+extern s32 sceSifLoadFileReset(void);
+extern s32 sceFsReset(void);
+extern s32 sceDmaReset(s32);
+extern s32 PreparePowerOff(void);
+extern s32 sceSifLoadModule(const char *, s32, const char *);
 extern void setNewIopIdentifier(const char *);
-extern int sceDbcInit(void);
+extern s32 sceDbcInit(void);
 extern void padsysInit(void);
-extern int usbSerialSysInit(void);
+extern s32 usbSerialSysInit(void);
 
 extern const char D_0013A138[];
 extern const char D_0013A140[];
@@ -680,9 +680,9 @@ static inline void __inlined_LoaderSysRebootIop(const char *arg0)
 }
 
 // TODO: Merge with LoaderSysLoadIopModule once the file is done
-static inline int __inlined_LoaderSysLoadIopModule(const char *module, s32 arg_count, void *args)
+static inline s32 __inlined_LoaderSysLoadIopModule(const char *module, s32 arg_count, void *args)
 {
-    int result;
+    s32 result;
 
     PutString(0x4080FF00, "\t\tLoading ");
     PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), module);
@@ -706,7 +706,7 @@ static inline void __rodata_LoaderSysUnloadIopModuleByName()
 
 #define LOAD_MODULE(path, ident)                                  \
     {                                                             \
-        int result;                                               \
+        s32 result;                                               \
         result = __inlined_LoaderSysLoadIopModule(path, 0, NULL); \
         if (result < 0)                                           \
         {                                                         \
@@ -719,8 +719,8 @@ static inline void __rodata_LoaderSysUnloadIopModuleByName()
 void func_001033B0()
 {
     const char *module;
-    int result;
-    int r;
+    s32 result;
+    s32 r;
 
     sceSifInitRpc(0);
     sceSifInitIopHeap();
@@ -769,7 +769,7 @@ void func_001033B0()
     usbSerialSysInit();
 }
 
-int end;
+s32 end;
 extern s32 D_0013A110;
 extern s32 D_0013A184;
 extern s32 D_0013A114;
@@ -863,10 +863,10 @@ s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 
 extern char D_0013A130[];
 // s32 sceSifSearchModuleByName(char *name);                                 /* extern */
-int sceSifStopModule(int modid, int args, const char *argp, int *result); /* extern */
+s32 sceSifStopModule(s32 modid, s32 args, const char *argp, s32 *result); /* extern */
 s32 sceSifUnloadModule(s32);
 
-s32 LoaderSysUnloadIopModuleByName(const char *arg0, int arg1, int arg2, int *arg3)
+s32 LoaderSysUnloadIopModuleByName(const char *arg0, s32 arg1, s32 arg2, s32 *arg3)
 {
     s32 modId;
     s32 success;
@@ -924,7 +924,7 @@ void LoaderSysRebootIop(const char *arg0)
 
 void loaderExecResetCallback(void)
 {
-    int i;
+    s32 i;
 
     for (i = 0; i < MAX_RESET_CALLBACKS; i++)
     {
@@ -949,11 +949,11 @@ void loaderSetResetCallback(t_resetCallback callback)
     RESET_CALLBACK_LIST[LOADER_RESET_CALLBACK_NUM++] = callback;
 }
 
-int memprintf(const char *in, ...)
+s32 memprintf(const char *in, ...)
 {
 }
 
-int imemprintf(const char *in, ...)
+s32 imemprintf(const char *in, ...)
 {
 }
 
