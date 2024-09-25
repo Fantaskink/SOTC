@@ -13,6 +13,11 @@ extern const char D_0013A128[]; // "Done.\n"
 
 extern u32 D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
+#define MAX_RESET_CALLBACKS 10
+
+typedef (*t_resetCallback)();
+extern s32 LOADER_RESET_CALLBACK_NUM;
+extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
 
 #define SEMAPHORE_LIST D_0013BD10
 #define THREAD_LIST D_0013B910
@@ -631,63 +636,207 @@ void setNewIopIdentifier(const char *newIdentifier)
     strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001033B0);
+extern int sceSifInitRpc(int);
+extern int sceSifInitIopHeap(void);
+extern int PutString(int, const char *, ...);
+extern void PutStringS(int, const char *, ...);
+extern int sceCdInit(int);
+extern int sceCdMmode(int);
+extern int sceSifRebootIop(const char *);
+extern int sceSifSyncIop(void);
+extern int sceSifLoadFileReset(void);
+extern int sceFsReset(void);
+extern int sceDmaReset(int);
+extern int PreparePowerOff(void);
+extern int sceSifLoadModule(const char *, int, const char *);
+extern void setNewIopIdentifier(const char *);
+extern int sceDbcInit(void);
+extern void padsysInit(void);
+extern int usbSerialSysInit(void);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
+extern const char D_0013A138[];
+extern const char D_0013A140[];
+extern const char D_0013A148[];
+extern const char D_0013A150[];
+extern const char D_0013A158[];
+extern const char D_0013A160[];
+extern const char D_0013A168[];
+extern const char D_0013A170[];
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136BE8);
+// TODO: Merge with LoaderSysRebootIop once the file is done
+static inline void __inlined_LoaderSysRebootIop(const char *arg0)
+{
+    PutString(0xFFFF00, "\tRebooting Iop\n\t\twith ");
+    PutString(0x40FFFF80, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0xFFFF00, GSTR(D_0013A120, "... "));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C00);
+    while (sceSifRebootIop(arg0) == 0)
+        ;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C10);
+    while (sceSifSyncIop() == 0)
+        ;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C48);
+    PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
+}
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C58);
+// TODO: Merge with LoaderSysLoadIopModule once the file is done
+static inline int __inlined_LoaderSysLoadIopModule(const char *module, s32 arg_count, void *args)
+{
+    int result;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C98);
+    PutString(0x4080FF00, "\t\tLoading ");
+    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), module);
+    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
+    result = sceSifLoadModule(module, arg_count, args);
+    if (result < 0)
+    {
+        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
+        return -1;
+    }
+    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
+    return 0;
+}
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CB8);
+// TODO: Remove once the file is done
+static inline void __rodata_LoaderSysUnloadIopModuleByName()
+{
+    PutStringS(0, "\t\tUnloading ");
+    PutStringS(0, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n");
+}
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CC8);
+#define LOAD_MODULE(path, ident)                                  \
+    {                                                             \
+        int result;                                               \
+        result = __inlined_LoaderSysLoadIopModule(path, 0, NULL); \
+        if (result < 0)                                           \
+        {                                                         \
+            while (1)                                             \
+                ;                                                 \
+        }                                                         \
+        setNewIopIdentifier(ident);                               \
+    }
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CD8);
+void func_001033B0()
+{
+    const char *module;
+    int result;
+    int r;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CF8);
+    sceSifInitRpc(0);
+    sceSifInitIopHeap();
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D10);
+    PutString(-256, "Initialize loader (Version: ");
+    // PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), __DATE__, __TIME__);
+    PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), "Jul 12 2005", "16:20:22");
+    PutStringS(-256, GSTR(D_0013A140, ")\n\n"));
+    PutStringS(0x80C0FF00, "\tWarm up CD/DVD hardware... ");
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D30);
+    sceCdInit(0);
+    sceCdMmode(2);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D50);
+    PutStringS(0x80C0FF00, GSTR(D_0013A128, "Done.\n"));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D70);
+    // TODO: Use normal LoaderSysRebootIop once the file is done
+    __inlined_LoaderSysRebootIop("cdrom0:\\IOPRP300.IMG;1");
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D90);
+    sceSifInitRpc(0);
+    sceSifLoadFileReset();
+    sceFsReset();
+    sceCdInit(0);
+    sceCdMmode(2);
+    PreparePowerOff();
+    sceSifLoadFileReset();
+    sceFsReset();
+    sceDmaReset(1);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DB0);
+    LOAD_MODULE("cdrom0:\\MODULES\\SIO2MAN.IRX;1", GSTR(D_0013A148, "SIO2MAN"));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DD0);
+    LOAD_MODULE("cdrom0:\\MODULES\\DBCMAN.IRX;1", GSTR(D_0013A150, "DBCMAN"));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DE0);
+    LOAD_MODULE("cdrom0:\\MODULES\\SIO2D.IRX;1", GSTR(D_0013A158, "SIO2D"));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DF0);
+    LOAD_MODULE("cdrom0:\\MODULES\\DS1O_D.IRX;1", GSTR(D_0013A160, "DS1O_D"));
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E00);
+    sceSifLoadFileReset();
+    sceFsReset();
+    sceDmaReset(1);
+    sceDbcInit();
+    padsysInit();
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E10);
+    LOAD_MODULE("cdrom0:\\MODULES\\USBD.IRX;1", GSTR(D_0013A168, "USBD"));
 
+    LOAD_MODULE("cdrom0:\\MODULES\\PL2303.IRX;1", GSTR(D_0013A170, "PL2303"));
+    usbSerialSysInit();
+}
+
+int end;
+extern s32 D_0013A110;
+extern s32 D_0013A184;
+extern s32 D_0013A114;
+static inline void loaderPrintMessage()
+{
+    void *heap_base;
+
+    register sp asm("sp");
+    register gp asm("gp");
+    heap_base = (void *)malloc(1);
+    free(heap_base);
+    PutStringS(0xFFFFFF00, " GP: %08p\n", gp);
+    PutStringS(0xFFFFFF00, " SP: %08p\n", sp);
+    PutStringS(0xFFFFFF00, " HEAP: %08p\n", heap_base);
+    PutStringS(0xFFFFFF00, " END: %08p\n\n", &end);
+    PutStringS(0xFFFFFF00, " LOADER HEAP START: %08p\n", D_0013A110);
+    memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+    LOADER_RESET_CALLBACK_NUM = 0;
+}
+
+// TODO: Get rid of this once the file is done
 const char D_00136E30[] = "ld: ERROR LOADER_RESET_CALLBACK_NUM over \n";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E60);
+void loaderLoop(void)
+{
+    s32 reset_count;
+    s32 i;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E78);
+    reset_count = 0;
+    loaderPrintMessage();
+
+    while (1)
+    {
+        SetHeapStartPoint(D_0013A110);
+        D_0013A114 = execProgWithThread("cdrom0:\\STARTUP.XFF;1", 2);
+        SleepThread();
+
+        // TODO: inlined call to loaderExecResetCallback
+        {
+            for (i = 0; i < MAX_RESET_CALLBACKS; i++)
+            {
+                if (RESET_CALLBACK_LIST[i] != NULL)
+                {
+                    RESET_CALLBACK_LIST[i]();
+                }
+            }
+
+            memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+            LOADER_RESET_CALLBACK_NUM = 0;
+        }
+
+        reset_count++;
+        LoaderSysExecuteRecoveryFirstProcess();
+        ChangeThreadPriority(D_0013A184, 1);
+        LoaderSysDeleteAllExternalIntcHandler();
+        LoaderSysDeleteAllExternalThread();
+        LoaderSysDeleteAllExternalSema();
+        LoaderSysDeleteAllExternalIopMemory();
+        ReinitDisp();
+        PutStringS(0xFFFFFF00, "\nreset: %d\n", reset_count);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
 
 extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
-extern const char D_00136C10[];
-extern const char D_00136C00[];
+
 const char *LoaderSysGetBootArg(void)
 {
     return D_0013D110;
@@ -696,7 +845,7 @@ const char *LoaderSysGetBootArg(void)
 s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 {
     s32 result;
-    PutString(0x4080FF00, GSTR(D_00136C00, "\t\tLoading "));
+    PutString(0x4080FF00, "\t\tLoading ");
     PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), path);
     PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
 
@@ -704,7 +853,7 @@ s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
 
     if (result < 0)
     {
-        PutStringS(0xFF804000, GSTR(D_00136C10, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n"), path, result);
+        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", path, result);
         return -1;
     }
 
@@ -712,7 +861,44 @@ s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysUnloadIopModuleByName);
+extern char D_0013A130[];
+// s32 sceSifSearchModuleByName(char *name);                                 /* extern */
+int sceSifStopModule(int modid, int args, const char *argp, int *result); /* extern */
+s32 sceSifUnloadModule(s32);
+
+s32 LoaderSysUnloadIopModuleByName(const char *arg0, int arg1, int arg2, int *arg3)
+{
+    s32 modId;
+    s32 success;
+    s32 dummy;
+
+    PutString(0x4080FF00, "\t\tUnloading ");
+    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
+    modId = sceSifSearchModuleByName(arg0);
+
+    if (modId >= 0)
+    {
+        success = sceSifStopModule(modId, 1, D_0013A130, arg3 ? arg3 : &dummy);
+        if (success >= 0)
+        {
+            success = sceSifUnloadModule(modId);
+        }
+    }
+    else
+    {
+        success = modId;
+    }
+
+    if (success < 0)
+    {
+        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n", arg0, success);
+        return -1;
+    }
+
+    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
+    return success;
+}
 
 void LoaderSysHookPoint(void)
 {
@@ -721,40 +907,55 @@ void LoaderSysHookPoint(void)
 extern s32 sceSifRebootIop(const char *);
 extern s32 sceSifSyncIop(void);
 
-extern char D_00136BE8[];
-
-void LoaderSysRebootIop(char *arg0)
+void LoaderSysRebootIop(const char *arg0)
 {
-    PutString(0xFFFF00, &D_00136BE8);
-    PutString(0x40FFFF80, D_0013A118, arg0);
-    PutStringS(0xFFFF00, &D_0013A120);
+    PutString(0xFFFF00, "\tRebooting Iop\n\t\twith ");
+    PutString(0x40FFFF80, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(0xFFFF00, GSTR(D_0013A120, "... "));
+
     while (sceSifRebootIop(arg0) == 0)
         ;
+
     while (sceSifSyncIop() == 0)
         ;
-    PutStringS(0xFFFF00, &D_0013A128);
+
+    PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
-
-extern s32 D_0013A17C;
-// extern char D_00136E30[];
-extern s32 D_0013D120[];
-
-void loaderSetResetCallback(s32 a0)
+void loaderExecResetCallback(void)
 {
-    if (D_0013A17C == 0xA)
+    int i;
+
+    for (i = 0; i < MAX_RESET_CALLBACKS; i++)
     {
-        LoaderSysPrintf(D_00136E30);
-        D_0013A17C = 0;
+        if (RESET_CALLBACK_LIST[i] != NULL)
+        {
+            RESET_CALLBACK_LIST[i]();
+        }
     }
 
-    D_0013D120[D_0013A17C++] = a0;
+    memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+    LOADER_RESET_CALLBACK_NUM = 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", memprintf);
+void loaderSetResetCallback(t_resetCallback callback)
+{
+    if (LOADER_RESET_CALLBACK_NUM == MAX_RESET_CALLBACKS)
+    {
+        LoaderSysPrintf(GSTR(D_00136E30, "ld: ERROR LOADER_RESET_CALLBACK_NUM over \n"));
+        LOADER_RESET_CALLBACK_NUM = 0;
+    }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", imemprintf);
+    RESET_CALLBACK_LIST[LOADER_RESET_CALLBACK_NUM++] = callback;
+}
+
+int memprintf(const char *in, ...)
+{
+}
+
+int imemprintf(const char *in, ...)
+{
+}
 
 void initmemprintf(void)
 {
