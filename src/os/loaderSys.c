@@ -905,9 +905,13 @@ void loaderSetResetCallback(s32 a0)
     D_0013D120[D_0013A17C++] = a0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", memprintf);
+int memprintf(const char *in, ...)
+{
+}
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", imemprintf);
+int imemprintf(const char *in, ...)
+{
+}
 
 void initmemprintf(void)
 {
