@@ -32,8 +32,25 @@ COMMON_INCLUDES = "-Iinclude -I include/sdk/ee -I include/sdk -I include/gcc"
 
 COMPILER = "ee-gcc2.96"
 GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
+CUSTOM_SPECS_FILE = f"{TOOLS_DIR}/cc/{COMPILER}/lib/regnames.specs"
 
-GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2"
+GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2 $regnames"
+
+# Custom spec rule that invokes the preprocessor before assembling
+# avoids us having to manually pipe each step and just use GCC
+# it defines PREPROCESS_ASM so it can be checked in source if need be
+CUSTOM_SPECS = """@c:
+cc1 -lang-c %{ansi:-std=c89} %(cpp_options) -DPREPROCESS_ASM %(cc1_options) -o %{|!pipe:%g.si} |
+ %(trad_capable_cpp) -lang-asm %{v} %I -I./ %{|!pipe:%g.si} -o %{|!pipe:%g.s} |
+ as %(asm_options) %{!pipe:%g.s} %A
+"""
+
+
+def create_custom_specs():
+    specs_file = Path(CUSTOM_SPECS_FILE)
+    if not specs_file.exists():
+        with specs_file.open("w") as f:
+            f.write(CUSTOM_SPECS)
 
 
 def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
@@ -44,6 +61,8 @@ def exec_shell(command: List[str], stdout=subprocess.PIPE) -> str:
 def clean():
     if os.path.exists(".splache"):
         os.remove(".splache")
+    if os.path.exists(CUSTOM_SPECS_FILE):
+        os.remove(CUSTOM_SPECS_FILE)
     shutil.rmtree("asm", ignore_errors=True)
     shutil.rmtree("assets", ignore_errors=True)
     shutil.rmtree("build", ignore_errors=True)
@@ -143,7 +162,11 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
             build(entry.object_path, entry.src_paths, "cpp")
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
-            build(entry.object_path, entry.src_paths, "cc")
+            if split.config["options"]["named_regs_for_c_funcs"]:
+                regnames = "--specs=regnames.specs"
+            else:
+                regnames = ""
+            build(entry.object_path, entry.src_paths, "cc", variables={"regnames": regnames})
         elif isinstance(
             seg, splat.segtypes.common.databin.CommonSegDatabin
         ) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
@@ -245,6 +268,8 @@ if __name__ == "__main__":
     split.main([YAML_FILE], modes="all", verbose=False)
 
     linker_entries = split.linker_writer.entries
+
+    create_custom_specs()
 
     build_stuff(linker_entries)
 

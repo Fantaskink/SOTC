@@ -31,7 +31,7 @@ options:
     string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
     disasm_unknown: True
-    named_regs_for_c_funcs: False
+    named_regs_for_c_funcs: True
     gp_value: 0x141e70
     find_file_boundaries: False
     section_order: [".text", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
