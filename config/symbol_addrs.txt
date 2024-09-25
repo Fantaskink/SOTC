@@ -1,5 +1,12 @@
 func_0                                           = 0x00000000; // ignore:true
 
+// linker symbols
+end                                              = 0x0016A518; // type:label
+_gp                                              = 0x00141E70; // type:label
+
+LOADER_RESET_CALLBACK_NUM                        = 0x0013A17C; // type:s32
+RESET_CALLBACK_LIST                              = 0x0013D120; // size:0x28
+
 // crt0.o
 entry                                            = 0x00100000; // type:func
 _exit                                            = 0x001000C0; // type:func
@@ -17,8 +24,8 @@ LoaderSysRelocateOnlineElfInfo                   = 0x00101518; // type:func
 RelocateCode                                     = 0x001016E8; // type:func
 FreeDecodedSection                               = 0x00101800; // type:func
 RelocateSelfSymbol                               = 0x001018B8; // type:func
-DisposeRelocationElement                         = 0x00101950; // type:func
 SetHeapStartPoint                                = 0x00101A30; // type:func
+DisposeRelocationElement                         = 0x00101950; // type:func
 GetHeapCurrentPoint                              = 0x00101A48; // type:func
 LoaderSysResetSystem                             = 0x00101A50; // type:func
 mallocAlignMempool                               = 0x00101AC0; // type:func

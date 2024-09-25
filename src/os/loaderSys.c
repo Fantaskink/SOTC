@@ -13,6 +13,11 @@ extern const char D_0013A128[]; // "Done.\n"
 
 extern u32 D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
+#define MAX_RESET_CALLBACKS 10
+
+typedef (*t_resetCallback)();
+extern s32 LOADER_RESET_CALLBACK_NUM;
+extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
 
 #define SEMAPHORE_LIST D_0013BD10
 #define THREAD_LIST D_0013B910
@@ -764,41 +769,69 @@ void func_001033B0()
     usbSerialSysInit();
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderLoop);
+int end;
+extern s32 D_0013A110;
+extern s32 D_0013A184;
+extern s32 D_0013A114;
+static inline void loaderPrintMessage()
+{
+    void *heap_base;
 
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136C98);
+    register sp asm("sp");
+    register gp asm("gp");
+    heap_base = (void *)malloc(1);
+    free(heap_base);
+    PutStringS(0xFFFFFF00, " GP: %08p\n", gp);
+    PutStringS(0xFFFFFF00, " SP: %08p\n", sp);
+    PutStringS(0xFFFFFF00, " HEAP: %08p\n", heap_base);
+    PutStringS(0xFFFFFF00, " END: %08p\n\n", &end);
+    PutStringS(0xFFFFFF00, " LOADER HEAP START: %08p\n", D_0013A110);
+    memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+    LOADER_RESET_CALLBACK_NUM = 0;
+}
 
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CD8);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136CF8);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D10);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D30);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D50);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D70);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136D90);
-
-// INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DB0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DD0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DE0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136DF0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E00);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E10);
-
+// TODO: Get rid of this once the file is done
 const char D_00136E30[] = "ld: ERROR LOADER_RESET_CALLBACK_NUM over \n";
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E60);
+void loaderLoop(void)
+{
+    s32 reset_count;
+    s32 i;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136E78);
+    reset_count = 0;
+    loaderPrintMessage();
+
+    while (1)
+    {
+        SetHeapStartPoint(D_0013A110);
+        D_0013A114 = execProgWithThread("cdrom0:\\STARTUP.XFF;1", 2);
+        SleepThread();
+
+        // TODO: inlined call to loaderExecResetCallback
+        {
+            for (i = 0; i < MAX_RESET_CALLBACKS; i++)
+            {
+                if (RESET_CALLBACK_LIST[i] != NULL)
+                {
+                    RESET_CALLBACK_LIST[i]();
+                }
+            }
+
+            memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+            LOADER_RESET_CALLBACK_NUM = 0;
+        }
+
+        reset_count++;
+        LoaderSysExecuteRecoveryFirstProcess();
+        ChangeThreadPriority(D_0013A184, 1);
+        LoaderSysDeleteAllExternalIntcHandler();
+        LoaderSysDeleteAllExternalThread();
+        LoaderSysDeleteAllExternalSema();
+        LoaderSysDeleteAllExternalIopMemory();
+        ReinitDisp();
+        PutStringS(0xFFFFFF00, "\nreset: %d\n", reset_count);
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
 
@@ -889,20 +922,31 @@ void LoaderSysRebootIop(const char *arg0)
     PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", loaderExecResetCallback);
-
-extern s32 D_0013A17C;
-extern s32 D_0013D120[];
-
-void loaderSetResetCallback(s32 a0)
+void loaderExecResetCallback(void)
 {
-    if (D_0013A17C == 0xA)
+    int i;
+
+    for (i = 0; i < MAX_RESET_CALLBACKS; i++)
     {
-        LoaderSysPrintf(D_00136E30);
-        D_0013A17C = 0;
+        if (RESET_CALLBACK_LIST[i] != NULL)
+        {
+            RESET_CALLBACK_LIST[i]();
+        }
     }
 
-    D_0013D120[D_0013A17C++] = a0;
+    memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
+    LOADER_RESET_CALLBACK_NUM = 0;
+}
+
+void loaderSetResetCallback(t_resetCallback callback)
+{
+    if (LOADER_RESET_CALLBACK_NUM == MAX_RESET_CALLBACKS)
+    {
+        LoaderSysPrintf(GSTR(D_00136E30, "ld: ERROR LOADER_RESET_CALLBACK_NUM over \n"));
+        LOADER_RESET_CALLBACK_NUM = 0;
+    }
+
+    RESET_CALLBACK_LIST[LOADER_RESET_CALLBACK_NUM++] = callback;
 }
 
 int memprintf(const char *in, ...)
