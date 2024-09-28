@@ -16,7 +16,7 @@ jobs:
       
       - name: Run clang-format
         run: |
-          find . -name '*.c' -o -name '*.h' | xargs clang-format -i --style=file
+          find src -name '*.c' -o -name '*.h' | xargs clang-format -i --style=file
       
       - name: Run clang-format style check for C/C++/Protobuf programs.
         uses: jidicula/clang-format-action@v4.13.0
