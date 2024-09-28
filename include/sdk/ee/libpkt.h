@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/*
+/* 
  *                      Emotion Engine Library
  *                          Version 0.01
  *                           Shift-JIS
@@ -21,7 +21,7 @@
 #define __libpkt__
 
 #include <libdmapk.h>
-#include <libgifpk.h>
 #include <libvifpk.h>
+#include <libgifpk.h>
 
 #endif /* __libpkt__ */

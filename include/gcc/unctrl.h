@@ -37,10 +37,10 @@
 
 #include <_ansi.h>
 
-#define unctrl(c) __unctrl[(c) & 0xff]
-#define unctrllen(ch) __unctrllen[(ch) & 0xff]
+#define unctrl(c)		__unctrl[(c) & 0xff]
+#define unctrllen(ch)		__unctrllen[(ch) & 0xff]
 
-extern _CONST char *_CONST __unctrl[256]; /* Control strings. */
-extern _CONST char __unctrllen[256];      /* Control strings length. */
+extern _CONST char * _CONST __unctrl[256];	/* Control strings. */
+extern _CONST char __unctrllen[256];	/* Control strings length. */
 
 #endif /* _UNCTRL_H_ */

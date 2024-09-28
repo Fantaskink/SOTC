@@ -41,46 +41,45 @@
 
 #ifndef _REENT_H_
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 #define _REENT_H_
 
-#include <machine/types.h>
-#include <sys/_types.h>
 #include <sys/reent.h>
+#include <sys/_types.h>
+#include <machine/types.h>
 
 #define __need_size_t
 #include <stddef.h>
 
-    /* FIXME: not namespace clean */
-    struct stat;
-    struct tms;
-    struct timeval;
-    struct timezone;
+/* FIXME: not namespace clean */
+struct stat;
+struct tms;
+struct timeval;
+struct timezone;
 
-    /* Reentrant versions of system calls.  */
+/* Reentrant versions of system calls.  */
 
-    extern int _close_r _PARAMS((struct _reent *, int));
-    extern int _execve_r _PARAMS((struct _reent *, char *, char **, char **));
-    extern int _fcntl_r _PARAMS((struct _reent *, int, int, int));
-    extern int _fork_r _PARAMS((struct _reent *));
-    extern int _fstat_r _PARAMS((struct _reent *, int, struct stat *));
-    extern int _getpid_r _PARAMS((struct _reent *));
-    extern int _kill_r _PARAMS((struct _reent *, int, int));
-    extern int _link_r _PARAMS((struct _reent *, const char *, const char *));
-    extern _off_t _lseek_r _PARAMS((struct _reent *, int, _off_t, int));
-    extern int _open_r _PARAMS((struct _reent *, const char *, int, int));
-    extern _ssize_t _read_r _PARAMS((struct _reent *, int, void *, size_t));
-    extern void *_sbrk_r _PARAMS((struct _reent *, size_t));
-    extern int _stat_r _PARAMS((struct _reent *, const char *, struct stat *));
-    extern _CLOCK_T_ _times_r _PARAMS((struct _reent *, struct tms *));
-    extern int _unlink_r _PARAMS((struct _reent *, const char *));
-    extern int _wait_r _PARAMS((struct _reent *, int *));
-    extern _ssize_t _write_r _PARAMS((struct _reent *, int, const void *, size_t));
+extern int _close_r _PARAMS ((struct _reent *, int));
+extern int _execve_r _PARAMS ((struct _reent *, char *, char **, char **));
+extern int _fcntl_r _PARAMS ((struct _reent *, int, int, int));
+extern int _fork_r _PARAMS ((struct _reent *));
+extern int _fstat_r _PARAMS ((struct _reent *, int, struct stat *));
+extern int _getpid_r _PARAMS ((struct _reent *));
+extern int _kill_r _PARAMS ((struct _reent *, int, int));
+extern int _link_r _PARAMS ((struct _reent *, const char *, const char *));
+extern _off_t _lseek_r _PARAMS ((struct _reent *, int, _off_t, int));
+extern int _open_r _PARAMS ((struct _reent *, const char *, int, int));
+extern _ssize_t _read_r _PARAMS ((struct _reent *, int, void *, size_t));
+extern void *_sbrk_r _PARAMS ((struct _reent *, size_t));
+extern int _stat_r _PARAMS ((struct _reent *, const char *, struct stat *));
+extern _CLOCK_T_ _times_r _PARAMS ((struct _reent *, struct tms *));
+extern int _unlink_r _PARAMS ((struct _reent *, const char *));
+extern int _wait_r _PARAMS ((struct _reent *, int *));
+extern _ssize_t _write_r _PARAMS ((struct _reent *, int, const void *, size_t));
 
-    /* This one is not guaranteed to be available on all targets.  */
-    extern int _gettimeofday_r _PARAMS((struct _reent *, struct timeval *tp, struct timezone *tzp));
+/* This one is not guaranteed to be available on all targets.  */
+extern int _gettimeofday_r _PARAMS ((struct _reent *, struct timeval *tp, struct timezone *tzp));
 
 #ifdef __cplusplus
 }

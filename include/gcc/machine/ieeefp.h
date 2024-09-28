@@ -24,7 +24,7 @@
 #define __IEEE_BIG_ENDIAN
 #endif
 
-#if defined(__H8300__) || defined(__H8300H__) || defined(__H8300S__)
+#if defined (__H8300__) || defined (__H8300H__) || defined (__H8300S__)
 #define __IEEE_BIG_ENDIAN
 #define __SMALL_BITFIELDS
 #define _DOUBLE_IS_32BITS
@@ -144,3 +144,4 @@
 
 #endif /* not __IEEE_LITTLE_ENDIAN */
 #endif /* not __IEEE_BIG_ENDIAN */
+

@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/*
+/* 
  *                      Emotion Engine Library
  *                          Version 0.01
  *                           Shift-JIS
@@ -23,42 +23,40 @@
 #include <eekernel.h>
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
-    typedef struct
-    {
-        u_int *pCurrent;
-        u_long128 *pBase;
-        u_long128 *pDmaTag;
-        u_int pad03;
-    } sceDmaPacket;
+typedef struct{
+  u_int *pCurrent;
+  u_long128 *pBase;
+  u_long128 *pDmaTag;
+  u_int pad03;
+}sceDmaPacket;
 
-    void sceDmaPkInit(sceDmaPacket *pPacket, u_long128 *pBase);
+void sceDmaPkInit(sceDmaPacket *pPacket, u_long128 *pBase);
 
-    void sceDmaPkReset(sceDmaPacket *pPacket);
-    u_long128 *sceDmaPkTerminate(sceDmaPacket *pPacket);
+void sceDmaPkReset(sceDmaPacket *pPacket);
+u_long128 *sceDmaPkTerminate(sceDmaPacket *pPacket);
 
-    u_int sceDmaPkSize(sceDmaPacket *pPacket);
+u_int sceDmaPkSize(sceDmaPacket *pPacket);
 
-    void sceDmaPkCnt(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
-    void sceDmaPkRet(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
-    void sceDmaPkEnd(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkCnt(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkRet(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkEnd(sceDmaPacket *pPacket, u_int opt1, u_int opt2, u_int flag);
 
-    void sceDmaPkNext(sceDmaPacket *pPacket, u_long128 *pNext, u_int opt1, u_int opt2, u_int flag);
-    void sceDmaPkCall(sceDmaPacket *pPacket, u_long128 *pCall, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkNext(sceDmaPacket *pPacket, u_long128 *pNext, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkCall(sceDmaPacket *pPacket, u_long128 *pCall, u_int opt1, u_int opt2, u_int flag);
 
-    void sceDmaPkRefe(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
-    void sceDmaPkRef(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
-    void sceDmaPkRefs(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkRefe(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkRef(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
+void sceDmaPkRefs(sceDmaPacket *pPacket, u_long128 *pRef, u_int size, u_int opt1, u_int opt2, u_int flag);
 
-    u_int *sceDmaPkReserve(sceDmaPacket *pPacket, u_int count);
+u_int *sceDmaPkReserve(sceDmaPacket *pPacket, u_int count);
 
-    void sceDmaPkAddData(sceDmaPacket *pPacket, u_long128 data);
-    void sceDmaPkAddDataN(sceDmaPacket *pPacket, u_long128 *pData, u_int count);
+void sceDmaPkAddData(sceDmaPacket *pPacket, u_long128 data);
+void sceDmaPkAddDataN(sceDmaPacket *pPacket, u_long128* pData, u_int count);
 
-    void sceDmaPkDump(sceDmaPacket *pPacket);
+void sceDmaPkDump(sceDmaPacket *pPacket);
 
 #ifdef __cplusplus
 }

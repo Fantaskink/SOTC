@@ -21,27 +21,27 @@
 #ifndef _eetypes_h_
 #define _eetypes_h_
 
-#ifndef _SYS_TYPES_H
-typedef unsigned char u_char;
-typedef unsigned short u_short;
-typedef unsigned int u_int;
-typedef unsigned long u_long;
+#ifndef	_SYS_TYPES_H
+typedef unsigned char		u_char;
+typedef unsigned short		u_short;
+typedef unsigned int		u_int;
+typedef unsigned long		u_long;
 #endif
-#ifdef __GNUC__
-typedef int long128 __attribute__((mode(TI)));
-typedef unsigned int u_long128 __attribute__((mode(TI)));
+#ifdef	__GNUC__
+typedef int long128 __attribute__ ((mode (TI)));
+typedef unsigned int u_long128 __attribute__ ((mode (TI)));
 #endif
 
 #ifndef FALSE
-#define FALSE 0
+#define	FALSE	0
 #endif
 
 #ifndef TRUE
-#define TRUE (!FALSE)
+#define	TRUE	(!FALSE)
 #endif
 
 #ifndef NULL
-#define NULL 0
+#define	NULL	0
 #endif
 
 #endif /* _eetypes_h_ */
