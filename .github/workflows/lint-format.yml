@@ -5,6 +5,7 @@ on: [push, pull_request]
 jobs:
   lint-format-replace:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -16,6 +17,7 @@ jobs:
         with:
           clang-format-version: '13'
           check-path: 'src'
+          fallback-style: 'Mozilla'
 
       - name: Replace primitive types with fixed-width types
         run: |
