@@ -1,9 +1,7 @@
-s32       main (void    ) {
-        u16;
+s32 main(void) {
+    u16;
     s64;
-    u32      ;
+    u32;
 }
 
-
 ;
-
