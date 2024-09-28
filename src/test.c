@@ -1,5 +1,5 @@
-int main (void) {
-    unsigned short;
-    long;
-    unsigned int;
+s32 main (void) {
+    u16;
+    s64;
+    u32;
 }
