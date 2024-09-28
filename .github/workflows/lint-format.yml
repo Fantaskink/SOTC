@@ -1,5 +1,4 @@
 name: Replace primitive types with fixed-width types
-
 on: [push, pull_request]
 
 jobs:
