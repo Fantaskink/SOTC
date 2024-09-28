@@ -1,5 +1,5 @@
-#include "common.h"
 #include "netSys.h"
+#include "common.h"
 
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];

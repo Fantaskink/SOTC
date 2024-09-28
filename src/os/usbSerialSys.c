@@ -1,8 +1,8 @@
-#include "common.h"
 #include "usbSerialSys.h"
+#include "common.h"
 
-extern int semaId;
-extern int iSignalSema(int sema_id);
+extern s32 semaId;
+extern s32 iSignalSema(s32 sema_id);
 
 INCLUDE_ASM("asm/nonmatchings/os/usbSerialSys", usbSerialSysPutString);
 
