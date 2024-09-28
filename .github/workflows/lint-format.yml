@@ -16,7 +16,7 @@ jobs:
         with:
           clang-format-version: '13'
           check-path: 'src'
-          fallback-style: 'Mozilla'
+          fallback-style: 'GNU'
 
       - name: Replace primitive types with fixed-width types
         run: |
