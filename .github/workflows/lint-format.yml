@@ -11,6 +11,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Run clang-format
+        run: |
+          find . -name '*.c' | xargs clang-format-15 -i
+        shell: bash
+      
       - name: Run clang-format style check for C/C++/Protobuf programs.
         uses: jidicula/clang-format-action@v4.13.0
         with:
