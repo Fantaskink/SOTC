@@ -6,10 +6,10 @@
    their own if desired (or they can put target dependant conditionals here).
 */
 
-#ifndef	_SYS__TYPES_H
+#ifndef _SYS__TYPES_H
 #define _SYS__TYPES_H
 
 typedef long _off_t;
 typedef long _ssize_t;
 
-#endif	/* _SYS__TYPES_H */
+#endif /* _SYS__TYPES_H */

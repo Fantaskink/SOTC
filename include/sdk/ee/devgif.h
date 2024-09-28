@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/* 
+/*
  *                      Emotion Engine Library
  *                          Version 0.01
  *                           Shift-JIS
@@ -21,35 +21,37 @@
 #define __devgif__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-typedef struct{
-  u_long128 tag;
-  u_int stat;
-  u_int count;
-  u_int p3count;
-  u_int p3tag;
-  u_int pad;
-}sceDevGifCnd;
+    typedef struct
+    {
+        u_long128 tag;
+        u_int stat;
+        u_int count;
+        u_int p3count;
+        u_int p3tag;
+        u_int pad;
+    } sceDevGifCnd;
 
-void sceDevGifReset(void);
+    void sceDevGifReset(void);
 
-int sceDevGifPause(void);
+    int sceDevGifPause(void);
 
-int sceDevGifContinue(void);
+    int sceDevGifContinue(void);
 
-void sceDevGifPutImtMode(int);
+    void sceDevGifPutImtMode(int);
 
-u_int sceDevGifGetImtMode(void);
+    u_int sceDevGifGetImtMode(void);
 
-int sceDevGifPutP3msk(int enable);
+    int sceDevGifPutP3msk(int enable);
 
-int sceDevGifGetP3msk(void);
+    int sceDevGifGetP3msk(void);
 
-int sceDevGifGetCnd(sceDevGifCnd *);
+    int sceDevGifGetCnd(sceDevGifCnd *);
 
-int sceDevGifPutFifo(u_long128 *addr, int n);
+    int sceDevGifPutFifo(u_long128 *addr, int n);
 
 #ifdef __cplusplus
 }

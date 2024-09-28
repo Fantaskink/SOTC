@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/* 
+/*
  *                      Emotion Engine Library
  *                          Version 0.01
  *                           Shift-JIS
@@ -17,16 +17,15 @@
  *       0.01           Mar,29,1999     shibuya
  */
 
-
 #ifndef __libdev__
 #define __libdev__
 
-#include <devvu0.h>
-#include <devvu1.h>
+#include <devfont.h>
 #include <devgif.h>
 #include <devvif0.h>
 #include <devvif1.h>
-#include <devfont.h>
+#include <devvu0.h>
+#include <devvu1.h>
 
 /*
 #ifdef __cplusplus

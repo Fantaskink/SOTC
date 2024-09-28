@@ -6,14 +6,15 @@
    it will override this one.  */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-struct utimbuf 
-{
-  time_t actime;
-  time_t modtime; 
-};
+    struct utimbuf
+    {
+        time_t actime;
+        time_t modtime;
+    };
 
 #ifdef __cplusplus
 };

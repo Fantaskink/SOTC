@@ -9,7 +9,8 @@
 #ifndef _SYS_TIMEB_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define _SYS_TIMEB_H
@@ -18,19 +19,19 @@ extern "C" {
 #include <machine/types.h>
 
 #ifndef __time_t_defined
-typedef _TIME_T_ time_t;
+    typedef _TIME_T_ time_t;
 #define __time_t_defined
 #endif
 
-struct timeb
-{
-  time_t time;
-  unsigned short millitm;
-  short timezone;
-  short dstflag;
-};
+    struct timeb
+    {
+        time_t time;
+        unsigned short millitm;
+        short timezone;
+        short dstflag;
+    };
 
-extern int ftime _PARAMS ((struct timeb *));
+    extern int ftime _PARAMS((struct timeb *));
 
 #ifdef __cplusplus
 }

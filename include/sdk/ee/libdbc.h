@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/* 
+/*
  *                 device basic control library
  *                          Version 1.0
  *                           Shift-JIS
@@ -21,14 +21,15 @@
 #ifndef _LIBDBC_H_
 #define _LIBDBC_H_
 
-#if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-extern "C" {
+#if defined(__LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C"
+{
 #endif
 
-int sceDbcInit( void );
-int sceDbcEnd( void );
+    int sceDbcInit(void);
+    int sceDbcEnd(void);
 
-#if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+#if defined(__LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 }
 #endif
 

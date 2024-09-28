@@ -1,4 +1,4 @@
-/* AUTOMATICALLY GENERATED; DO NOT EDIT! */ 
+/* AUTOMATICALLY GENERATED; DO NOT EDIT! */
 #ifndef _G_config_h
 #define _G_config_h
 #define _G_LIB_VERSION "2.8-ee-991111"
@@ -8,22 +8,22 @@
 #define _G_HAVE_ST_BLKSIZE 1
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 7)
-typedef          int   _G_int8_t __attribute__((__mode__(__QI__)));
-typedef unsigned int  _G_uint8_t __attribute__((__mode__(__QI__)));
-typedef          int  _G_int16_t __attribute__((__mode__(__HI__)));
+typedef int _G_int8_t __attribute__((__mode__(__QI__)));
+typedef unsigned int _G_uint8_t __attribute__((__mode__(__QI__)));
+typedef int _G_int16_t __attribute__((__mode__(__HI__)));
 typedef unsigned int _G_uint16_t __attribute__((__mode__(__HI__)));
-typedef          int  _G_int32_t __attribute__((__mode__(__SI__)));
+typedef int _G_int32_t __attribute__((__mode__(__SI__)));
 typedef unsigned int _G_uint32_t __attribute__((__mode__(__SI__)));
-typedef          int  _G_int64_t __attribute__((__mode__(__DI__)));
+typedef int _G_int64_t __attribute__((__mode__(__DI__)));
 typedef unsigned int _G_uint64_t __attribute__((__mode__(__DI__)));
 #if __GNUC__ > 2 || __GNUC_MINOR__ >= 8
 __extension__ typedef long long _G_llong;
 __extension__ typedef unsigned long long _G_ullong;
 #endif
 #else
-typedef  short /* deduced */  _G_int16_t;
+typedef short /* deduced */ _G_int16_t;
 typedef unsigned short /* deduced */ _G_uint16_t;
-typedef  int /* deduced */  _G_int32_t;
+typedef int /* deduced */ _G_int32_t;
 typedef unsigned int /* deduced */ _G_uint32_t;
 #endif
 
@@ -52,20 +52,20 @@ typedef int _G_wchar_t;
 #define _G_BUFSIZ 1024
 #define _G_FOPEN_MAX 20
 #define _G_FILENAME_MAX 1024
-#if defined (__cplusplus) || defined (__STDC__)
+#if defined(__cplusplus) || defined(__STDC__)
 #define _G_ARGS(ARGLIST) ARGLIST
 #else
 #define _G_ARGS(ARGLIST) ()
 #endif
-#if !defined (__GNUG__) || defined (__STRICT_ANSI__)
+#if !defined(__GNUG__) || defined(__STRICT_ANSI__)
 #define _G_NO_NRV
 #endif
-#if !defined (__GNUG__)
+#if !defined(__GNUG__)
 #define _G_NO_EXTERN_TEMPLATES
 #endif
 typedef long _G_ssize_t;
 typedef unsigned int _G_wint_t;
-typedef char * _G_va_list;
+typedef char *_G_va_list;
 #define _G_signal_return_type void
 #define _G_sprintf_return_type int
 #define _G_HAVE_ATEXIT 0

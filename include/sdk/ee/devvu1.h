@@ -1,7 +1,7 @@
 /* SCE CONFIDENTIAL
  "PlayStation 2" Programmer Tool Runtime Library Release 2.5
  */
-/* 
+/*
  *                      Emotion Engine Library
  *                          Version 0.01
  *                           Shift-JIS
@@ -21,39 +21,41 @@
 #define __devvu1__
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-typedef struct{
-  u_long128 vf[32];
-  u_int status;
-  u_int mac;
-  u_int clipping;
-  u_int r, i, q, p;
-  u_short vi[16];
-}sceDevVu1Cnd;
+    typedef struct
+    {
+        u_long128 vf[32];
+        u_int status;
+        u_int mac;
+        u_int clipping;
+        u_int r, i, q, p;
+        u_short vi[16];
+    } sceDevVu1Cnd;
 
-void sceDevVu1Reset(void);
+    void sceDevVu1Reset(void);
 
-int sceDevVu1Pause(void);
+    int sceDevVu1Pause(void);
 
-int sceDevVu1Continue(void);
+    int sceDevVu1Continue(void);
 
-void sceDevVu1PutDBit(int bit);
+    void sceDevVu1PutDBit(int bit);
 
-void sceDevVu1PutTBit(int bit);
+    void sceDevVu1PutTBit(int bit);
 
-int sceDevVu1GetDBit(void);
+    int sceDevVu1GetDBit(void);
 
-int sceDevVu1GetTBit(void);
+    int sceDevVu1GetTBit(void);
 
-void sceDevVu1Exec(u_short addr);
+    void sceDevVu1Exec(u_short addr);
 
-u_short sceDevVu1GetTpc(void);
+    u_short sceDevVu1GetTpc(void);
 
-int sceDevVu1GetCnd(sceDevVu1Cnd *cnd);
+    int sceDevVu1GetCnd(sceDevVu1Cnd *cnd);
 
-int sceDevVu1PutCnd(sceDevVu1Cnd *cnd);
+    int sceDevVu1PutCnd(sceDevVu1Cnd *cnd);
 
 #ifdef __cplusplus
 }

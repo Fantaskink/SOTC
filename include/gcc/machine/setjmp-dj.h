@@ -19,23 +19,25 @@
 #define _SETJMP_DJ_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-typedef struct {
-  unsigned long eax;
-  unsigned long ebx;
-  unsigned long ecx;
-  unsigned long edx;
-  unsigned long esi;
-  unsigned long edi;
-  unsigned long ebp;
-  unsigned long esp;
-  unsigned long eip;
-} jmp_buf[1];
+    typedef struct
+    {
+        unsigned long eax;
+        unsigned long ebx;
+        unsigned long ecx;
+        unsigned long edx;
+        unsigned long esi;
+        unsigned long edi;
+        unsigned long ebp;
+        unsigned long esp;
+        unsigned long eip;
+    } jmp_buf[1];
 
-extern int setjmp(jmp_buf);
-extern void longjmp(jmp_buf, int);
+    extern int setjmp(jmp_buf);
+    extern void longjmp(jmp_buf, int);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,6 @@
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 #include <sys/dirent.h>
 #ifdef __cplusplus

@@ -16,20 +16,21 @@
 
 #define SCESPU2MEM_TABLE_UNITSIZE 12
 
-#define SCESPU2MEM_NO_EFFECT  1
+#define SCESPU2MEM_NO_EFFECT 1
 #define SCESPU2MEM_USE_EFFECT 0
 
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
-extern "C" {
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
+extern "C"
+{
 #endif
 
-extern int  sceSpu2MemInit (void *, unsigned int, unsigned int);
-extern int  sceSpu2MemQuit (void);
+    extern int sceSpu2MemInit(void *, unsigned int, unsigned int);
+    extern int sceSpu2MemQuit(void);
 
-extern int  sceSpu2MemAllocate (unsigned int);
-extern void sceSpu2MemFree (unsigned int);
+    extern int sceSpu2MemAllocate(unsigned int);
+    extern void sceSpu2MemFree(unsigned int);
 
-#if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
+#if defined(_LANGUAGE_C_PLUS_PLUS) || defined(__cplusplus) || defined(c_plusplus)
 }
 #endif
 

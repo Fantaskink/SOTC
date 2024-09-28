@@ -14,23 +14,24 @@
 #ifndef _LIBSDR_H_
 #define _LIBSDR_H_
 
-#include <sdmacro.h>	/* common/include */
-#include <sdrcmd.h>	/* common/include */
+#include <sdmacro.h> /* common/include */
+#include <sdrcmd.h>  /* common/include */
 #include <sifrpc.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/* ----------------------------------------------------------------
- *	Proto Types
- * ---------------------------------------------------------------- */
+    /* ----------------------------------------------------------------
+     *	Proto Types
+     * ---------------------------------------------------------------- */
 
-extern int sceSdRemoteInit( void );
-extern int sceSdRemote( int arg, ... );
-extern int sceSdRemoteCallbackInit( int priority );
-extern sceSifEndFunc sceSdCallBack( sceSifEndFunc end_func );
-extern int sceSdTransToIOP( void *buff, u_int sendAddr, u_int size, u_int isBlock );
+    extern int sceSdRemoteInit(void);
+    extern int sceSdRemote(int arg, ...);
+    extern int sceSdRemoteCallbackInit(int priority);
+    extern sceSifEndFunc sceSdCallBack(sceSifEndFunc end_func);
+    extern int sceSdTransToIOP(void *buff, u_int sendAddr, u_int size, u_int isBlock);
 
 #ifdef __cplusplus
 }
