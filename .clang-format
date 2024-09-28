@@ -1,1 +1,7 @@
-BasedOnStyle: Visual Studio
+BasedOnStyle: LLVM
+UseTab: Never                  # Use spaces instead of tabs
+IndentWidth: 4                # Set indentation to 4 spaces
+BreakBeforeBraces: Allman      # Use Allman style for braces
+AllowShortIfStatementsOnASingleLine: false  # Do not allow short if statements on a single line
+IndentCaseLabels: false       # Do not indent case labels
+ColumnLimit: 0                # Disable column limit
