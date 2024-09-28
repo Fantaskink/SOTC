@@ -1,5 +1,5 @@
-#include "common.h"
 #include "usbSerialSys.h"
+#include "common.h"
 
 extern s32 semaId;
 extern s32 iSignalSema(s32 sema_id);

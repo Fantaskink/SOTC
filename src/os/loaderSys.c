@@ -1,8 +1,8 @@
 #include "common.h"
+#include "fl_xfftype.h"
+#include "gcc/string.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
-#include "gcc/string.h"
-#include "fl_xfftype.h"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 

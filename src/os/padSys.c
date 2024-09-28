@@ -1,5 +1,5 @@
-#include "common.h"
 #include "padSys.h"
+#include "common.h"
 #include "sdk/ee/libpad2.h"
 #include "sdk/ee/libvib.h"
 
