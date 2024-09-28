@@ -1,23 +1,21 @@
 name: Replace primitive types with fixed-width types
 
-on:
-  push:
-    branches:
-      - main
-      - linter
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   lint-format-replace:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run clang-format style check for C/C++/Protobuf programs.
+        uses: jidicula/clang-format-action@v4.13.0
+        with:
+          clang-format-version: '13'
+          check-path: 'src'
 
       - name: Replace primitive types with fixed-width types
         run: |
