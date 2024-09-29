@@ -10,13 +10,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install clang-format
+        run: sudo apt-get install clang-format
       
-      - name: Run clang-format style check for C/C++/Protobuf programs.
-        uses: jidicula/clang-format-action@v4.13.0
-        with:
-          clang-format-version: '13'
-          check-path: 'src'
-          fallback-style: 'GNU'
+      - name: Run clang-format
+        run: |
+          find src -name '*.c' -o -name '*.h' | xargs clang-format -i --style=file
 
       - name: Replace primitive types with fixed-width types
         run: |
