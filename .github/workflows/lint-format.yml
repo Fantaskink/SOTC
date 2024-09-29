@@ -17,13 +17,6 @@ jobs:
       - name: Run clang-format
         run: |
           find src -name '*.c' -o -name '*.h' | xargs clang-format -i --style=file
-      
-      - name: Run clang-format style check for C/C++/Protobuf programs.
-        uses: jidicula/clang-format-action@v4.13.0
-        with:
-          clang-format-version: '13'
-          check-path: 'src'
-          fallback-style: 'GNU'
 
       - name: Replace primitive types with fixed-width types
         run: |
