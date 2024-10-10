@@ -13,10 +13,6 @@ jobs:
 
       - name: Install clang-format
         run: sudo apt-get install clang-format
-      
-      - name: Run clang-format
-        run: |
-          find src -name '*.c' -o -name '*.h' | xargs clang-format -i --style=file
 
       - name: Replace primitive types with fixed-width types
         run: |
@@ -31,4 +27,4 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'actions@github.com'
-          git diff --exit-code || (git add . && git commit -m "Replace primitives types with fixed-width types and format files" && git push)
+          git diff --exit-code || (git add . && git commit -m "Replace primitives types with fixed-width types" && git push)
