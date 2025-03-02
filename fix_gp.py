@@ -13,14 +13,9 @@ def main():
             lines.append(fh.read())
 
         syms.update(re.findall(r"\(([^) ]+).*\) \/\* gp_rel: .*\*\/", lines[0]))
-        lines[0] = re.sub(inst_pattern, ".set at\n\\1\n.set noat", lines[0])
+        lines[0] = re.sub(inst_pattern, ".set at\n    \\1\n    .set noat", lines[0])
 
         if syms:
-            lines.insert(0, "/* Symbols accessed via $gp register */\n")
-            lines.insert(1, "\n")
-            for s in syms:
-                lines.insert(1, f".extern {s}, 1\n")
-
             with open(asm_file, mode="w") as wh:
                 wh.writelines(lines)
 
