@@ -608,7 +608,25 @@ s32 GetHeapCurrentPoint(void)
     return HEAP_START;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysResetSystem);
+extern int D_0013A184;
+void LoaderSysResetSystem(void) {
+    s32 thread_id;
+
+    LoaderSysExecuteRecoveryFirstProcess();
+    PutString(0xff603000, GSTR(D_00139F50, "\n"));
+    thread_id = GetThreadId();
+    ChangeThreadPriority(thread_id, 127);
+    WakeupThread(D_0013A184);
+    do {
+        SleepThread();
+    } while (1);
+}
+
+extern const char D_001364A8[];
+void func_00101AA0(void) {
+    register int ra asm("ra");
+    LoaderSysJumpRecoverPoint(GSTR(D_001364A8, "undefined function call from %p.\n"), ra - 8);
+}
 
 // TODO: merge this into mallocAlignMempool
 static inline s32 __inlined_mallocAlignMempool(s32 size, u32 align) {
