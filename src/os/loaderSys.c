@@ -261,7 +261,31 @@ void DecodeSection(
     return;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateElfInfoHeader);
+void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp) {
+    s32 i;
+    u32 xffBaseAddr = (u32)xffEp;
+
+    xffEp->sectTab = (void*)(xffBaseAddr + xffEp->sectTab_Rel);
+
+    for (i = 0; i < xffEp->sectNrE; i++) {
+        xffEp->sectTab[i].filePt = (void*)(xffBaseAddr + xffEp->sectTab[i].offs_Rel);
+    }
+
+    xffEp->symTab = (void*)(xffBaseAddr + xffEp->symTab_Rel);
+	xffEp->symRelTab = (void*)(xffBaseAddr + xffEp->symRelTab_Rel);
+	xffEp->symTabStr = (void*)(xffBaseAddr + xffEp->symTabStr_Rel);
+	xffEp->impSymIxs = (void*)(xffBaseAddr + xffEp->impSymIxs_Rel);
+	xffEp->relocTab = (void*)(xffBaseAddr + xffEp->relocTab_Rel);
+	xffEp->ssNamesBase = (void*)(xffBaseAddr + xffEp->ssNamesBase_Rel);
+	xffEp->ssNamesOffs = (void*)(xffBaseAddr + xffEp->ssNamesOffs_Rel);
+
+    for (i = 0; i < xffEp->relocTabNrE; i++) {
+        xffEp->relocTab[i].addr = (void*)(xffBaseAddr + xffEp->relocTab[i].addr_Rel);
+		xffEp->relocTab[i].inst = (void*)(xffBaseAddr + xffEp->relocTab[i].inst_Rel);
+    }
+
+    xffEp->stack = (void*)(xffBaseAddr + xffEp->stack_Rel);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001363B0);
 
