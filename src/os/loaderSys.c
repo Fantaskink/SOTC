@@ -14,6 +14,7 @@
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_GREEN "\x1b[32m"
+#define ANSI_BLUE "\x1b[34m"
 #define ANSI_RESET "\x1b[m"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
@@ -507,7 +508,37 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysRelocateOnlineElfInfo);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateCode);
+extern const char D_00136200[];
+s32 RelocateCode(struct t_xffEntPntHdr* xffEp) {
+    s32 i;
+    s32 j;
+    
+    while (xffEp != NULL) {
+        struct t_xffRelocEnt *rt = xffEp->relocTab;
+        for (i = xffEp->relocTabNrE; i--; rt++) {
+            switch (rt->type) {
+                case 4:
+                case 9:
+                {
+                    s32 count = rt->nrEnt;
+                    for (j = 0; j < count; j++) {
+                        ResolveRelocation(xffEp, rt, j);
+                    }
+                }
+                break;
+            }
+        }
+        
+        if (xffEp->nextXffHdr == 0x0) {
+            xffEp = NULL;
+        } else {
+            printf(GSTR(D_00136200, "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"), ((u32)xffEp + xffEp->nextXffHdr));
+            xffEp = (struct t_xffEntPntHdr*)((u32)xffEp + xffEp->nextXffHdr);
+        }
+    }
+    
+    return 1;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", FreeDecodedSection);
 
