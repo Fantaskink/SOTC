@@ -4,6 +4,17 @@
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
 
+#define R_MIPS_NONE (0)
+#define R_MIPS_16 (1)
+#define R_MIPS_32 (2)
+#define R_MIPS_REL32 (3)
+#define R_MIPS_26 (4)
+#define R_MIPS_HI16 (5)
+#define R_MIPS_LO16 (6)
+
+#define ANSI_RED "\x1b[31m"
+#define ANSI_RESET "\x1b[m"
+
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
 
 extern char D_0013A100[];       // "host0:"
@@ -32,6 +43,8 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
+s32 LoaderSysPrintf(const char *format, ...);
+
 struct unk
 {
     s32 unk0;
@@ -40,7 +53,104 @@ struct unk
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136200);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", ResolveRelocation);
+static inline s32 SearchRelocLoPair(struct t_xffRelocEnt* relocEntry, s32 relocIndex) {
+    s32 i;
+
+    for (i = relocIndex + 1;; i++) {
+        struct t_xffRelocAddrEnt *addr = &relocEntry->addr[i];
+        switch (addr->tyIx & 0xFF) {
+            case R_MIPS_HI16:
+                // According to the ABI specs HI16 relocs *should* be followed by their corresponding LO16. 
+                // HOWEVER, a common GNU extension allows having multiple consecute HI16 before a LO16
+                // so we just skip consecutive HI16 until the next LO16...
+                break;
+            case R_MIPS_LO16:
+                // Found a LO16!
+                return relocEntry->inst[i].inst;
+            default:
+                // We found an unrelated reloc type, log a warning and return 0
+                LoaderSysPrintf(
+                    "ld:\t" ANSI_RED "Warning! Can't find low16 for hi16(relid:%d)." ANSI_RESET "\n", relocIndex
+                );
+                return 0;
+        }
+    }
+}
+
+s32 ResolveRelocation(void* xffBuf, struct t_xffRelocEnt* relocEnt, s32 relocIx) {
+    struct t_xffEntPntHdr* xffEp;
+    s32 relOffs;
+    u32* relAddr;
+    s32 addVal;
+    void* tgtAddr;
+    s32 loInstr;
+    s32 a;
+    s32 relTy;
+    struct t_xffRelocAddrEnt *addr = &relocEnt->addr[relocIx];
+
+    xffEp = xffBuf;
+    relOffs = addr->addr;
+    relTy = addr->tyIx & 0xFF;
+    relAddr = (void*)((u32)xffEp->sectTab[relocEnt->sect].memPt + relOffs);
+    tgtAddr = xffEp->symTab[addr->tyIx >> 8].addr;
+    addVal = relocEnt->inst[relocIx].inst;
+
+    switch (relTy) {
+        case R_MIPS_NONE:
+            // MIPS_NONE relocation
+            // There's nothing to do
+            break;
+
+        case R_MIPS_32:
+            // MIPS_32 relocation
+            // Symbol shifted by the addend
+            *relAddr = addVal + (u32)tgtAddr;
+            break;
+
+        case R_MIPS_26:
+            // MIPS_26 relocation
+            // Used in jal / j reloc with target symbol in symTab
+            *relAddr = addVal + (((u32)tgtAddr / 4) & 0x03FFFFFF);
+            break;
+
+        case R_MIPS_HI16:
+            // MIPS_HI16 relocation 
+            // High part of immediate lui+addiu pair
+
+            // Let's look for the paired LO16 relocation so that we can compute 
+            // the high part correctly accounting for the signed offsets.            
+            loInstr = SearchRelocLoPair(relocEnt, relocIx);
+            
+            // LO16 and HI16 instructions are of the form:
+            // bit 31                   15                      0
+            //     |--------------------------------------------|
+            //     |     INSTRUCTION     |  MIPS_HI/LO16 VALUE  |
+            //     |--------------------------------------------|
+            
+            // As the addend we want is the sign extended pairing of the HI16 and LO16
+            // values we can just do: value = (HI16Instr << 0x10) + (short)LO16Instr
+            a = (u32)tgtAddr + (addVal << 16) + (s16)loInstr;
+
+            // Now, we are relocating the HI16 part, so extract it here
+            // minding the sign-extension
+            a >>= 15; a++; a >>= 1;
+            *relAddr = (addVal & 0xFFFF0000) | (a & 0x0000FFFF);
+            break;
+
+        case R_MIPS_LO16:
+            // MIPS_LO16 relocation
+            // Lower part of immediate lui+addiu pair
+            // reloc with target symbol in symTab
+            *relAddr = (addVal & 0xFFFF0000) | (((u32)tgtAddr + addVal) & 0x0000FFFF);
+            break;
+
+        default:
+            LoaderSysPrintf("ld:\tFatal error!! unknown relocation type(%d) appeared. (ofs:%x)\n", relTy, relOffs);
+            return 0; // fail
+    };
+
+    return 1; // success
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001362D0);
 
