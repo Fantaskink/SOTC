@@ -54,7 +54,7 @@ typedef struct unk_stack_40 {
     struct t_xffEntPntHdr* unk0;
     int unk4;
     struct t_xffRelocEnt *unk8;
-    int unkC;
+    void* unkC;
 } unk_stack_40;
 typedef int (dispose_reloc_func)(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt*, unk_stack_40*);
 
@@ -641,7 +641,44 @@ s32 _checkExistString(char *string, char **strings)
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00101B88);
+extern const char D_00136500[];
+s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, unk_stack_40* arg2) {
+    s32 count;
+    s32 i;
+    s32 size;
+    struct t_xffRelocEnt* srel_ent;
+    struct t_xffRelocEnt* trel_ent;
+    s8* data_p;
+    struct t_xffEntPntHdr* txffEp;
+
+    txffEp = arg2->unk0;
+    trel_ent = arg2->unk8;
+    data_p = arg2->unkC;
+    
+    count = txffEp->relocTabNrE >> 1;
+    srel_ent = &txffEp->relocTab[count];
+    
+    for (i = 0; i < count; i++, srel_ent++, trel_ent++)
+    {
+        size = srel_ent->nrEnt * 8; // sizeof(struct t_xffRelocInstEnt)?
+        *trel_ent = *srel_ent;
+        
+        memcpy(data_p, srel_ent->addr, size);
+        trel_ent->addr = (struct t_xffRelocAddrEnt *)data_p;
+        data_p += size;
+        
+        memcpy(data_p, srel_ent->inst, size);
+        trel_ent->inst = (struct t_xffRelocInstEnt *)data_p; 
+        data_p += size;
+    }
+    
+    LoaderSysPrintf(GSTR(D_00136500, "ld:\t\t\tsplit at %p : (duplicate relinfo to %p-%p / reldata to %p-%p)\n"), arg1, arg2->unk8, trel_ent, arg2->unkC, data_p);
+    
+    arg2->unk4 = count;
+    D_00139F04 = (s32)arg1;
+    
+    return 0;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", _execProgWithThread);
 
