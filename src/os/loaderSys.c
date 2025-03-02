@@ -610,9 +610,20 @@ s32 GetHeapCurrentPoint(void)
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysResetSystem);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlignMempool);
+// TODO: merge this into mallocAlignMempool
+static inline s32 __inlined_mallocAlignMempool(s32 size, u32 align) {
+    int result = ((D_00139F04 + align - 1) / align) * align;
+    D_00139F04 = result + size;
+    return result;
+}
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", mallocAlign0x100Mempool);
+s32 mallocAlignMempool(s32 size, u32 align) {
+   return __inlined_mallocAlignMempool(size, align);
+}
+
+s32 mallocAlign0x100Mempool(s32 size) {
+    return __inlined_mallocAlignMempool(size, 0x100);
+}
 
 s32 _checkExistString(char *string, char **strings)
 {
