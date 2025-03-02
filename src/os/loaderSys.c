@@ -45,6 +45,9 @@ extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
 s32 LoaderSysPrintf(const char *format, ...);
+extern s32 PutString(s32, const char *, ...);
+void LoaderSysSendAbort(void);
+void loaderExecResetCallback(void);
 
 struct unk
 {
@@ -384,7 +387,81 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, v
     return 1; // Sucess
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100A58);
+extern int D_0013A180;
+extern int D_0013A184;
+extern char D_00139F50[];
+extern char D_0013B4C8[];
+void loaderLoop(void);
+static inline int _ReadPad() {
+    int r;
+    r = padSysReadForLoader();
+    ExecBaseProc();
+    return r;
+}
+
+void func_00100A58(void) {
+    register void* sp asm("sp");
+    register void* gp asm("gp");
+    s32 thread_id;
+    void* jal_addr;
+    s32* call;
+    
+    thread_id = GetThreadId();
+    if (thread_id == D_0013A184) {
+        ChangeThreadPriority(GetThreadId(), 1);
+        sceSifInitRpc(0);
+        sceSifInitIopHeap();
+        gp = (void*)&_gp;
+        sp = (void*)D_0013A180;
+        CancelWakeupThread(D_0013A184);
+        WakeupThread(D_0013A184);
+
+        // Take the address of the jal 0 instr
+        asm (
+            "la %0, __label\n" 
+            : "=r"(jal_addr) :
+        );
+
+        // Use the uncached address
+        call = (int*)((int)jal_addr | 0x20000000);
+
+        // Mask the jal target
+        *(call) &= 0xff000000;
+
+        // Set the jal target to loaderLoop
+        *(call) |= (((unsigned int)loaderLoop)) / 4;
+        
+        ___label:
+        asm(
+            "__label:\n" 
+            "jal 0\n"
+            "nop\n" 
+            : : "r"(gp) // gp use needed so GCC doesn't skip it (why?)
+        );
+    }
+
+    ChangeThreadPriority(thread_id, 0x7F);
+    PutString(0xFF603000, GSTR(D_00139F50, "\n"));
+    PutString(0xFF603000, "in threadid: %d\n", thread_id);
+    PutString(0xFF603000, D_0013B4C8);
+    PutString(0xC0FFE000, "\nhit 'reset' or push 'start key on pad-1' to restart system.");
+    PutString(0xC0FFE000, "\n\tor 'source s' to debugging and tracing.");
+    LoaderSysPrintf(GSTR(D_00139F50, "\n"));
+    LoaderSysSendAbort();
+    loaderExecResetCallback();
+    
+    while(!(_ReadPad() & 0x800)) {
+        Sync();
+    }
+    
+    PutString(0xFF603000, GSTR(D_00139F50, "\n"));
+    ChangeThreadPriority(GetThreadId(), 0x7F);
+    WakeupThread(D_0013A184);
+    
+    while(1) {
+        SleepThread();
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPointNoStateSetting);
 
@@ -865,7 +942,6 @@ void setNewIopIdentifier(const char *newIdentifier)
 
 extern s32 sceSifInitRpc(s32);
 extern s32 sceSifInitIopHeap(void);
-extern s32 PutString(s32, const char *, ...);
 extern void PutStringS(s32, const char *, ...);
 extern s32 sceCdInit(s32);
 extern s32 sceCdMmode(s32);
@@ -1004,8 +1080,8 @@ static inline void loaderPrintMessage()
 {
     void *heap_base;
 
-    register sp asm("sp");
-    register gp asm("gp");
+    register int sp asm("sp");
+    register int gp asm("gp");
     heap_base = (void *)malloc(1);
     free(heap_base);
     PutStringS(0xFFFFFF00, " GP: %08p\n", gp);
