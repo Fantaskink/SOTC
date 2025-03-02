@@ -511,7 +511,39 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateCode);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", FreeDecodedSection);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateSelfSymbol);
+s32 RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1) {
+    s32 symtab_count = xffEp->symTabNrE;
+    struct t_xffSymEnt *st = &xffEp->symTab[0];
+    struct t_xffSymRelEnt *rt = &xffEp->symRelTab[0];
+    struct t_xffSectEnt *stt = &xffEp->sectTab[0];
+    
+    for (; symtab_count--; st++, rt++) {
+        u32 section = st->sect;
+
+        switch (section) {
+            case 0:
+            st->addr = arg1;
+            break;
+            case 0xFFF1:
+            st->addr = (void*)rt->offs;
+            break;
+            default:
+            if (section <= 0xFEFF) {
+                switch(st->type & 0xF) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    st->addr = (void*)(rt->offs + (s32)stt[section].memPt);
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return 1;
+}
 
 extern char D_00131DB8[];
 void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2) {
