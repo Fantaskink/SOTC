@@ -13,6 +13,7 @@
 #define R_MIPS_LO16 (6)
 
 #define ANSI_RED "\x1b[31m"
+#define ANSI_GREEN "\x1b[32m"
 #define ANSI_RESET "\x1b[m"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
@@ -289,7 +290,99 @@ void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp) {
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001363B0);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", OutputLinkerScriptFile);
+// char* D_00131DD0[8] = { ".text", ".vutext", ".data", ".vudata", ".rodata", ".bss", ".vubss", ".DVP.ovlytab" };
+extern char* D_00131DD0[8];
+extern u32 D_00139F40;
+extern char D_00139F48[];
+extern s32 D_0013A300;
+char D_0013A4C8[0x1000];
+
+// TODO: remove this
+static inline s32 __inline_checkExistString(char *string, char **strings)
+{
+    s32 i = 0;
+
+    while (strings[i] != 0)
+    {
+        if (strcmp(strings[i], string) == 0)
+        {
+            return 1;
+        }
+        i++;
+    }
+
+    return 0;
+}
+
+static inline void LoaderSysFWriteString(s32 fd, char* str, s32 flush) {
+    s32 len;
+
+    if (D_0013A300 == fd) {
+        len = strlen(str);
+
+        // Would we go over the buffer with this write? Flush to file
+        if ((0xfff < (D_00139F40 + len)) && (D_00139F40 != 0x0)) {
+            LoaderSysFWrite(D_0013A300, &D_0013A4C8, D_00139F40);
+            D_00139F40 = 0x0;
+        }
+
+        // If the string to write is bigger than the buffer write directly
+        // copy to the buffer otherwise
+        if (strlen(str) >= 0x1000) {
+            LoaderSysFWrite(D_0013A300, str, strlen(str));
+        } else {
+            strncpy(&D_0013A4C8[D_00139F40], str, strlen(str));
+            D_00139F40 += strlen(str);
+        }
+
+        // If the flush flag is set then flush everything at the end
+        if ((flush) && (D_0013A300 == fd) && (D_00139F40 != 0x0)) {
+            LoaderSysFWrite(D_0013A300, &D_0013A4C8, D_00139F40);
+            D_00139F40 = 0x0;
+        }
+    }
+}
+
+s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, void (*callback)(void*)) {
+    char buffer[1000];
+    char pad[16];
+    s32 linker_fd;
+    s32 symbol;
+    s32 section;
+
+    if (callback != NULL) {
+        callback("ld:\toutput linker script " ANSI_GREEN "\"%s\"" ANSI_RESET ".\n");
+    }
+    
+    D_0013A300 = linker_fd = LoaderSysFOpen(ld_script_path, SCE_CREAT | SCE_TRUNC | SCE_WRONLY, 0);
+    
+    // Symbol writing might be an inline of its own
+    for (symbol = 0; symbol < xffEp->impSymIxsNrE; symbol++) {
+        sprintf(
+            &buffer, "%s = 0x%08x;\n", xffEp->symTabStr + xffEp->symTab[xffEp->impSymIxs[symbol].stIx].nameOffs,
+            xffEp->symTab[xffEp->impSymIxs[symbol].stIx].addr
+        );
+        LoaderSysFWriteString(linker_fd, (char*)&buffer, 0);
+    }
+
+    // Section writing might be an inline of its own
+    LoaderSysFWriteString(linker_fd, "SECTIONS {\n", 0);
+
+    for (section = 1; section < xffEp->sectNrE; section++) {
+        if (__inline_checkExistString(xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs, D_00131DD0)) {
+            sprintf(
+                &buffer, "\t%s\t%p: {*(%s)}\n", xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs,
+                xffEp->sectTab[section].memPt, xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs
+            );
+            LoaderSysFWriteString(linker_fd, (char*)&buffer, 0);
+        }
+    }
+
+    LoaderSysFWriteString(linker_fd, GSTR(D_00139F48, "}\n"), 1);
+    
+    LoaderSysFClose(linker_fd);
+    return 1; // Sucess
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100A58);
 
@@ -648,9 +741,9 @@ void LoaderSysPutString(char *string)
     printf(GSTR(D_0013A0F8, "%s"), string);
 }
 
-s32 LoaderSysFOpen(const char *name, s32 flags)
+s32 LoaderSysFOpen(const char *name, s32 flags, s32 mode)
 {
-    s32 success = sceOpen(name, flags);
+    s32 success = sceOpen(name, flags, mode);
     return success;
 }
 
