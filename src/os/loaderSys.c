@@ -463,7 +463,19 @@ void func_00100A58(void) {
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPointNoStateSetting);
+extern char D_0013B4C8[];
+void LoaderSysJumpRecoverPointNoStateSetting(int format, ...) {
+    register void* gp asm("gp");
+    va_list args;
+    gp = (void*)&_gp;
+    
+    LoaderSysExecuteRecoveryFirstProcess();
+
+    va_start(args, format);
+    vsprintf(D_0013B4C8, format, args);
+    va_end(args);
+    func_00100A58();
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
 
