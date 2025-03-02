@@ -49,6 +49,14 @@ extern s32 PutString(s32, const char *, ...);
 void LoaderSysSendAbort(void);
 void loaderExecResetCallback(void);
 
+typedef struct unk_stack_40 {
+    struct t_xffEntPntHdr* unk0;
+    int unk4;
+    struct t_xffRelocEnt *unk8;
+    int unkC;
+} unk_stack_40;
+typedef int (dispose_reloc_func)(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt*, unk_stack_40*);
+
 struct unk
 {
     s32 unk0;
@@ -505,7 +513,27 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", FreeDecodedSection);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", RelocateSelfSymbol);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", DisposeRelocationElement);
+extern char D_00131DB8[];
+void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2) {
+    s32 i;   
+    s32 reloc_count;
+    s32 total_relocs;
+
+    if (xffEp->ident == *(u32*)GSTR(&D_00131DB8, "XFF2")) {
+        reloc_count = xffEp->relocTabNrE >> 1;
+        
+        total_relocs = 0x0;
+        for (i = 0; i < reloc_count; i++) {
+            total_relocs += xffEp->relocTab[i].nrEnt;
+        }
+        
+        arg1(xffEp, &xffEp->relocTab->addr[total_relocs], arg2);
+         
+        for (i = 0; i < reloc_count; i++) {
+            xffEp->relocTab[reloc_count + i].nrEnt = 0;
+        }
+    }
+}
 
 void SetHeapStartPoint(u32 start_address)
 {
