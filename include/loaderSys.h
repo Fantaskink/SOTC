@@ -45,6 +45,7 @@ void func_00101AA0(void);
 s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
 void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
 void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
+void initmemprintf(s32, s32);
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
@@ -54,6 +55,47 @@ extern const char D_00131DB8[]; // "XFF2"
 extern const char D_0013A118[]; // "\"%s\""
 extern const char D_0013A120[]; // "... "
 extern const char D_0013A128[]; // "Done.\n"
+
+// Legitimate Static inlines
+static inline int LoaderSysGetStackBase() {
+    int ret;
+    asm volatile (
+        "lui   %0,%%hi(_stack)\n" "nop\n"
+        "addiu %0,%%lo(_stack)\n" "nop\n"
+        : "=r"(ret) :
+    );
+    return ret;
+}
+
+static inline int LoaderSysGetStackSize() {
+    int ret;
+    asm volatile (
+        "lui   %0,%%hi(_stack_size)\n" "nop\n"
+        "addiu %0,%%lo(_stack_size)\n" "nop\n"
+        : "=r"(ret) :
+    );
+    return ret;
+}
+
+static inline int LoaderSysGetHeapBase() {
+    int ret;
+    asm volatile (
+        "lui   %0,%%hi(_end)\n" "nop\n"
+        "addiu %0,%%lo(_end)\n" "nop\n"
+        : "=r"(ret) :
+    );
+    return ret;
+}
+
+static inline int LoaderSysGetHeapSize() {
+    int ret;
+    asm volatile (
+        "lui   %0,%%hi(_heap_size)\n" "nop\n"
+        "addiu %0,%%lo(_heap_size)\n" "nop\n"
+        : "=r"(ret) :
+    );
+    return ret;
+}
 
 // TODO: merge these
 static inline s32 __inline__checkExistString(char *string, char **strings)

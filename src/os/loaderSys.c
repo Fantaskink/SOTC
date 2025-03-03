@@ -1380,9 +1380,51 @@ void loaderLoop(void)
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", main);
+extern char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
+s32 main(s32 argc, char** argv) {
+    register void* sp asm("sp");
+    s32 i;
+    s32 r;
+    s32 heap;
+    s32 heap_size;
 
-extern const char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
+    printf("ld: start: argc:%d \n", argc);
+
+    for (i = 0; i < argc; i++) {
+        printf("ld: \targc %d: %s\n", i, argv[i]);
+    }
+
+    if (argc != 0) {
+        strncpy(D_0013D110, argv[0], 16);
+        D_0013D110[15] = 0;
+    } else {
+        D_0013D110[0] = 0;
+    }
+
+    D_0013A184 = GetThreadId();
+    InitDisp();
+    initmemprintf(0x2000000, 0x7ffff00);
+    func_001033B0();
+
+    heap = LoaderSysGetHeapBase();
+    heap_size = LoaderSysGetHeapSize();
+    D_0013A110 = ALIGN(heap + heap_size, 0x10);
+
+    InitException();
+    LoaderSysInitExternalIntcHandlerList();
+    LoaderSysInitExternalThreadList();
+    LoaderSysInitExternalSemaList();
+    LoaderSysInitExternalIopMemoryList();
+    ChangeThreadPriority(D_0013A184, 1);
+    PutStringS(0xFFFFFF00, "\nInitialize loader complete.\n\n\0");
+    D_0013A180 = (s32)sp;
+    loaderLoop();
+
+    return 0;
+}
+
+// TODO: Why is this needed?
+char padding[8] __attribute__((section(".rodata")));
 
 const char *LoaderSysGetBootArg(void)
 {
@@ -1480,6 +1522,6 @@ s32 imemprintf(const char *in, ...)
 {
 }
 
-void initmemprintf(void)
+void initmemprintf(s32 a, s32 b)
 {
 }
