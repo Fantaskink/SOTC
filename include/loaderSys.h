@@ -36,6 +36,7 @@ typedef int (ldrDbgPrintf_func)(const char *, ...);
 
 s32 LoaderSysPrintf(const char *format, ...);
 extern void PutString(s32, const char *, ...);
+extern void PutStringS(s32, const char *, ...);
 void LoaderSysSendAbort(void);
 void loaderExecResetCallback(void);
 s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);
@@ -46,6 +47,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
 void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
 void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
 void initmemprintf(s32, s32);
+// s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"

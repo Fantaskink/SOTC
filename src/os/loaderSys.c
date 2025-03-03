@@ -550,7 +550,57 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
     return xffEp;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
+typedef struct unk_00131D00_s {
+    char data[0x40];
+    s32 unk40;
+    s32 unk44;
+} unk_00131D00_s;
+extern struct unk_00131D00_s D_00131D00;
+extern const char D_00139F60[];
+
+// TODO: moving this declaration breaks setNewIopIdentifier (?)
+s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
+s32 func_001013C8(const char* filename) {
+    struct sce_stat stat;
+    s32 result;
+    u64 size;
+    int i;
+    char* p;
+
+    D_00131D00.unk40 = 0x4000;
+
+    result = LoaderSysGetstat(filename, &stat);
+    if (result != 0) {
+        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, result);
+        return 0;
+    }
+        
+    result = LoaderSysFOpen(filename, 1, 0);
+    if (result < 0) {
+        D_00131D00.data[0] = '\0';
+        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, result);
+        return 0;
+    } 
+        
+    size = (u64)stat.st_hisize << 32 | (u64)stat.st_size;
+
+    LoaderSysFRead(result, D_00131D00.data, size);
+    LoaderSysFClose(result);
+
+    D_00131D00.data[size] = '\0';
+    D_00131D00.data[64 - 1] = '\0';
+
+    p = D_00131D00.data;
+    for (i = 0; i < size; i++) {
+        if (p[i] == ' ') {
+            p[i] = '\0';
+            sscanf(&p[i+1], GSTR(D_00139F60, "0x%x"), &D_00131D00.unk40);
+            break;
+        }
+    }
+    
+    return (u32)&D_00131D00;
+}
 
 s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
     return __inlined_LoaderSysRelocateOnlineElfInfo(xffEp, arg1, arg2, arg3, arg4);
@@ -1186,7 +1236,6 @@ void setNewIopIdentifier(const char *newIdentifier)
 
 extern s32 sceSifInitRpc(s32);
 extern s32 sceSifInitIopHeap(void);
-extern void PutStringS(s32, const char *, ...);
 extern s32 sceCdInit(s32);
 extern s32 sceCdMmode(s32);
 extern s32 sceSifRebootIop(const char *);
