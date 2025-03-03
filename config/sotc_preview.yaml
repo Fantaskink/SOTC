@@ -27,7 +27,6 @@ options:
 
     migrate_rodata_to_functions: True
     use_gp_rel_macro_nonmatching: False
-    include_macro_inc: False
     
     string_encoding: EUC-JP
     rodata_string_guesser_level: 2 # improve string detection
