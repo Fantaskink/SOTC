@@ -524,7 +524,15 @@ struct t_xffEntPntHdr* func_00100D48(char* module_path) {
     return xffEp;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", MoveElf);
+void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
+    LoaderSysPrintf("%p: %x => %p\n", xffEp, xffEp->stack_Rel, arg1);
+    xffEp = memmove(arg1, xffEp, xffEp->stack_Rel);
+    FlushCache(0);
+    __inlined_LoaderSysRelocateOnlineElfInfo(xffEp, &mallocAlignMempool, &mallocAlign0x100Mempool, &func_00101AA0, &LoaderSysPrintf);  
+    FlushCache(0);
+    LoaderSysPrintf("entry: %p\n", xffEp->entryPnt);
+    return xffEp;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
 
