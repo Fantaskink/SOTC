@@ -41,6 +41,13 @@ struct unk
     s32 unk4;
 };
 
+typedef struct {
+	union {
+		u128 q;
+		u64 d[2];
+		u32 s[4];
+	};
+} qword;
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136200);
 
@@ -723,7 +730,59 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136830);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136840);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00101EC0);
+extern const char D_0013A0F0[];
+extern qword D_0013B900;
+
+// TODO: Get rid of this
+const char D_00136850[] = "     %s:%08x %s:%08x %s:%08x %s:%08x \n";
+
+void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_except_s* ctx, u32 mode)
+{
+    s32 i;
+    s32 j;
+
+    switch (mode) {
+        case 0:
+            PutString(0xFFC04000, "      %s\n\n", D_00131E00[except_code].name);
+            PutString(0x40FFC000, "   pc:%08x ", epc);
+            PutString(0x40C0FF00, "bva:%08x bpa:%08x ", bva, bpa);
+            PutString(0xC0C0C000, "cause:%08x\n", cause);
+            PutString(0xFFFFFF00, GSTR(D_0013A0F0, "\n"));
+
+            // dump registers
+            for (j = 0; j < 8; j++) {
+                PutString(0x80A0C000, GSTR(D_00136850, "     %s:%08x %s:%08x %s:%08x %s:%08x \n"),
+                    ctx[(j * 4) + 0].name, ctx[(j * 4) + 0].value,
+                    ctx[(j * 4) + 1].name, ctx[(j * 4) + 1].value,
+                    ctx[(j * 4) + 2].name, ctx[(j * 4) + 2].value,
+                    ctx[(j * 4) + 3].name, ctx[(j * 4) + 3].value
+                );
+            }
+            break;
+
+        case 1:
+            for (i = 0; i < 16; i++) {
+                D_0013B900.q = ctx[i].value;
+                PutString(0xFFFFFF00, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n",
+                    ctx[i].name,
+                    D_0013B900.s[3], D_0013B900.s[2],
+                    D_0013B900.s[1], D_0013B900.s[0]
+                );
+            }
+            break;
+
+        case 2:
+            for (i = 0; i < 16; i++) {
+                D_0013B900.q = ctx[i + 0x10].value;
+                PutString(0xFFFFFF00, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n",
+                    ctx[i + 0x10].name,
+                    D_0013B900.s[3], D_0013B900.s[2],
+                    D_0013B900.s[1], D_0013B900.s[0]
+                );
+            }
+            break;
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", InitException);
 
@@ -736,7 +795,6 @@ void setCop0Epc(int epc) {
     );
 }
 
-extern const char D_0013A0F0[];
 void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr) {
     register void* gp asm("gp");
     s32 th_id;
