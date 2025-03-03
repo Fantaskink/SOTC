@@ -560,7 +560,7 @@ extern const char D_00139F60[];
 
 // TODO: moving this declaration breaks setNewIopIdentifier (?)
 s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
-s32 func_001013C8(const char* filename) {
+unk_00131D00_s* func_001013C8(const char* filename) {
     struct sce_stat stat;
     s32 result;
     u64 size;
@@ -599,7 +599,7 @@ s32 func_001013C8(const char* filename) {
         }
     }
     
-    return (u32)&D_00131D00;
+    return &D_00131D00;
 }
 
 s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
@@ -736,14 +736,14 @@ s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, 
 
 extern s32 D_00139F00;
 extern const char D_001364D0[];
-void _execProgWithThread(char* module_path) {
+void _execProgWithThread(void* module_path) {
     s32 (*module_entry)(s32, void*);
     s32 text_nop;
     s32 th_id;
     struct t_xffEntPntHdr* xffEp;
 
     th_id = GetThreadId();
-    xffEp = func_00100D48(module_path);
+    xffEp = func_00100D48((char*)module_path);
 
     if (xffEp != NULL) {
         D_00139F00 = (s32)D_00139F04;
@@ -763,7 +763,27 @@ void _execProgWithThread(char* module_path) {
     ExitDeleteThread();
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", execProgWithThread);
+s32 execProgWithThread(const char* filename, s32 priority) {
+    s32 th_id;
+    unk_00131D00_s* prog_info;
+
+    prog_info = func_001013C8(filename);
+    if (prog_info != NULL) {
+        struct ThreadParam prog_thread = {
+            .entry = _execProgWithThread,
+            .stack = __inlined_mallocAlignMempool(prog_info->unk40, 0x10),
+            .gpReg = &_gp,
+            .initPriority = priority,
+            .stackSize = prog_info->unk40
+        };
+        
+        th_id = CreateThread(&prog_thread);
+        LoaderSysEntryExternalThreadList(th_id);
+        StartThread(th_id, prog_info);
+        return (s32)prog_thread.stack;
+    }
+    
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136630);
 
