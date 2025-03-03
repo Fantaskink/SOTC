@@ -553,7 +553,7 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
 typedef struct unk_00131D00_s {
     char data[0x40];
     s32 unk40;
-    s32 unk44;
+    struct t_xffEntPntHdr* unk44;
 } unk_00131D00_s;
 extern struct unk_00131D00_s D_00131D00;
 extern const char D_00139F60[];
@@ -734,7 +734,34 @@ s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, 
     return 0;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", _execProgWithThread);
+extern s32 D_00139F00;
+extern const char D_001364D0[];
+void _execProgWithThread(char* module_path) {
+    s32 (*module_entry)(s32, void*);
+    s32 text_nop;
+    s32 th_id;
+    struct t_xffEntPntHdr* xffEp;
+
+    th_id = GetThreadId();
+    xffEp = func_00100D48(module_path);
+
+    if (xffEp != NULL) {
+        D_00139F00 = (s32)D_00139F04;
+        module_entry = xffEp->entryPnt;
+        D_00131D00.unk44 = xffEp;
+        text_nop = LoaderSysGetTextNopBase();
+        
+        FlushCache(WRITEBACK_DCACHE);
+        FlushCache(INVALIDATE_ICACHE);
+    
+        LoaderSysPrintf(GSTR(D_001364D0, "ld:\texecute entry point(%p) as h10kmode(id:%x)\n"), module_entry, text_nop);
+        module_entry(1, (void*)text_nop);
+    } else {
+        PutStringS(0xFF804000, "Can't execute, because map fail.\n");
+    }
+    LoaderSysDeleteExternalThreadList(th_id);
+    ExitDeleteThread();
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", execProgWithThread);
 

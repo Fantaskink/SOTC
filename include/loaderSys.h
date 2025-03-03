@@ -59,6 +59,17 @@ extern const char D_0013A120[]; // "... "
 extern const char D_0013A128[]; // "Done.\n"
 
 // Legitimate Static inlines
+// TODO: This points to a custom section, so this should be a linker symbol
+static inline int LoaderSysGetTextNopBase() {
+    int ret;
+    asm volatile (
+        "lui   %0,%%hi(func_00131CAC)\n" "nop\n"
+        "addiu %0,%%lo(func_00131CAC)\n" "nop\n"
+         : "=r"(ret) :
+    );
+    return ret;
+}
+
 static inline int LoaderSysGetStackBase() {
     int ret;
     asm volatile (
