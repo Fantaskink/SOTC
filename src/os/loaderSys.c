@@ -544,7 +544,28 @@ s32 RelocateCode(struct t_xffEntPntHdr* xffEp) {
     return __inlined_RelocateCode(xffEp);
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", FreeDecodedSection);
+s32 FreeDecodedSection(struct t_xffEntPntHdr* xffEp, char (*arg1)(void*)) {
+    s32 i;
+
+    while (xffEp != 0x0) {
+        for (i = 1; i < xffEp->sectNrE; i++) {
+            struct t_xffSectEnt* st = &xffEp->sectTab[i];
+            if (st->moved) {
+                st->moved = 0;
+                arg1(st->memPt);
+            }
+        }
+
+        if (xffEp->nextXffHdr == 0x0) {
+            xffEp = 0x0;
+        } else {
+            printf(GSTR(D_00136200, "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"), ((u32)xffEp + xffEp->nextXffHdr));
+            xffEp = (struct t_xffEntPntHdr *)((u32)xffEp + xffEp->nextXffHdr);
+        }
+    }
+
+    return 1;
+}
 
 s32 RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1) {
     return __inlined_RelocateSelfSymbol(xffEp, arg1);
