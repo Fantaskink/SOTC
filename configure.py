@@ -10,8 +10,6 @@ import re
 from pathlib import Path
 from typing import Dict, List, Set, Union
 
-from fix_gp import main as fix_gp_main
-
 import ninja_syntax
 
 import splat
@@ -274,9 +272,6 @@ if __name__ == "__main__":
     build_stuff(linker_entries)
 
     write_permuter_settings()
-
-    if not split.config["options"]["use_gp_rel_macro_nonmatching"]:
-        fix_gp_main()
 
     if not args.no_short_loop_workaround:
         replace_instructions_with_opcodes(split.config["options"]["asm_path"])
