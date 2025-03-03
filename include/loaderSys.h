@@ -48,6 +48,9 @@ void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf
 void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
 void initmemprintf(s32, s32);
 // s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
+void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
+void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
+s32 main(s32 argc, char** argv);
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"

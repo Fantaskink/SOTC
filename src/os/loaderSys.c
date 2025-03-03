@@ -881,7 +881,33 @@ void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_ex
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", InitException);
+void InitException(void) {
+    register void* sp asm("sp");
+    s32 i;
+    
+    for (i = 0; i < 14u; i++) {
+        switch (i) {
+        case 0: // No exception
+        case 8: // System call exception
+            break;
+        case 9: // Breakpoint exception
+            SetDebugHandler(D_00131E00[i].value, func_00102360);
+            break;
+        default: // Other exceptions
+            SetDebugHandler(D_00131E00[i].value, func_001021E0);
+            break;
+        }
+    }
+
+    // TODO: This works, but maybe the array is 1D?
+    for (i = 0; i < 64; i++) {
+        D_00131E80[0][i].value = 0;
+    }
+
+    D_00131E80[0][MIPS_REG_SP].value = (u32)sp;
+    D_00131E80[0][MIPS_REG_RA].value = (u32)&main;
+    D_00131E80[1][COP0_REG_EPC].value = (u32)&main;
+}
 
 void setCop0Epc(int epc) {
     asm (
