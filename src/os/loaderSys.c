@@ -552,7 +552,7 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
 
 typedef struct unk_00131D00_s {
     char data[0x40];
-    s32 unk40;
+    s32 stack_size;
     struct t_xffEntPntHdr* unk44;
 } unk_00131D00_s;
 extern struct unk_00131D00_s D_00131D00;
@@ -562,30 +562,30 @@ extern const char D_00139F60[];
 s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
 unk_00131D00_s* func_001013C8(const char* filename) {
     struct sce_stat stat;
-    s32 result;
+    s32 th_id;
     u64 size;
-    int i;
+    s32 i;
     char* p;
 
-    D_00131D00.unk40 = 0x4000;
+    D_00131D00.stack_size = 0x4000;
 
-    result = LoaderSysGetstat(filename, &stat);
-    if (result != 0) {
-        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, result);
+    th_id = LoaderSysGetstat(filename, &stat);
+    if (th_id != 0) {
+        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
         return 0;
     }
         
-    result = LoaderSysFOpen(filename, 1, 0);
-    if (result < 0) {
+    th_id = LoaderSysFOpen(filename, 1, 0);
+    if (th_id < 0) {
         D_00131D00.data[0] = '\0';
-        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, result);
+        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
         return 0;
     } 
         
     size = (u64)stat.st_hisize << 32 | (u64)stat.st_size;
 
-    LoaderSysFRead(result, D_00131D00.data, size);
-    LoaderSysFClose(result);
+    LoaderSysFRead(th_id, D_00131D00.data, size);
+    LoaderSysFClose(th_id);
 
     D_00131D00.data[size] = '\0';
     D_00131D00.data[64 - 1] = '\0';
@@ -594,7 +594,7 @@ unk_00131D00_s* func_001013C8(const char* filename) {
     for (i = 0; i < size; i++) {
         if (p[i] == ' ') {
             p[i] = '\0';
-            sscanf(&p[i+1], GSTR(D_00139F60, "0x%x"), &D_00131D00.unk40);
+            sscanf(&p[i+1], GSTR(D_00139F60, "0x%x"), &D_00131D00.stack_size);
             break;
         }
     }
@@ -771,10 +771,10 @@ s32 execProgWithThread(const char* filename, s32 priority) {
     if (prog_info != NULL) {
         struct ThreadParam prog_thread = {
             .entry = _execProgWithThread,
-            .stack = __inlined_mallocAlignMempool(prog_info->unk40, 0x10),
+            .stack = __inlined_mallocAlignMempool(prog_info->stack_size, 0x10),
             .gpReg = &_gp,
             .initPriority = priority,
-            .stackSize = prog_info->unk40
+            .stackSize = prog_info->stack_size
         };
         
         th_id = CreateThread(&prog_thread);
