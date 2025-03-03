@@ -1,3 +1,6 @@
+#ifndef XFF_TPYE_H
+#define XFF_TPYE_H
+
 #include "common.h"
 
 /*
@@ -627,3 +630,5 @@ struct t_xffEntPntHdr
 in DBGMGR there where absolute addresses apper on loading,
 the values from the start of the file are +0x40010000 and some are +0x00010000
 */
+
+#endif /* XFF_TPYE_H */
