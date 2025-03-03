@@ -924,7 +924,30 @@ void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr) {
     LoaderSysJumpRecoverPointNoStateSetting("recovering from exception...\n");
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00102360);
+void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr)
+{
+    register void* gp asm("gp");
+    s32 th_id;
+    s32 i;
+
+    th_id = GetThreadId();
+    gp = &_gp;
+
+    LoaderSysExecuteRecoveryFirstProcess();
+    ChangeThreadPriority(th_id, 0x7F);
+    EIntr();
+    LoaderSysPrintf(ANSI_YELLOW "exception" ANSI_RESET ": break instruction appeared.(threadid:%d)\n", th_id);
+
+    for (i = 0; i < 32; i++) {
+        D_00131E80[0][i].value = gpr[i];
+        D_00131E80[1][i].value = iGetCop0(i);
+    }
+
+    D_00131E80[1][COP0_REG_CAUSE].value = cause;
+    D_00131E80[1][COP0_REG_EPC].value = epc;
+
+    LoaderSysJumpRecoverPointNoStateSetting("recovering from break...\n");
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalIntcHandler);
 
