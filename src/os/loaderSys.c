@@ -26,14 +26,16 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
-int LoaderSysPrintf(const char *format, ...);
+s32 LoaderSysPrintf(const char *format, ...);
 extern s32 PutString(s32, const char *, ...);
 void LoaderSysSendAbort(void);
 void loaderExecResetCallback(void);
 s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);
-s32 mallocAlignMempool(s32, u32);
-s32 mallocAlign0x100Mempool(s32);
+void* mallocAlignMempool(s32, u32);
+void* mallocAlign0x100Mempool(s32);
 void func_00101AA0(void);
+s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
+void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
 
 struct unk
 {
@@ -153,9 +155,9 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136308);
 
 void DecodeSection(
     void *xffBuf,
-    void *(*mallocAlign)(s32 sz, s32 align),
-    void *(*mallocMaxAlign)(s32 sz),
-    void (*ldrDbgPrintf)(char *fmt, ...))
+    mallocAlign_func* mallocAlign,
+    mallocMaxAlign_func* mallocMaxAlign,
+    ldrDbgPrintf_func* ldrDbgPrintf)
 {
     s32 i;
     struct t_xffEntPntHdr *xffEp;
@@ -318,7 +320,7 @@ static inline void LoaderSysFWriteString(s32 fd, char* str, s32 flush) {
     }
 }
 
-s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, void (*callback)(void*)) {
+s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, ldrDbgPrintf_func* callback) {
     char buffer[1000];
     char pad[16];
     s32 linker_fd;
@@ -326,7 +328,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, v
     s32 section;
 
     if (callback != NULL) {
-        callback("ld:\toutput linker script " ANSI_GREEN "\"%s\"" ANSI_RESET ".\n");
+        callback("ld:\toutput linker script " ANSI_GREEN "\"%s\"" ANSI_RESET ".\n", ld_script_path);
     }
     
     D_0013A300 = linker_fd = LoaderSysFOpen(ld_script_path, SCE_CREAT | SCE_TRUNC | SCE_WRONLY, 0);
@@ -451,19 +453,87 @@ void LoaderSysJumpRecoverPointNoStateSetting(int format, ...) {
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00100D48);
-
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364A8);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364D0);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136500);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136548);
+extern const char D_00139F58[];
+struct t_xffEntPntHdr* func_00100D48(char* module_path) {
+    s32 fid;
+    u8* chr_p;
+    struct sce_stat fstat;
+    unk_stack_40 sp40;
+    char linkfile_path[0x400];
+    s32 i;
+    s32 j;
+    s32 rcount;
+    struct t_xffEntPntHdr* xffEp;
+    struct t_xffRelocEnt *rt;
+    u64 size;
+    s32 chksum;
+    typedef void (vLoaderSysPrintf)(char*, ...);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136560);
+    LoaderSysPrintf("ld:\tload module \"%s\"\n", module_path);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136588);
+    fid = LoaderSysGetstat(module_path, &fstat);
+    if (fid != 0x0) {
+        PutString(0xffffff00, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
+        return NULL;
+    }
+
+    fid = LoaderSysFOpen(module_path, 0x1, 0x0);
+    if (fid < 0x0) {
+        PutString(0xffffff00, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
+        return NULL;
+    }
+
+    size = ((long)fstat.st_hisize << 32) | fstat.st_size;
+    xffEp = (void*)__inlined_mallocAlignMempool(size, 0x40);
+    LoaderSysFRead(fid, xffEp, (u32)size);
+    LoaderSysFClose(fid);
+    
+    chksum = 0x0;
+    chr_p = (u8*)xffEp;
+    for (i = size; i--;) {
+        chksum += *chr_p++;
+    }
+
+    // Is this (somehow) an inline? This call needs to return void 
+    ((vLoaderSysPrintf*)&LoaderSysPrintf)("ld:\t\t0x%08x - 0x%08x (0x%08x:%x)\n", xffEp, ((s32)xffEp + (s32)size), size, chksum);
+    
+    sp40.unk8 = (struct t_xffRelocEnt*)0x1000000;
+    sp40.unkC = (void*)0x1100000;
+    sp40.unk0 = xffEp;
+    sp40.unk4 = 0;
+    
+    RelocateElfInfoHeader(xffEp);
+    __inlined_DisposeRelocationElement(xffEp, &func_00101B88, &sp40);    
+    DecodeSection(xffEp, &mallocAlignMempool, &mallocAlign0x100Mempool, &LoaderSysPrintf);
+    __inlined_RelocateSelfSymbol(xffEp, &func_00101AA0);
+    __inlined_RelocateCode(xffEp);
+
+    // inline?
+    rt = &sp40.unk8[0];
+    for (rcount = sp40.unk4; rcount--; rt++) {
+        switch (rt->type) {
+            case 4:
+            case 9:
+            {
+                int count = rt->nrEnt;
+                for (j = 0; j < count; j++) {
+                    ResolveRelocation(xffEp, rt, j);
+                }
+            }
+            break;
+        }
+    }
+    
+    sprintf(linkfile_path, GSTR(D_00139F58, "%s.cmd"), module_path);
+    OutputLinkerScriptFile(xffEp, linkfile_path, &LoaderSysPrintf);
+    return xffEp;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", MoveElf);
 
@@ -487,12 +557,12 @@ void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* 
 
 void SetHeapStartPoint(u32 start_address)
 {
-    HEAP_START = (start_address + 0xF) & ~0xF;
+    HEAP_START = (void*)((start_address + 0xF) & ~0xF);
 }
 
 s32 GetHeapCurrentPoint(void)
 {
-    return HEAP_START;
+    return (u32)HEAP_START;
 }
 
 extern int D_0013A184;
@@ -515,11 +585,11 @@ void func_00101AA0(void) {
     LoaderSysJumpRecoverPoint(GSTR(D_001364A8, "undefined function call from %p.\n"), ra - 8);
 }
 
-s32 mallocAlignMempool(s32 size, u32 align) {
+void* mallocAlignMempool(s32 size, u32 align) {
    return __inlined_mallocAlignMempool(size, align);
 }
 
-s32 mallocAlign0x100Mempool(s32 size) {
+void* mallocAlign0x100Mempool(s32 size) {
     return __inlined_mallocAlignMempool(size, 0x100);
 }
 
@@ -573,7 +643,7 @@ s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, 
     LoaderSysPrintf(GSTR(D_00136500, "ld:\t\t\tsplit at %p : (duplicate relinfo to %p-%p / reldata to %p-%p)\n"), arg1, arg2->unk8, trel_ent, arg2->unkC, data_p);
     
     arg2->unk4 = count;
-    D_00139F04 = (s32)arg1;
+    D_00139F04 = arg1;
     
     return 0;
 }

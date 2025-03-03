@@ -18,7 +18,7 @@
 #define ANSI_BLUE "\x1b[34m"
 #define ANSI_RESET "\x1b[m"
 
-extern u32 D_00139F04; // heap pointer
+extern void* D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
 #define MAX_RESET_CALLBACKS 10
 
@@ -29,6 +29,9 @@ typedef struct unk_stack_40 {
     void* unkC;
 } unk_stack_40;
 typedef int (dispose_reloc_func)(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt*, unk_stack_40*);
+typedef void*(mallocAlign_func)(s32, u32);
+typedef void*(mallocMaxAlign_func)(s32);
+typedef int (ldrDbgPrintf_func)(const char *, ...);
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
@@ -56,9 +59,9 @@ static inline s32 __inline__checkExistString(char *string, char **strings)
     return 0;
 }
 
-static inline s32 __inlined_mallocAlignMempool(s32 size, u32 align) {
-    int result = ((D_00139F04 + align - 1) / align) * align;
-    D_00139F04 = result + size;
+static inline void* __inlined_mallocAlignMempool(s32 size, u32 align) {
+    void* result = (void*)((((u32)D_00139F04 + align - 1) / align) * align);
+    D_00139F04 = (void*)((u32)result + size);
     return result;
 }
 
