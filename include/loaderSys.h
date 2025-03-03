@@ -15,6 +15,7 @@
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_GREEN "\x1b[32m"
+#define ANSI_YELLOW "\x1b[33m"
 #define ANSI_BLUE "\x1b[34m"
 #define ANSI_RESET "\x1b[m"
 
@@ -34,7 +35,7 @@ typedef void*(mallocMaxAlign_func)(s32);
 typedef int (ldrDbgPrintf_func)(const char *, ...);
 
 s32 LoaderSysPrintf(const char *format, ...);
-extern s32 PutString(s32, const char *, ...);
+extern void PutString(s32, const char *, ...);
 void LoaderSysSendAbort(void);
 void loaderExecResetCallback(void);
 s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);

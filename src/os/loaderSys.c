@@ -1,6 +1,7 @@
 #include "common.h"
 #include "loaderSys.h"
 #include "fl_xfftype.h"
+#include "regnames.h"
 #include "gcc/string.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
@@ -25,6 +26,14 @@ extern s32 D_0013BD10[MAX_SEMAPHORES];
 extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
+
+typedef struct unk_except_s {
+    u32 value;
+    char* name;
+} unk_except_s;
+
+extern unk_except_s D_00131E00[14];
+extern unk_except_s D_00131E80[2][32];
 
 struct unk
 {
@@ -427,7 +436,7 @@ void func_00100A58(void) {
 }
 
 extern char D_0013B4C8[];
-void LoaderSysJumpRecoverPointNoStateSetting(int format, ...) {
+void LoaderSysJumpRecoverPointNoStateSetting(char* format, ...) {
     register void* gp asm("gp");
     va_list args;
     gp = (void*)&_gp;
@@ -727,7 +736,38 @@ void setCop0Epc(int epc) {
     );
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001021E0);
+extern const char D_0013A0F0[];
+void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr) {
+    register void* gp asm("gp");
+    s32 th_id;
+    s32 except_code;
+    s32 i;
+
+    except_code = COP0_CAUSE_GET_EXCEPT_CODE(cause);
+    th_id = GetThreadId();
+    gp = &_gp;
+    
+    LoaderSysExecuteRecoveryFirstProcess();
+    ChangeThreadPriority(th_id, 0x7f);
+    EIntr();
+    LoaderSysPrintf(ANSI_YELLOW "exception" ANSI_RESET ": exceptional abort.(threadid:%d)\n", th_id);
+
+    for (i = 0; i < 32; i++) {
+        D_00131E80[0][i].value = gpr[i];
+        D_00131E80[1][i].value = iGetCop0(i);
+    }
+    
+    D_00131E80[1][COP0_REG_CAUSE].value = cause;
+    D_00131E80[1][COP0_REG_EPC].value = epc;
+    
+    PutString(0xffffff00, GSTR(D_0013A0F0, "\n"));
+    PutString(0xff802000, "     -----------------------------------------------\n");
+    PutString(0xff802000, "           ios reports critical error message.\n");
+    PutString(0xff802000, "     -----------------------------------------------\n");
+    PutString(0xff603000, GSTR(D_0013A0F0, "\n"));
+    func_00101EC0(except_code, cause, epc, bva, bpa, (unk_except_s*)&D_00131E80, 0x0);
+    LoaderSysJumpRecoverPointNoStateSetting("recovering from exception...\n");
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00102360);
 

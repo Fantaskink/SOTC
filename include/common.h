@@ -7,11 +7,13 @@ typedef char s8;
 typedef short s16;
 typedef int s32;
 typedef long s64;
+typedef long s128  __attribute__((mode(TI)));
 
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long u64;
+typedef unsigned long u128  __attribute__((mode(TI)));
 
 typedef unsigned int u_long128 __attribute__((mode(TI)));
 
