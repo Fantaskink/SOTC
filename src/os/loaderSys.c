@@ -718,7 +718,14 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_00101EC0);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", InitException);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", setCop0Epc);
+void setCop0Epc(int epc) {
+    asm (
+        // apparently this isn't a supported opcode?
+        // "mtc0 %0, 0\n"
+        ".word 0x40847000\n"
+        :: "r"(epc)
+    );
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001021E0);
 
