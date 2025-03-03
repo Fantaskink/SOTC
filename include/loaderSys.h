@@ -33,6 +33,18 @@ typedef void*(mallocAlign_func)(s32, u32);
 typedef void*(mallocMaxAlign_func)(s32);
 typedef int (ldrDbgPrintf_func)(const char *, ...);
 
+s32 LoaderSysPrintf(const char *format, ...);
+extern s32 PutString(s32, const char *, ...);
+void LoaderSysSendAbort(void);
+void loaderExecResetCallback(void);
+s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);
+void* mallocAlignMempool(s32, u32);
+void* mallocAlign0x100Mempool(s32);
+void func_00101AA0(void);
+s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
+void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
+void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
+
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
 
@@ -149,6 +161,16 @@ static inline void __inlined_DisposeRelocationElement(struct t_xffEntPntHdr* xff
             xffEp->relocTab[reloc_count + i].nrEnt = 0;
         }
     }
+}
+
+static inline s32 __inlined_LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
+
+    RelocateElfInfoHeader(xffEp);
+    DecodeSection(xffEp, arg1, arg2, arg4);
+    __inlined_RelocateSelfSymbol(xffEp, arg3);
+    __inlined_RelocateCode(xffEp);
+    
+    return 1;
 }
 
 #endif /* LOADERSYS_H */

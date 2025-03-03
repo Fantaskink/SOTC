@@ -26,17 +26,6 @@ extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
-s32 LoaderSysPrintf(const char *format, ...);
-extern s32 PutString(s32, const char *, ...);
-void LoaderSysSendAbort(void);
-void loaderExecResetCallback(void);
-s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);
-void* mallocAlignMempool(s32, u32);
-void* mallocAlign0x100Mempool(s32);
-void func_00101AA0(void);
-s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
-void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
-
 struct unk
 {
     s32 unk0;
@@ -539,7 +528,9 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", MoveElf);
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", func_001013C8);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysRelocateOnlineElfInfo);
+s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
+    return __inlined_LoaderSysRelocateOnlineElfInfo(xffEp, arg1, arg2, arg3, arg4);
+}
 
 s32 RelocateCode(struct t_xffEntPntHdr* xffEp) {
     return __inlined_RelocateCode(xffEp);
