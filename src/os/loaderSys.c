@@ -18,12 +18,6 @@ typedef struct unk_except_s {
 extern unk_except_s D_00131E00[14];
 extern unk_except_s D_00131E80[2][32];
 
-struct unk
-{
-    s32 unk0;
-    s32 unk4;
-};
-
 typedef struct {
 	union {
 		u128 q;
@@ -958,7 +952,19 @@ void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr)
     LoaderSysJumpRecoverPointNoStateSetting("recovering from break...\n");
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalIntcHandler);
+void LoaderSysDeleteAllExternalIntcHandler(void) {
+    s32 i;
+
+    for (i = 0; i < 0x100; i++) {
+        if (D_0013C110[i].unk4 >= 0) {
+            DisableIntc(D_0013C110[i].unk0);
+            RemoveIntcHandler(D_0013C110[i].unk0, D_0013C110[i].unk4);
+            D_0013C110[i].unk0 = D_0013C110[i].unk4 = -1;
+        }
+    }
+    
+    __inlined_LoaderSysInitExternalIntcHandlerList();
+}
 
 extern u32 D_00132080[3];
 static inline s32 LoaderSysCheckSemaAttribueList(s32 sema_id) {
@@ -1091,12 +1097,7 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteExternalIopMemoryLis
 
 void LoaderSysInitExternalIntcHandlerList(void)
 {
-    s32 i;
-
-    for (i = 0; i < MAX_INTC_HANDLERS; i++)
-    {
-        INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
-    }
+    __inlined_LoaderSysInitExternalIntcHandlerList();
 }
 
 void LoaderSysInitExternalSemaList(void)

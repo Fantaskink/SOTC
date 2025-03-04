@@ -24,6 +24,12 @@ extern void* D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
 #define MAX_RESET_CALLBACKS 10
 
+struct unk
+{
+    s32 unk0;
+    s32 unk4;
+};
+
 typedef struct unk_stack_40 {
     struct t_xffEntPntHdr* unk0;
     int unk4;
@@ -308,6 +314,16 @@ static inline void __inlined_LoaderSysInitExternalSemaList(void)
     for (i = 0; i < MAX_SEMAPHORES; i++)
     {
         SEMAPHORE_LIST[i] = -1;
+    }
+}
+
+static inline void __inlined_LoaderSysInitExternalIntcHandlerList(void)
+{
+    s32 i;
+
+    for (i = 0; i < MAX_INTC_HANDLERS; i++)
+    {
+        INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
     }
 }
 
