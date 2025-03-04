@@ -888,10 +888,8 @@ void InitException(void) {
 
 void setCop0Epc(int epc) {
     asm (
-        // apparently this isn't a supported opcode?
-        // "mtc0 %0, 0\n"
-        ".word 0x40847000\n"
-        :: "r"(epc)
+        "mtc0 %0, $%1\n"
+        :: "r"(epc), "i"(COP0_REG_EPC)
     );
 }
 
