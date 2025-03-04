@@ -529,7 +529,7 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
 }
 
 typedef struct unk_00131D00_s {
-    char data[0x40];
+    char path[0x40];
     s32 stack_size;
     struct t_xffEntPntHdr* unk44;
 } unk_00131D00_s;
@@ -555,20 +555,20 @@ unk_00131D00_s* func_001013C8(const char* filename) {
         
     th_id = LoaderSysFOpen(filename, 1, 0);
     if (th_id < 0) {
-        D_00131D00.data[0] = '\0';
+        D_00131D00.path[0] = '\0';
         PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
         return 0;
     } 
         
     size = (u64)stat.st_hisize << 32 | (u64)stat.st_size;
 
-    LoaderSysFRead(th_id, D_00131D00.data, size);
+    LoaderSysFRead(th_id, D_00131D00.path, size);
     LoaderSysFClose(th_id);
 
-    D_00131D00.data[size] = '\0';
-    D_00131D00.data[64 - 1] = '\0';
+    D_00131D00.path[size] = '\0';
+    D_00131D00.path[64 - 1] = '\0';
 
-    p = D_00131D00.data;
+    p = D_00131D00.path;
     for (i = 0; i < size; i++) {
         if (p[i] == ' ') {
             p[i] = '\0';
@@ -1364,7 +1364,26 @@ s32 LoaderSysChstat(const char *name, struct sce_stat *buf, u32 cbit)
     return sceChstat(name, buf, cbit);
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysGetMemoryInfo);
+s32 LoaderSysGetMemoryInfo(memory_info* info) {
+    u32 stack_size;
+    u32 heap_size;
+
+    info->unk18 = (void*)D_00139F00;
+
+    info->stack_base = (void*)LoaderSysGetStackBase();
+    stack_size = LoaderSysGetStackSize();
+    info->heap_base = (void*)LoaderSysGetHeapBase();
+    heap_size = LoaderSysGetHeapSize();
+    
+    info->module_stack_base = info->module_stack_end = (void*)D_0013A114;
+    info->module_stack_end += D_00131D00.stack_size;
+    info->stack_base2 = info->stack_base;
+    info->stack_end = info->stack_base + stack_size;
+    info->heap_end = info->heap_base + heap_size;
+    info->module_info = D_00131D00;
+    
+    return 1;
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A00);
 
@@ -1549,9 +1568,6 @@ void func_001033B0()
 }
 
 s32 end;
-extern s32 D_0013A110;
-extern s32 D_0013A184;
-extern s32 D_0013A114;
 static inline void loaderPrintMessage()
 {
     void *heap_base;

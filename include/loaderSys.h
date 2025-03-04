@@ -37,6 +37,19 @@ typedef struct unk_stack_40 {
     struct t_xffRelocEnt *unk8;
     void* unkC;
 } unk_stack_40;
+
+typedef struct memory_info {
+    void* stack_base;
+    void* stack_end;
+    void* heap_base;
+    void* heap_end;
+    void* module_stack_base;
+    void* module_stack_end;
+    void* unk18;
+    void* stack_base2;
+    unk_00131D00_s module_info;
+} memory_info;
+
 typedef int (dispose_reloc_func)(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt*, unk_stack_40*);
 typedef void*(mallocAlign_func)(s32, u32);
 typedef void*(mallocMaxAlign_func)(s32);
@@ -83,6 +96,10 @@ extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
 extern s32 D_0013A108;        // number of iop modules
 extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
+
+extern s32 D_0013A110;
+extern s32 D_0013A184;
+extern s32 D_0013A114;
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
