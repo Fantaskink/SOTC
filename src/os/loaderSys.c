@@ -4,6 +4,7 @@
 #include "regnames.h"
 #include "gcc/string.h"
 #include "sdk/ee/eekernel.h"
+#include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
 
 extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
@@ -1226,7 +1227,68 @@ s32 LoaderSysPrintf(const char *format, ...)
     return strlen(buffer);
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysLoadIopModuleFromEEBuffer);
+static inline s32 LoaderSysSearchInLoadedIopModules(const char *module_name) {
+    s32 i;
+    for (i = 0; i < D_0013A108; i++) {
+        if (!strcmp((const char*)&D_0013CD10[i], module_name)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+extern const char D_00136A00[];
+extern const char D_00136A48[];
+static inline s32 _loadIopModuleFromEEBuffer(s32 data, s32 module_size, s32 argc, const char* argp)
+{
+    s32 stat;
+    void* module_addr;
+    s32 queue_id;
+    sceSifDmaData dma_data;
+
+    module_size = ALIGN(module_size, 4);
+
+    sceSifInitRpc(0x0);
+    sceSifInitIopHeap();
+    
+    module_addr = sceSifAllocSysMemory(0x1, module_size, NULL);
+    LoaderSysPrintf(GSTR(D_00136A00, "ldsys: _loadIopModuleFromEEBuffer: allocated iop memory:%p(size:%d)\n"), module_addr, module_size);
+    FlushCache(0x0);
+    dma_data.addr = (int)module_addr;
+    dma_data.mode = 0x0;
+    dma_data.data = data;
+    dma_data.size = module_size;
+    queue_id = sceSifSetDma(&dma_data, 0x1);
+    
+    while (-0x1 < sceSifDmaStat(queue_id));
+    
+    LoaderSysPrintf(GSTR(D_00136A48, "ldsys: _loadIopModuleFromEEBuffer: senddma: finish\n"));
+    stat = sceSifLoadModuleBuffer(module_addr, argc, argp);
+    sceSifFreeSysMemory(module_addr);
+    return stat;
+}
+
+extern const char D_00136AC0[];
+s32 LoaderSysLoadIopModuleFromEEBuffer(const char* module_ident, s32 data, s32 module_size, s32 argc, const char* argp) {
+    s32 stat;
+    s32 module_id;
+
+    if (module_ident != 0x0) {
+        module_id = LoaderSysSearchInLoadedIopModules(module_ident);
+        if (module_id < 0x0) {
+            stat = _loadIopModuleFromEEBuffer(data, module_size, argc, argp);
+            if (-0x1 < stat) {
+                __inlined_setNewIopIdentifier(module_ident);
+            }
+        } else {
+            LoaderSysPrintf(GSTR(D_00136AC0, "ldsys: LoaderSysLoadIopModuleFromEEBuffer: iop identifier \"%s\" exists at #%d (load skipped).\n"), module_ident, module_id);
+            return 0x0;
+        }
+    } else {
+        stat = _loadIopModuleFromEEBuffer(data, module_size, argc, argp);
+    }
+    return stat;
+}
 
 s32 LoaderSysCheckCDBootMode()
 {
@@ -1312,9 +1374,6 @@ INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136A80);
 
 INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136AC0);
 
-extern s32 D_0013A108;        // number of iop modules
-extern char D_0013CD10[][16]; // iop module identifiers
-
 void LoaderSysDumpIopModuleIdentifiers(void)
 {
     s32 i;
@@ -1351,8 +1410,6 @@ char *checkHookDesc(char *hook_desc)
     }
     return NULL;
 }
-
-extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n", Referenced in LoaderSysLoadIopModuleFromEEBuffer
 
 void setNewIopIdentifier(const char *newIdentifier)
 {

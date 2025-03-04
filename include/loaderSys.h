@@ -5,6 +5,7 @@
 #include "common.h"
 #include "fl_xfftype.h"
 #include "sdk/ee/eekernel.h"
+#include "gcc/string.h"
 
 #define R_MIPS_NONE (0)
 #define R_MIPS_16 (1)
@@ -73,14 +74,19 @@ extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
 
 #define MAX_INTC_HANDLERS 256
 #define IOP_MEM_LIST_LEN 256
+#define MAX_IOP_IDENTIFIERS 64
 
 extern s32 D_0013BD10[MAX_SEMAPHORES];
 extern s32 D_0013B910[MAX_THREADS];
 extern s32 D_0013C910[IOP_MEM_LIST_LEN];
 extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
+extern s32 D_0013A108;        // number of iop modules
+extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
+
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
+extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n", Referenced in LoaderSysLoadIopModuleFromEEBuffer
 
 // sdata externs
 extern const char D_00131DB8[]; // "XFF2"
@@ -326,6 +332,11 @@ static inline void __inlined_LoaderSysInitExternalIntcHandlerList(void)
     {
         INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
     }
+}
+
+static inline void __inlined_setNewIopIdentifier(const char* newIdentifier) {
+    LoaderSysPrintf(D_00136A80, newIdentifier, D_0013A108);
+    strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
 }
 
 #endif /* LOADERSYS_H */
