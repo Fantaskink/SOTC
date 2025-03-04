@@ -4,6 +4,7 @@
 #include "include_asm.h"
 #include "common.h"
 #include "fl_xfftype.h"
+#include "sdk/ee/eekernel.h"
 
 #define R_MIPS_NONE (0)
 #define R_MIPS_16 (1)
@@ -51,6 +52,25 @@ void initmemprintf(s32, s32);
 void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
 void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
 s32 main(s32 argc, char** argv);
+void LoaderSysExecuteRecoveryFirstProcess(void);
+void LoaderSysFlushPrint(void);
+
+typedef (*t_resetCallback)();
+extern s32 LOADER_RESET_CALLBACK_NUM;
+extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
+
+#define SEMAPHORE_LIST D_0013BD10
+#define THREAD_LIST D_0013B910
+#define IOP_MEMORY_LIST D_0013C910
+#define INTC_HANDLER_LIST D_0013C110
+
+#define MAX_INTC_HANDLERS 256
+#define IOP_MEM_LIST_LEN 256
+
+extern s32 D_0013BD10[MAX_SEMAPHORES];
+extern s32 D_0013B910[MAX_THREADS];
+extern s32 D_0013C910[IOP_MEM_LIST_LEN];
+extern struct unk D_0013C110[MAX_INTC_HANDLERS];
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
@@ -230,6 +250,56 @@ static inline s32 __inlined_LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr
     __inlined_RelocateCode(xffEp);
     
     return 1;
+}
+
+static inline void __inlined_LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority) {
+    s32 i;
+    s32 threadId;
+
+    threadId = GetThreadId();
+    for (i = 0; i < MAX_THREADS; i++)
+    {
+        if ((THREAD_LIST[i] != threadId) && (-1 < THREAD_LIST[i]))
+        {
+            ChangeThreadPriority(THREAD_LIST[i], priority);
+        }
+    }
+    return;
+}
+
+static inline void __inlined_LoaderSysDeleteAllExternalThreadExceptMe(void)
+{
+    s32 threadId;
+    s32 i;
+
+    threadId = GetThreadId();
+
+    for (i = 0; i < MAX_THREADS; i++)
+    {
+        if ((THREAD_LIST[i] != threadId) && (THREAD_LIST[i] >= 0))
+        {
+            TerminateThread(THREAD_LIST[i]);
+            DeleteThread(THREAD_LIST[i]);
+            THREAD_LIST[i] = -1;
+        }
+    }
+}
+
+static inline void __inlined_LoaderSysDeleteAllExternalIopMemory(void)
+{
+    s32 i;
+
+    sceSifInitRpc(0);
+    sceSifInitIopHeap();
+
+    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
+    {
+        if (IOP_MEMORY_LIST[i] != 0)
+        {
+            sceSifFreeIopHeap((void *)IOP_MEMORY_LIST[i]);
+            IOP_MEMORY_LIST[i] = 0;
+        }
+    }
 }
 
 #endif /* LOADERSYS_H */

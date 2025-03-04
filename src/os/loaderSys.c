@@ -10,23 +10,6 @@ extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B
 
 extern char D_0013A100[];       // "host0:"
 
-typedef (*t_resetCallback)();
-extern s32 LOADER_RESET_CALLBACK_NUM;
-extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
-
-#define SEMAPHORE_LIST D_0013BD10
-#define THREAD_LIST D_0013B910
-#define IOP_MEMORY_LIST D_0013C910
-#define INTC_HANDLER_LIST D_0013C110
-
-#define MAX_INTC_HANDLERS 256
-#define IOP_MEM_LIST_LEN 256
-
-extern s32 D_0013BD10[MAX_SEMAPHORES];
-extern s32 D_0013B910[MAX_THREADS];
-extern s32 D_0013C910[IOP_MEM_LIST_LEN];
-extern struct unk D_0013C110[MAX_INTC_HANDLERS];
-
 typedef struct unk_except_s {
     u32 value;
     char* name;
@@ -979,7 +962,15 @@ INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalIntcHandl
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalSema);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysExecuteRecoveryFirstProcess);
+void LoaderSysExecuteRecoveryFirstProcess(void) {
+    ChangeThreadPriority(GetThreadId(), 1);
+    LoaderSysDeleteAllExternalIntcHandler();
+    __inlined_LoaderSysChangeExternalThreadPriorityExceptMe(0x7F);
+    __inlined_LoaderSysDeleteAllExternalThreadExceptMe();
+    LoaderSysDeleteAllExternalSema();
+    LoaderSysFlushPrint();
+    __inlined_LoaderSysDeleteAllExternalIopMemory();
+}
 
 static inline s32 getStA()
 {
@@ -1108,18 +1099,7 @@ void LoaderSysExternalThreadListCallBack(void (*fun_ptr)(s32))
 
 void LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority)
 {
-    s32 i;
-    s32 threadId;
-
-    threadId = GetThreadId();
-    for (i = 0; i < MAX_THREADS; i++)
-    {
-        if ((THREAD_LIST[i] != threadId) && (-1 < THREAD_LIST[i]))
-        {
-            ChangeThreadPriority(THREAD_LIST[i], priority);
-        }
-    }
-    return;
+    __inlined_LoaderSysChangeExternalThreadPriorityExceptMe(priority);
 }
 
 void LoaderSysDeleteAllExternalThread(void)
@@ -1139,20 +1119,7 @@ void LoaderSysDeleteAllExternalThread(void)
 
 void LoaderSysDeleteAllExternalThreadExceptMe(void)
 {
-    s32 threadId;
-    s32 i;
-
-    threadId = GetThreadId();
-
-    for (i = 0; i < MAX_THREADS; i++)
-    {
-        if ((THREAD_LIST[i] != threadId) && (THREAD_LIST[i] >= 0))
-        {
-            TerminateThread(THREAD_LIST[i]);
-            DeleteThread(THREAD_LIST[i]);
-            THREAD_LIST[i] = -1;
-        }
-    }
+    __inlined_LoaderSysDeleteAllExternalThreadExceptMe();
 }
 
 void LoaderSysInitExternalIopMemoryList(void)
@@ -1167,19 +1134,7 @@ void LoaderSysInitExternalIopMemoryList(void)
 
 void LoaderSysDeleteAllExternalIopMemory(void)
 {
-    s32 i;
-
-    sceSifInitRpc(0);
-    sceSifInitIopHeap();
-
-    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
-    {
-        if (IOP_MEMORY_LIST[i] != 0)
-        {
-            sceSifFreeIopHeap((void *)IOP_MEMORY_LIST[i]);
-            IOP_MEMORY_LIST[i] = 0;
-        }
-    }
+    __inlined_LoaderSysDeleteAllExternalIopMemory();
 }
 
 s32 LoaderSysPrintf(const char *format, ...)
