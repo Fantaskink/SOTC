@@ -960,7 +960,39 @@ void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr)
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalIntcHandler);
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysDeleteAllExternalSema);
+extern u32 D_00132080[3];
+static inline s32 LoaderSysCheckSemaAttribueList(s32 sema_id) {
+    struct SemaParam sparam;
+    s32 i;
+
+    if (ReferSemaStatus(sema_id, &sparam) == sema_id) {       
+        for (i = 0; i < 3; i++) {
+            if (D_00132080[i] == sparam.attr) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void LoaderSysDeleteAllExternalSema(void) {
+    s32 i;
+    
+    for (i = 0; i < 0x100; i++) {
+        if (SEMAPHORE_LIST[i] >= 0) {
+            DeleteSema(SEMAPHORE_LIST[i]);
+            SEMAPHORE_LIST[i] = -1;
+        }
+    }
+
+    __inlined_LoaderSysInitExternalSemaList();
+    
+    for (i = 0; i < 0x100; i++) {
+        if (LoaderSysCheckSemaAttribueList(i) != 0) {
+            DeleteSema(i);
+        }
+    }
+}
 
 void LoaderSysExecuteRecoveryFirstProcess(void) {
     ChangeThreadPriority(GetThreadId(), 1);
@@ -1069,11 +1101,7 @@ void LoaderSysInitExternalIntcHandlerList(void)
 
 void LoaderSysInitExternalSemaList(void)
 {
-    s32 i;
-    for (i = 0; i < MAX_SEMAPHORES; i++)
-    {
-        SEMAPHORE_LIST[i] = -1;
-    }
+    __inlined_LoaderSysInitExternalSemaList();
 }
 
 void LoaderSysInitExternalThreadList(void)

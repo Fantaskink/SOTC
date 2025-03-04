@@ -302,4 +302,13 @@ static inline void __inlined_LoaderSysDeleteAllExternalIopMemory(void)
     }
 }
 
+static inline void __inlined_LoaderSysInitExternalSemaList(void)
+{
+    s32 i;
+    for (i = 0; i < MAX_SEMAPHORES; i++)
+    {
+        SEMAPHORE_LIST[i] = -1;
+    }
+}
+
 #endif /* LOADERSYS_H */
