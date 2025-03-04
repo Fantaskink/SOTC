@@ -1063,7 +1063,32 @@ void LoaderSysEntryExternalSemaList(s32 arg1)
     SEMAPHORE_LIST[FindSemaIndex()] = arg1;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysEntryExternalIopMemoryList);
+static inline s32 FindIopMemoryIndex() {
+    s32 i;
+
+    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
+    {
+        if (IOP_MEMORY_LIST[i] == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+s32 LoaderSysEntryExternalIopMemoryList(s32 iopmem_id) {
+    s32 i;
+    if (iopmem_id != 0) {
+        i = FindIopMemoryIndex();
+    
+        if (i >= 0) {
+            IOP_MEMORY_LIST[i] = iopmem_id;
+            return i;
+        }
+    }
+    
+    return -1;
+}
 
 s32 LoaderSysDeleteExternalIntcHandlerList(s32 arg)
 {
