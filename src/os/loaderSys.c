@@ -1028,7 +1028,22 @@ void LoaderSysEntryExternalIntcHandlerList(s32 param_1, s32 param_2)
     INTC_HANDLER_LIST[i].unk0 = param_2;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysEntryExternalThreadList);
+static inline s32 FindThreadIndex(void)
+{
+    s32 i;
+    for (i = 0; i < MAX_THREADS; i++)
+    {
+        if (THREAD_LIST[i] < 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void LoaderSysEntryExternalThreadList(s32 thread_id) {
+    THREAD_LIST[FindThreadIndex()] = thread_id;
+}
 
 static inline s32 FindSemaIndex(void)
 {

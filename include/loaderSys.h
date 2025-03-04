@@ -60,6 +60,7 @@ void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
 s32 main(s32 argc, char** argv);
 void LoaderSysExecuteRecoveryFirstProcess(void);
 void LoaderSysFlushPrint(void);
+void LoaderSysEntryExternalThreadList(s32 thread_id);
 
 typedef (*t_resetCallback)();
 extern s32 LOADER_RESET_CALLBACK_NUM;
