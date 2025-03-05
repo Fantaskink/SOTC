@@ -29,15 +29,10 @@ jobs:
           find . -name '*.c' | xargs sed -i 's/\bunsigned short\b/u16/g'
           find . -name '*.c' | xargs sed -i 's/\bshort\b/s16/g'
 
-      - name: Check if any files were changed
+      - name: Pull latest changes to avoid conflicts
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'actions@github.com'
+          git pull --rebase origin ${{ github.head_ref }}
 
-          if git diff --quiet; then
-            echo "No changes detected"
-          else
-            git add .
-            git commit -m "Replace primitive types with fixed-width types"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
+      - name: Push changes
+        run: |
+          git push origin HEAD:${{ github.head_ref }}
