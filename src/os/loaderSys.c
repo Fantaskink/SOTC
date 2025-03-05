@@ -739,7 +739,3 @@ s32 execProgWithThread(const char* filename, s32 priority) {
     }
     
 }
-
-// TODO: These are an alignment issue, probably can be solved differently
-ASM_SECT_ALIGN(text);
-ASM_SECT_ALIGN(rodata);

@@ -117,7 +117,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.rule(
         "as",
         description="as $in",
-        command=f"cpp {COMMON_INCLUDES} $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out",
+        command=f"cpp {COMMON_INCLUDES} $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/elf_patcher.py $out gas $override",
     )
 
     ninja.rule(
@@ -153,10 +153,17 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         if entry.object_path is None:
             continue
 
+        if entry.object_path.is_relative_to(Path("build/asm/sdk")):
+            override = "--section-align .text:0x4"
+        elif entry.object_path.is_relative_to(Path("build/asm/data/section")):
+            override = "--section-align .data:0x4"
+        else:
+            override = ""
+
         if isinstance(seg, splat.segtypes.common.asm.CommonSegAsm) or isinstance(
             seg, splat.segtypes.common.data.CommonSegData
         ):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, "as", variables={"override": override})
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
             build(entry.object_path, entry.src_paths, "cpp")
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
@@ -173,7 +180,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         elif isinstance(
             seg, splat.segtypes.common.databin.CommonSegDatabin
         ) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, "as", variables={"override": override})
         else:
             print(f"ERROR: Unsupported build segment type {seg.type}")
             sys.exit(1)
