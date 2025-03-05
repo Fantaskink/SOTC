@@ -528,11 +528,6 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
     return xffEp;
 }
 
-typedef struct unk_00131D00_s {
-    char path[0x40];
-    s32 stack_size;
-    struct t_xffEntPntHdr* unk44;
-} unk_00131D00_s;
 extern struct unk_00131D00_s D_00131D00;
 extern const char D_00139F60[];
 
