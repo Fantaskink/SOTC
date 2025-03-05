@@ -67,7 +67,7 @@ void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
 s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
 void func_00100A58(void);
 void LoaderSysJumpRecoverPointNoStateSetting(char* format, ...);
-void* LoaderSysJumpRecoverPoint(int format, ...);
+void* LoaderSysJumpRecoverPoint(char* format, ...);
 struct t_xffEntPntHdr* func_00100D48(char* module_path);
 void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1);
 unk_00131D00_s* func_001013C8(const char* filename);
@@ -108,125 +108,6 @@ static inline int LoaderSysGetTextNopBase() {
          : "=r"(ret) :
     );
     return ret;
-}
-
-// TODO: merge these
-static inline s32 __inline__checkExistString(char *string, char **strings)
-{
-    s32 i = 0;
-
-    while (strings[i] != 0)
-    {
-        if (strcmp(strings[i], string) == 0)
-        {
-            return 1;
-        }
-        i++;
-    }
-
-    return 0;
-}
-
-static inline void* __inlined_mallocAlignMempool(s32 size, u32 align) {
-    void* result = (void*)((((u32)D_00139F04 + align - 1) / align) * align);
-    D_00139F04 = (void*)((u32)result + size);
-    return result;
-}
-
-static inline s32 __inlined_RelocateCode(struct t_xffEntPntHdr* xffEp) {
-    s32 i;
-    s32 j;
-    
-    while (xffEp != NULL) {
-        struct t_xffRelocEnt *rt = xffEp->relocTab;
-        for (i = xffEp->relocTabNrE; i--; rt++) {
-            switch (rt->type) {
-                case 4:
-                case 9:
-                {
-                    s32 count = rt->nrEnt;
-                    for (j = 0; j < count; j++) {
-                        ResolveRelocation(xffEp, rt, j);
-                    }
-                }
-                break;
-            }
-        }
-        
-        if (xffEp->nextXffHdr == 0x0) {
-            xffEp = NULL;
-        } else {
-            printf(GSTR(D_00136200, "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"), ((u32)xffEp + xffEp->nextXffHdr));
-            xffEp = (struct t_xffEntPntHdr*)((u32)xffEp + xffEp->nextXffHdr);
-        }
-    }
-    
-    return 1;
-}
-
-static inline s32 __inlined_RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1) {
-    s32 symtab_count = xffEp->symTabNrE;
-    struct t_xffSymEnt *st = &xffEp->symTab[0];
-    struct t_xffSymRelEnt *rt = &xffEp->symRelTab[0];
-    struct t_xffSectEnt *stt = &xffEp->sectTab[0];
-    
-    for (; symtab_count--; st++, rt++) {
-        u32 section = st->sect;
-
-        switch (section) {
-            case 0:
-            st->addr = arg1;
-            break;
-            case 0xFFF1:
-            st->addr = (void*)rt->offs;
-            break;
-            default:
-            if (section <= 0xFEFF) {
-                switch(st->type & 0xF) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    st->addr = (void*)(rt->offs + (s32)stt[section].memPt);
-                    break;
-                }
-            }
-            break;
-        }
-    }
-
-    return 1;
-}
-
-static inline void __inlined_DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2) {
-    s32 i;   
-    s32 reloc_count;
-    s32 total_relocs;
-
-    if (xffEp->ident == *(u32*)GSTR(&D_00131DB8, "XFF2")) {
-        reloc_count = xffEp->relocTabNrE >> 1;
-        
-        total_relocs = 0x0;
-        for (i = 0; i < reloc_count; i++) {
-            total_relocs += xffEp->relocTab[i].nrEnt;
-        }
-        
-        arg1(xffEp, &xffEp->relocTab->addr[total_relocs], arg2);
-         
-        for (i = 0; i < reloc_count; i++) {
-            xffEp->relocTab[reloc_count + i].nrEnt = 0;
-        }
-    }
-}
-
-static inline s32 __inlined_LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
-
-    RelocateElfInfoHeader(xffEp);
-    DecodeSection(xffEp, arg1, arg2, arg4);
-    __inlined_RelocateSelfSymbol(xffEp, arg3);
-    __inlined_RelocateCode(xffEp);
-    
-    return 1;
 }
 
 #endif /* LOADERSYS_H */
