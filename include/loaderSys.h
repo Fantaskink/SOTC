@@ -61,55 +61,36 @@ typedef void*(mallocAlign_func)(s32, u32);
 typedef void*(mallocMaxAlign_func)(s32);
 typedef int (ldrDbgPrintf_func)(const char *, ...);
 
-s32 LoaderSysPrintf(const char *format, ...);
-extern void PutString(s32, const char *, ...);
-extern void PutStringS(s32, const char *, ...);
-void LoaderSysSendAbort(void);
-void loaderExecResetCallback(void);
-s32 func_00101B88(struct t_xffEntPntHdr*, struct t_xffRelocAddrEnt *, unk_stack_40*);
-void* mallocAlignMempool(s32, u32);
-void* mallocAlign0x100Mempool(s32);
-void func_00101AA0(void);
-s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
+s32 ResolveRelocation(void* xffBuf, struct t_xffRelocEnt* relocEnt, s32 relocIx);
 void DecodeSection(void *, mallocAlign_func*, mallocMaxAlign_func*, ldrDbgPrintf_func*);
 void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp);
-void initmemprintf(s32, s32);
-// s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
-void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
-void func_00102360(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128* gpr);
-s32 main(s32 argc, char** argv);
-void LoaderSysExecuteRecoveryFirstProcess(void);
-void LoaderSysFlushPrint(void);
-void LoaderSysEntryExternalThreadList(s32 thread_id);
+s32 OutputLinkerScriptFile(struct t_xffEntPntHdr*, char*, ldrDbgPrintf_func*);
+void func_00100A58(void);
+void LoaderSysJumpRecoverPointNoStateSetting(char* format, ...);
+void* LoaderSysJumpRecoverPoint(int format, ...);
+struct t_xffEntPntHdr* func_00100D48(char* module_path);
+void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1);
+unk_00131D00_s* func_001013C8(const char* filename);
+s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4);
+s32 RelocateCode(struct t_xffEntPntHdr* xffEp);
+s32 FreeDecodedSection(struct t_xffEntPntHdr* xffEp, char (*arg1)(void*));
+s32 RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1);
+void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2);
+void SetHeapStartPoint(u32 start_address);
+s32 GetHeapCurrentPoint(void);
+void LoaderSysResetSystem(void);
+void func_00101AA0(void);
+void* mallocAlignMempool(s32, u32);
+void* mallocAlign0x100Mempool(s32);
+s32 _checkExistString(char *string, char **strings);
+s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, unk_stack_40* arg2);
+void _execProgWithThread(void* module_path);
+s32 execProgWithThread(const char* filename, s32 priority);
 
-typedef (*t_resetCallback)();
-extern s32 LOADER_RESET_CALLBACK_NUM;
-extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
-
-#define SEMAPHORE_LIST D_0013BD10
-#define THREAD_LIST D_0013B910
-#define IOP_MEMORY_LIST D_0013C910
-#define INTC_HANDLER_LIST D_0013C110
-
-#define MAX_INTC_HANDLERS 256
-#define IOP_MEM_LIST_LEN 256
-#define MAX_IOP_IDENTIFIERS 64
-
-extern s32 D_0013BD10[MAX_SEMAPHORES];
-extern s32 D_0013B910[MAX_THREADS];
-extern s32 D_0013C910[IOP_MEM_LIST_LEN];
-extern struct unk D_0013C110[MAX_INTC_HANDLERS];
-
-extern s32 D_0013A108;        // number of iop modules
-extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
-
-extern s32 D_0013A110;
-extern s32 D_0013A184;
-extern s32 D_0013A114;
+extern s32 LoaderSysPrintf(const char *format, ...);
 
 // rodata externs
 extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
-extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n", Referenced in LoaderSysLoadIopModuleFromEEBuffer
 
 // sdata externs
 extern const char D_00131DB8[]; // "XFF2"
@@ -125,46 +106,6 @@ static inline int LoaderSysGetTextNopBase() {
         "lui   %0,%%hi(func_00131CAC)\n" "nop\n"
         "addiu %0,%%lo(func_00131CAC)\n" "nop\n"
          : "=r"(ret) :
-    );
-    return ret;
-}
-
-static inline int LoaderSysGetStackBase() {
-    int ret;
-    asm volatile (
-        "lui   %0,%%hi(_stack)\n" "nop\n"
-        "addiu %0,%%lo(_stack)\n" "nop\n"
-        : "=r"(ret) :
-    );
-    return ret;
-}
-
-static inline int LoaderSysGetStackSize() {
-    int ret;
-    asm volatile (
-        "lui   %0,%%hi(_stack_size)\n" "nop\n"
-        "addiu %0,%%lo(_stack_size)\n" "nop\n"
-        : "=r"(ret) :
-    );
-    return ret;
-}
-
-static inline int LoaderSysGetHeapBase() {
-    int ret;
-    asm volatile (
-        "lui   %0,%%hi(_end)\n" "nop\n"
-        "addiu %0,%%lo(_end)\n" "nop\n"
-        : "=r"(ret) :
-    );
-    return ret;
-}
-
-static inline int LoaderSysGetHeapSize() {
-    int ret;
-    asm volatile (
-        "lui   %0,%%hi(_heap_size)\n" "nop\n"
-        "addiu %0,%%lo(_heap_size)\n" "nop\n"
-        : "=r"(ret) :
     );
     return ret;
 }
@@ -286,80 +227,6 @@ static inline s32 __inlined_LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr
     __inlined_RelocateCode(xffEp);
     
     return 1;
-}
-
-static inline void __inlined_LoaderSysChangeExternalThreadPriorityExceptMe(s32 priority) {
-    s32 i;
-    s32 threadId;
-
-    threadId = GetThreadId();
-    for (i = 0; i < MAX_THREADS; i++)
-    {
-        if ((THREAD_LIST[i] != threadId) && (-1 < THREAD_LIST[i]))
-        {
-            ChangeThreadPriority(THREAD_LIST[i], priority);
-        }
-    }
-    return;
-}
-
-static inline void __inlined_LoaderSysDeleteAllExternalThreadExceptMe(void)
-{
-    s32 threadId;
-    s32 i;
-
-    threadId = GetThreadId();
-
-    for (i = 0; i < MAX_THREADS; i++)
-    {
-        if ((THREAD_LIST[i] != threadId) && (THREAD_LIST[i] >= 0))
-        {
-            TerminateThread(THREAD_LIST[i]);
-            DeleteThread(THREAD_LIST[i]);
-            THREAD_LIST[i] = -1;
-        }
-    }
-}
-
-static inline void __inlined_LoaderSysDeleteAllExternalIopMemory(void)
-{
-    s32 i;
-
-    sceSifInitRpc(0);
-    sceSifInitIopHeap();
-
-    for (i = 0; i < IOP_MEM_LIST_LEN; i++)
-    {
-        if (IOP_MEMORY_LIST[i] != 0)
-        {
-            sceSifFreeIopHeap((void *)IOP_MEMORY_LIST[i]);
-            IOP_MEMORY_LIST[i] = 0;
-        }
-    }
-}
-
-static inline void __inlined_LoaderSysInitExternalSemaList(void)
-{
-    s32 i;
-    for (i = 0; i < MAX_SEMAPHORES; i++)
-    {
-        SEMAPHORE_LIST[i] = -1;
-    }
-}
-
-static inline void __inlined_LoaderSysInitExternalIntcHandlerList(void)
-{
-    s32 i;
-
-    for (i = 0; i < MAX_INTC_HANDLERS; i++)
-    {
-        INTC_HANDLER_LIST[i].unk0 = INTC_HANDLER_LIST[i].unk4 = -1;
-    }
-}
-
-static inline void __inlined_setNewIopIdentifier(const char* newIdentifier) {
-    LoaderSysPrintf(D_00136A80, newIdentifier, D_0013A108);
-    strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
 }
 
 #endif /* LOADERSYS_H */
