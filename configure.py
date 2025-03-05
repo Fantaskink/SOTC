@@ -32,7 +32,7 @@ COMPILER = "ee-gcc2.96"
 GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
 CUSTOM_SPECS_FILE = f"{TOOLS_DIR}/cc/{COMPILER}/lib/regnames.specs"
 
-GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2 $regnames"
+GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} $optlevel -g2 $regnames"
 
 # Custom spec rule that invokes the preprocessor before assembling
 # avoids us having to manually pipe each step and just use GCC
@@ -164,7 +164,12 @@ def build_stuff(linker_entries: List[LinkerEntry]):
                 regnames = "--specs=regnames.specs"
             else:
                 regnames = ""
-            build(entry.object_path, entry.src_paths, "cc", variables={"regnames": regnames})
+
+            if len(seg.yaml) < 4:
+                opt = "-O2"
+            else:
+                opt = seg.yaml[3]
+            build(entry.object_path, entry.src_paths, "cc", variables={"regnames": regnames, "optlevel": opt})
         elif isinstance(
             seg, splat.segtypes.common.databin.CommonSegDatabin
         ) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
