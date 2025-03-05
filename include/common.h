@@ -7,11 +7,13 @@ typedef char s8;
 typedef short s16;
 typedef int s32;
 typedef long s64;
+typedef long s128  __attribute__((mode(TI)));
 
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long u64;
+typedef unsigned long u128  __attribute__((mode(TI)));
 
 typedef unsigned int u_long128 __attribute__((mode(TI)));
 
@@ -42,9 +44,16 @@ typedef __gnuc_va_list va_list;
 #define FALSE 0
 #endif
 
+#define IN_DATA __attribute__((section(".data")))
+#define IN_SDATA __attribute__((section(".sdata")))
+#define IN_SBSS __attribute__((section(".sbss")))
+#define IN_BSS __attribute__((section(".bss")))
+
 #define CONST_ARR_NRE(a) ((const)(sizeof((a)) / sizeof(*(a))))
 
 #define CONST_ARR_ENTSZ(a) (sizeof(*(a)))
+
+#define ALIGN(v, a) ((v) + (a - 1) & ~(a - 1))
 
 #define GSTR_USE_PTR_REF
 

@@ -10,8 +10,6 @@ import re
 from pathlib import Path
 from typing import Dict, List, Set, Union
 
-from fix_gp import main as fix_gp_main
-
 import ninja_syntax
 
 import splat
@@ -34,7 +32,7 @@ COMPILER = "ee-gcc2.96"
 GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
 CUSTOM_SPECS_FILE = f"{TOOLS_DIR}/cc/{COMPILER}/lib/regnames.specs"
 
-GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2 $regnames"
+GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} $optlevel -g2 $regnames"
 
 # Custom spec rule that invokes the preprocessor before assembling
 # avoids us having to manually pipe each step and just use GCC
@@ -119,7 +117,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.rule(
         "as",
         description="as $in",
-        command=f"cpp {COMMON_INCLUDES} $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out",
+        command=f"cpp {COMMON_INCLUDES} $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out && python3 tools/elf_patcher.py $out gas $override",
     )
 
     ninja.rule(
@@ -155,10 +153,17 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         if entry.object_path is None:
             continue
 
+        if entry.object_path.is_relative_to(Path("build/asm/sdk")):
+            override = "--section-align .text:0x4"
+        elif entry.object_path.is_relative_to(Path("build/asm/data/section")):
+            override = "--section-align .data:0x4"
+        else:
+            override = ""
+
         if isinstance(seg, splat.segtypes.common.asm.CommonSegAsm) or isinstance(
             seg, splat.segtypes.common.data.CommonSegData
         ):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, "as", variables={"override": override})
         elif isinstance(seg, splat.segtypes.common.cpp.CommonSegCpp):
             build(entry.object_path, entry.src_paths, "cpp")
         elif isinstance(seg, splat.segtypes.common.c.CommonSegC):
@@ -166,11 +171,16 @@ def build_stuff(linker_entries: List[LinkerEntry]):
                 regnames = "--specs=regnames.specs"
             else:
                 regnames = ""
-            build(entry.object_path, entry.src_paths, "cc", variables={"regnames": regnames})
+
+            if len(seg.yaml) < 4:
+                opt = "-O2"
+            else:
+                opt = seg.yaml[3]
+            build(entry.object_path, entry.src_paths, "cc", variables={"regnames": regnames, "optlevel": opt})
         elif isinstance(
             seg, splat.segtypes.common.databin.CommonSegDatabin
         ) or isinstance(seg, splat.segtypes.common.rodatabin.CommonSegRodatabin):
-            build(entry.object_path, entry.src_paths, "as")
+            build(entry.object_path, entry.src_paths, "as", variables={"override": override})
         else:
             print(f"ERROR: Unsupported build segment type {seg.type}")
             sys.exit(1)
@@ -274,9 +284,6 @@ if __name__ == "__main__":
     build_stuff(linker_entries)
 
     write_permuter_settings()
-
-    if not split.config["options"]["use_gp_rel_macro_nonmatching"]:
-        fix_gp_main()
 
     if not args.no_short_loop_workaround:
         replace_instructions_with_opcodes(split.config["options"]["asm_path"])

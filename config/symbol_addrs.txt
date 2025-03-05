@@ -1,7 +1,10 @@
 func_0                                           = 0x00000000; // ignore:true
 
 // linker symbols
-end                                              = 0x0016A518; // type:label
+_stack                                           = 0x01FE0000; // type:label
+_stack_size                                      = 0x00020000; // type:label
+_end                                             = 0x0016A518; // type:label
+_heap_size                                       = 0x00040000; // type:label
 _gp                                              = 0x00141E70; // type:label
 
 LOADER_RESET_CALLBACK_NUM                        = 0x0013A17C; // type:s32

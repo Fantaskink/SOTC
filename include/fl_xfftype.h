@@ -1,3 +1,6 @@
+#ifndef XFF_TPYE_H
+#define XFF_TPYE_H
+
 #include "common.h"
 
 /*
@@ -269,9 +272,9 @@ struct xSectStr_t {
 struct t_xffRelocAddrEnt
 {
     u32 addr; // Address where to apply the changes
-    // u32	tyIx;			//type, index
-    u32 relType : 8;  // The type of modification to do.
-    u32 tgSymIx : 24; // Index of the target symbol in SymTab (the symbol to which that thing at addr should point to.
+    u32	tyIx;			//type, index
+    // u32 relType : 8;  // The type of modification to do.
+    // u32 tgSymIx : 24; // Index of the target symbol in SymTab (the symbol to which that thing at addr should point to.
 };
 
 // intrsuction or actually target relocated data, and not necessarily instruction
@@ -627,3 +630,5 @@ struct t_xffEntPntHdr
 in DBGMGR there where absolute addresses apper on loading,
 the values from the start of the file are +0x40010000 and some are +0x00010000
 */
+
+#endif /* XFF_TPYE_H */
