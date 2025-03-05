@@ -7,13 +7,84 @@
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
 
-extern char *D_00131DC0[]; // {{"normal use"}, {"\x1B[36mout of align(alloc)\x1B[m"}, {"alloc flag(alloc)"}}
+// data
+struct unk_00131D00_s D_00131D00 = {
+    "noname",
+    0x4000,
+    0
+};
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136200);
+struct pad_00131D48_s {
+    char padding[0x70];
+};
+struct pad_00131D48_s D_00131D48 = { "" };
+IN_DATA char ident[] = "xff2"; // TODO: Maybe figure a natural way to get this into .data?
 
-ASM_RODATA;
+// sdata vars
+s32 D_00139F00 = 0;
+void* D_00139F04 = 0; // heap pointer
 
-static inline s32 SearchRelocLoPair(struct t_xffRelocEnt* relocEntry, s32 relocIndex) {
+// sbss vars
+extern s32 D_0013A300;
+
+// bss vars
+extern char D_0013A4C8[0x1000];
+
+s32 RelocateCode(struct t_xffEntPntHdr* xffEp) {
+    s32 i;
+    s32 j;
+    
+    while (xffEp != NULL) {
+        struct t_xffRelocEnt *rt = xffEp->relocTab;
+        for (i = xffEp->relocTabNrE; i--; rt++) {
+            switch (rt->type) {
+                case 4:
+                case 9:
+                {
+                    s32 count = rt->nrEnt;
+                    for (j = 0; j < count; j++) {
+                        ResolveRelocation(xffEp, rt, j);
+                    }
+                }
+                break;
+            }
+        }
+        
+        if (xffEp->nextXffHdr == 0x0) {
+            xffEp = NULL;
+        } else {
+            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", ((u32)xffEp + xffEp->nextXffHdr));
+            xffEp = (struct t_xffEntPntHdr*)((u32)xffEp + xffEp->nextXffHdr);
+        }
+    }
+    
+    return 1;
+}
+
+s32 FreeDecodedSection(struct t_xffEntPntHdr* xffEp, char (*arg1)(void*)) {
+    s32 i;
+
+    while (xffEp != 0x0) {
+        for (i = 1; i < xffEp->sectNrE; i++) {
+            struct t_xffSectEnt* st = &xffEp->sectTab[i];
+            if (st->moved) {
+                st->moved = 0;
+                arg1(st->memPt);
+            }
+        }
+
+        if (xffEp->nextXffHdr == 0x0) {
+            xffEp = 0x0;
+        } else {
+            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", ((u32)xffEp + xffEp->nextXffHdr));
+            xffEp = (struct t_xffEntPntHdr *)((u32)xffEp + xffEp->nextXffHdr);
+        }
+    }
+
+    return 1;
+}
+
+static s32 SearchRelocLoPair(struct t_xffRelocEnt* relocEntry, s32 relocIndex) {
     s32 i;
 
     for (i = relocIndex + 1;; i++) {
@@ -112,12 +183,7 @@ s32 ResolveRelocation(void* xffBuf, struct t_xffRelocEnt* relocEnt, s32 relocIx)
     return 1; // success
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001362D0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001362E8);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136308);
-
+char* D_00131DC0[] = { "normal use", ANSI_CYAN "out of align(alloc)" ANSI_RESET, "alloc flag(alloc)" };
 void DecodeSection(
     void *xffBuf,
     mallocAlign_func* mallocAlign,
@@ -247,15 +313,24 @@ void RelocateElfInfoHeader(struct t_xffEntPntHdr* xffEp) {
     xffEp->stack = (void*)(xffBaseAddr + xffEp->stack_Rel);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001363B0);
+s32 _checkExistString(char *string, char **strings)
+{
+    s32 i = 0;
 
-// char* D_00131DD0[8] = { ".text", ".vutext", ".data", ".vudata", ".rodata", ".bss", ".vubss", ".DVP.ovlytab" };
-extern char* D_00131DD0[8];
-extern u32 D_00139F40;
-extern char D_00139F48[];
-extern s32 D_0013A300;
-char D_0013A4C8[0x1000];
+    while (strings[i] != 0)
+    {
+        if (strcmp(strings[i], string) == 0)
+        {
+            return 1;
+        }
+        i++;
+    }
 
+    return 0;
+}
+
+char* D_00131DD0[12] = { ".text", ".vutext", ".data", ".vudata", ".rodata", ".bss", ".vubss", ".DVP.ovlytab" };
+u32 D_00139F40 = 0;
 static inline void LoaderSysFWriteString(s32 fd, char* str, s32 flush) {
     s32 len;
 
@@ -320,7 +395,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, l
         }
     }
 
-    LoaderSysFWriteString(linker_fd, GSTR(D_00139F48, "}\n"), 1);
+    LoaderSysFWriteString(linker_fd, "}\n", 1);
     
     LoaderSysFClose(linker_fd);
     return 1; // Sucess
@@ -328,7 +403,6 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr* xffEp, char* ld_script_path, l
 
 extern int D_0013A180;
 extern int D_0013A184;
-extern char D_00139F50[];
 extern char D_0013B4C8[];
 void loaderLoop(void);
 static inline int _ReadPad() {
@@ -370,7 +444,6 @@ void func_00100A58(void) {
         // Set the jal target to loaderLoop
         *(call) |= (((unsigned int)loaderLoop)) / 4;
         
-        ___label:
         asm(
             "__label:\n" 
             "jal 0\n"
@@ -380,12 +453,12 @@ void func_00100A58(void) {
     }
 
     ChangeThreadPriority(thread_id, 0x7F);
-    PutString(0xFF603000, GSTR(D_00139F50, "\n"));
+    PutString(0xFF603000, "\n");
     PutString(0xFF603000, "in threadid: %d\n", thread_id);
     PutString(0xFF603000, D_0013B4C8);
     PutString(0xC0FFE000, "\nhit 'reset' or push 'start key on pad-1' to restart system.");
     PutString(0xC0FFE000, "\n\tor 'source s' to debugging and tracing.");
-    LoaderSysPrintf(GSTR(D_00139F50, "\n"));
+    LoaderSysPrintf("\n");
     LoaderSysSendAbort();
     loaderExecResetCallback();
     
@@ -393,7 +466,7 @@ void func_00100A58(void) {
         Sync();
     }
     
-    PutString(0xFF603000, GSTR(D_00139F50, "\n"));
+    PutString(0xFF603000, "\n");
     ChangeThreadPriority(GetThreadId(), 0x7F);
     WakeupThread(D_0013A184);
     
@@ -418,13 +491,153 @@ void LoaderSysJumpRecoverPointNoStateSetting(char* format, ...) {
 
 INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364A8);
+void func_00101AA0(void) {
+    register int ra asm("ra");
+    LoaderSysJumpRecoverPoint("undefined function call from %p.\n", ra - 8);
+}
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_001364D0);
+static inline void LoaderSysExecProg(struct t_xffEntPntHdr* xffEp) {
+    s32 (*module_entry)(s32, void*);    
+    s32 text_nop;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys", D_00136500);
+    D_00139F00 = (s32)D_00139F04;
+    module_entry = xffEp->entryPnt;
+    D_00131D00.unk44 = xffEp;
+    text_nop = LoaderSysGetTextNopBase();
+    
+    FlushCache(WRITEBACK_DCACHE);
+    FlushCache(INVALIDATE_ICACHE);
 
-extern const char D_00139F58[];
+    LoaderSysPrintf("ld:\texecute entry point(%p) as h10kmode(id:%x)\n", module_entry, text_nop);
+    module_entry(1, (void*)text_nop);
+}
+
+s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, unk_stack_40* arg2) {
+    s32 count;
+    s32 i;
+    s32 size;
+    struct t_xffRelocEnt* srel_ent;
+    struct t_xffRelocEnt* trel_ent;
+    s8* data_p;
+    struct t_xffEntPntHdr* txffEp;
+
+    txffEp = arg2->unk0;
+    trel_ent = arg2->unk8;
+    data_p = arg2->unkC;
+    
+    count = txffEp->relocTabNrE >> 1;
+    srel_ent = &txffEp->relocTab[count];
+    
+    for (i = 0; i < count; i++, srel_ent++, trel_ent++)
+    {
+        size = srel_ent->nrEnt * 8; // sizeof(struct t_xffRelocInstEnt)?
+        *trel_ent = *srel_ent;
+        
+        memcpy(data_p, srel_ent->addr, size);
+        trel_ent->addr = (struct t_xffRelocAddrEnt *)data_p;
+        data_p += size;
+        
+        memcpy(data_p, srel_ent->inst, size);
+        trel_ent->inst = (struct t_xffRelocInstEnt *)data_p; 
+        data_p += size;
+    }
+    
+    LoaderSysPrintf("ld:\t\t\tsplit at %p : (duplicate relinfo to %p-%p / reldata to %p-%p)\n", arg1, arg2->unk8, trel_ent, arg2->unkC, data_p);
+    
+    arg2->unk4 = count;
+    D_00139F04 = arg1;
+    
+    return 0;
+}
+
+extern int D_0013A184;
+void LoaderSysResetSystem(void) {
+    s32 thread_id;
+
+    LoaderSysExecuteRecoveryFirstProcess();
+    PutString(0xff603000, "\n");
+    thread_id = GetThreadId();
+    ChangeThreadPriority(thread_id, 127);
+    WakeupThread(D_0013A184);
+    do {
+        SleepThread();
+    } while (1);
+}
+
+void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2) {
+    s32 i;   
+    s32 reloc_count;
+    s32 total_relocs;
+
+    if (xffEp->ident == *(u32*)ident) {
+        reloc_count = xffEp->relocTabNrE >> 1;
+        
+        total_relocs = 0x0;
+        for (i = 0; i < reloc_count; i++) {
+            total_relocs += xffEp->relocTab[i].nrEnt;
+        }
+        
+        arg1(xffEp, &xffEp->relocTab->addr[total_relocs], arg2);
+         
+        for (i = 0; i < reloc_count; i++) {
+            xffEp->relocTab[reloc_count + i].nrEnt = 0;
+        }
+    }
+}
+
+s32 RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1) {
+    s32 symtab_count = xffEp->symTabNrE;
+    struct t_xffSymEnt *st = &xffEp->symTab[0];
+    struct t_xffSymRelEnt *rt = &xffEp->symRelTab[0];
+    struct t_xffSectEnt *stt = &xffEp->sectTab[0];
+    
+    for (; symtab_count--; st++, rt++) {
+        u32 section = st->sect;
+
+        switch (section) {
+            case 0:
+            st->addr = arg1;
+            break;
+            case 0xFFF1:
+            st->addr = (void*)rt->offs;
+            break;
+            default:
+            if (section <= 0xFEFF) {
+                switch(st->type & 0xF) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    st->addr = (void*)(rt->offs + (s32)stt[section].memPt);
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    return 1;
+}
+
+s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
+    RelocateElfInfoHeader(xffEp);
+    DecodeSection(xffEp, arg1, arg2, arg4);
+    RelocateSelfSymbol(xffEp, arg3);
+    RelocateCode(xffEp);
+    
+    return 1;
+}
+
+void* mallocAlignMempool(s32 size, u32 align) {
+    void* result = (void*)((((u32)D_00139F04 + align - 1) / align) * align);
+    D_00139F04 = (void*)((u32)result + size);
+    return result;
+}
+
+void* mallocAlign0x100Mempool(s32 size) {
+    return mallocAlignMempool(size, 0x100);
+}
+
 struct t_xffEntPntHdr* func_00100D48(char* module_path) {
     s32 fid;
     u8* chr_p;
@@ -495,7 +708,7 @@ struct t_xffEntPntHdr* func_00100D48(char* module_path) {
         }
     }
     
-    sprintf(linkfile_path, GSTR(D_00139F58, "%s.cmd"), module_path);
+    sprintf(linkfile_path, "%s.cmd", module_path);
     OutputLinkerScriptFile(xffEp, linkfile_path, &LoaderSysPrintf);
     return xffEp;
 }
@@ -510,11 +723,8 @@ void* MoveElf(struct t_xffEntPntHdr* xffEp, void* arg1) {
     return xffEp;
 }
 
-extern struct unk_00131D00_s D_00131D00;
-extern const char D_00139F60[];
-
-// TODO: moving this declaration breaks setNewIopIdentifier (?)
-s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
+// TODO: Use headers
+extern s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
 unk_00131D00_s* func_001013C8(const char* filename) {
     struct sce_stat stat;
     s32 th_id;
@@ -549,130 +759,12 @@ unk_00131D00_s* func_001013C8(const char* filename) {
     for (i = 0; i < size; i++) {
         if (p[i] == ' ') {
             p[i] = '\0';
-            sscanf(&p[i+1], GSTR(D_00139F60, "0x%x"), &D_00131D00.stack_size);
+            sscanf(&p[i+1], "0x%x", &D_00131D00.stack_size);
             break;
         }
     }
     
     return &D_00131D00;
-}
-
-s32 LoaderSysRelocateOnlineElfInfo(struct t_xffEntPntHdr* xffEp, void* arg1, void* arg2, void* arg3, void* arg4) {
-    RelocateElfInfoHeader(xffEp);
-    DecodeSection(xffEp, arg1, arg2, arg4);
-    RelocateSelfSymbol(xffEp, arg3);
-    RelocateCode(xffEp);
-    
-    return 1;
-}
-
-s32 RelocateCode(struct t_xffEntPntHdr* xffEp) {
-    s32 i;
-    s32 j;
-    
-    while (xffEp != NULL) {
-        struct t_xffRelocEnt *rt = xffEp->relocTab;
-        for (i = xffEp->relocTabNrE; i--; rt++) {
-            switch (rt->type) {
-                case 4:
-                case 9:
-                {
-                    s32 count = rt->nrEnt;
-                    for (j = 0; j < count; j++) {
-                        ResolveRelocation(xffEp, rt, j);
-                    }
-                }
-                break;
-            }
-        }
-        
-        if (xffEp->nextXffHdr == 0x0) {
-            xffEp = NULL;
-        } else {
-            printf(GSTR(D_00136200, "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"), ((u32)xffEp + xffEp->nextXffHdr));
-            xffEp = (struct t_xffEntPntHdr*)((u32)xffEp + xffEp->nextXffHdr);
-        }
-    }
-    
-    return 1;
-}
-
-s32 FreeDecodedSection(struct t_xffEntPntHdr* xffEp, char (*arg1)(void*)) {
-    s32 i;
-
-    while (xffEp != 0x0) {
-        for (i = 1; i < xffEp->sectNrE; i++) {
-            struct t_xffSectEnt* st = &xffEp->sectTab[i];
-            if (st->moved) {
-                st->moved = 0;
-                arg1(st->memPt);
-            }
-        }
-
-        if (xffEp->nextXffHdr == 0x0) {
-            xffEp = 0x0;
-        } else {
-            printf(GSTR(D_00136200, "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"), ((u32)xffEp + xffEp->nextXffHdr));
-            xffEp = (struct t_xffEntPntHdr *)((u32)xffEp + xffEp->nextXffHdr);
-        }
-    }
-
-    return 1;
-}
-
-s32 RelocateSelfSymbol(struct t_xffEntPntHdr* xffEp, void* arg1) {
-    s32 symtab_count = xffEp->symTabNrE;
-    struct t_xffSymEnt *st = &xffEp->symTab[0];
-    struct t_xffSymRelEnt *rt = &xffEp->symRelTab[0];
-    struct t_xffSectEnt *stt = &xffEp->sectTab[0];
-    
-    for (; symtab_count--; st++, rt++) {
-        u32 section = st->sect;
-
-        switch (section) {
-            case 0:
-            st->addr = arg1;
-            break;
-            case 0xFFF1:
-            st->addr = (void*)rt->offs;
-            break;
-            default:
-            if (section <= 0xFEFF) {
-                switch(st->type & 0xF) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    st->addr = (void*)(rt->offs + (s32)stt[section].memPt);
-                    break;
-                }
-            }
-            break;
-        }
-    }
-
-    return 1;
-}
-
-void DisposeRelocationElement(struct t_xffEntPntHdr* xffEp, dispose_reloc_func* arg1, void* arg2) {
-    s32 i;   
-    s32 reloc_count;
-    s32 total_relocs;
-
-    if (xffEp->ident == *(u32*)GSTR(&D_00131DB8, "XFF2")) {
-        reloc_count = xffEp->relocTabNrE >> 1;
-        
-        total_relocs = 0x0;
-        for (i = 0; i < reloc_count; i++) {
-            total_relocs += xffEp->relocTab[i].nrEnt;
-        }
-        
-        arg1(xffEp, &xffEp->relocTab->addr[total_relocs], arg2);
-         
-        for (i = 0; i < reloc_count; i++) {
-            xffEp->relocTab[reloc_count + i].nrEnt = 0;
-        }
-    }
 }
 
 void SetHeapStartPoint(u32 start_address)
@@ -685,93 +777,6 @@ s32 GetHeapCurrentPoint(void)
     return (u32)HEAP_START;
 }
 
-extern int D_0013A184;
-void LoaderSysResetSystem(void) {
-    s32 thread_id;
-
-    LoaderSysExecuteRecoveryFirstProcess();
-    PutString(0xff603000, GSTR(D_00139F50, "\n"));
-    thread_id = GetThreadId();
-    ChangeThreadPriority(thread_id, 127);
-    WakeupThread(D_0013A184);
-    do {
-        SleepThread();
-    } while (1);
-}
-
-extern const char D_001364A8[];
-void func_00101AA0(void) {
-    register int ra asm("ra");
-    LoaderSysJumpRecoverPoint(GSTR(D_001364A8, "undefined function call from %p.\n"), ra - 8);
-}
-
-void* mallocAlignMempool(s32 size, u32 align) {
-    void* result = (void*)((((u32)D_00139F04 + align - 1) / align) * align);
-    D_00139F04 = (void*)((u32)result + size);
-    return result;
-}
-
-void* mallocAlign0x100Mempool(s32 size) {
-    return mallocAlignMempool(size, 0x100);
-}
-
-s32 _checkExistString(char *string, char **strings)
-{
-    s32 i = 0;
-
-    while (strings[i] != 0)
-    {
-        if (strcmp(strings[i], string) == 0)
-        {
-            return 1;
-        }
-        i++;
-    }
-
-    return 0;
-}
-
-extern const char D_00136500[];
-s32 func_00101B88(struct t_xffEntPntHdr* xffEp, struct t_xffRelocAddrEnt *arg1, unk_stack_40* arg2) {
-    s32 count;
-    s32 i;
-    s32 size;
-    struct t_xffRelocEnt* srel_ent;
-    struct t_xffRelocEnt* trel_ent;
-    s8* data_p;
-    struct t_xffEntPntHdr* txffEp;
-
-    txffEp = arg2->unk0;
-    trel_ent = arg2->unk8;
-    data_p = arg2->unkC;
-    
-    count = txffEp->relocTabNrE >> 1;
-    srel_ent = &txffEp->relocTab[count];
-    
-    for (i = 0; i < count; i++, srel_ent++, trel_ent++)
-    {
-        size = srel_ent->nrEnt * 8; // sizeof(struct t_xffRelocInstEnt)?
-        *trel_ent = *srel_ent;
-        
-        memcpy(data_p, srel_ent->addr, size);
-        trel_ent->addr = (struct t_xffRelocAddrEnt *)data_p;
-        data_p += size;
-        
-        memcpy(data_p, srel_ent->inst, size);
-        trel_ent->inst = (struct t_xffRelocInstEnt *)data_p; 
-        data_p += size;
-    }
-    
-    LoaderSysPrintf(GSTR(D_00136500, "ld:\t\t\tsplit at %p : (duplicate relinfo to %p-%p / reldata to %p-%p)\n"), arg1, arg2->unk8, trel_ent, arg2->unkC, data_p);
-    
-    arg2->unk4 = count;
-    D_00139F04 = arg1;
-    
-    return 0;
-}
-
-extern s32 D_00139F00;
-extern const char D_001364D0[];
 void _execProgWithThread(void* module_path) {
     s32 (*module_entry)(s32, void*);
     s32 text_nop;
@@ -790,7 +795,7 @@ void _execProgWithThread(void* module_path) {
         FlushCache(WRITEBACK_DCACHE);
         FlushCache(INVALIDATE_ICACHE);
     
-        LoaderSysPrintf(GSTR(D_001364D0, "ld:\texecute entry point(%p) as h10kmode(id:%x)\n"), module_entry, text_nop);
+        LoaderSysPrintf("ld:\texecute entry point(%p) as h10kmode(id:%x)\n", module_entry, text_nop);
         module_entry(1, (void*)text_nop);
     } else {
         PutStringS(0xFF804000, "Can't execute, because map fail.\n");

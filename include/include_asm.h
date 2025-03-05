@@ -45,9 +45,6 @@ __asm__(".include \"include/labels.inc\"\n");
 #ifndef ASM_RODATA
 #define ASM_RODATA __asm__(".section .rodata")
 #endif
-#ifndef ASM_SECT_ALIGN
-#define ASM_SECT_ALIGN(section) __asm__(".section ."#section"\n.align 3")
-#endif
 #else
 #ifndef INCLUDE_ASM
 #define INCLUDE_ASM(FOLDER, NAME)

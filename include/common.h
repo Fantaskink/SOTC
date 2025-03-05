@@ -44,6 +44,11 @@ typedef __gnuc_va_list va_list;
 #define FALSE 0
 #endif
 
+#define IN_DATA __attribute__((section(".data")))
+#define IN_SDATA __attribute__((section(".sdata")))
+#define IN_SBSS __attribute__((section(".sbss")))
+#define IN_BSS __attribute__((section(".bss")))
+
 #define CONST_ARR_NRE(a) ((const)(sizeof((a)) / sizeof(*(a))))
 
 #define CONST_ARR_ENTSZ(a) (sizeof(*(a)))

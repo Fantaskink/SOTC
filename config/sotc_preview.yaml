@@ -45,7 +45,7 @@ segments:
       subalign: null
       subsegments:
         - [0x1000, asm, sdk/crt0]
-        - [0x10d0, c, os/loaderSys]
+        - [0x10d0, c, os/loaderSys, "-O3"]
         - [0x2ec0, c, os/loaderSys2]
         - [0x5090, c, os/netSys]
         - [0x5cc0, c, os/padSys]
@@ -202,7 +202,8 @@ segments:
         - [0x32c10, asm, sdk/libgcc/_df_to_si]
 
         #- [0x32CB4, databin] # .reginfo
-        - [0x32D00, data, os/loaderSys]
+        - [0x32D00, .data, os/loaderSys]
+        - [0x32E00, data, os/loaderSys2]
         - [0x330a0, data, os/netSys]
         - [0x33340, data, os/putString]
         - [0x33370, data, sdk/data] # library data
@@ -219,7 +220,7 @@ segments:
         - [0x38D88, rodatabin] # SDK rodata
         - [0x3AE80, rodatabin] # .lit4
         #- [0x3AE84, databin] # .data_nop
-        - [0x3AF00, sdata, os/loaderSys]
+        - [0x3AF00, .sdata, os/loaderSys]
         - [0x3AF68, sdata, os/loaderSys2]
         - [0x3b188, sdata, os/netSys]
         - [0x3b218, sdata, os/powerOff]

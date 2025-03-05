@@ -19,6 +19,9 @@
 #define ANSI_GREEN "\x1b[32m"
 #define ANSI_YELLOW "\x1b[33m"
 #define ANSI_BLUE "\x1b[34m"
+#define ANSI_MAGENTA "\x1b[35m"
+#define ANSI_CYAN "\x1b[36m"
+#define ANSI_WHITE "\x1b[37m"
 #define ANSI_RESET "\x1b[m"
 
 extern void* D_00139F04; // heap pointer
@@ -88,15 +91,6 @@ void _execProgWithThread(void* module_path);
 s32 execProgWithThread(const char* filename, s32 priority);
 
 extern s32 LoaderSysPrintf(const char *format, ...);
-
-// rodata externs
-extern const char D_00136200[]; // "ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n"
-
-// sdata externs
-extern const char D_00131DB8[]; // "XFF2"
-extern const char D_0013A118[]; // "\"%s\""
-extern const char D_0013A120[]; // "... "
-extern const char D_0013A128[]; // "Done.\n"
 
 // Legitimate Static inlines
 // TODO: This points to a custom section, so this should be a linker symbol
