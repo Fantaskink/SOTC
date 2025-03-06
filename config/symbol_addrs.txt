@@ -152,6 +152,8 @@ padSysVibSetAcrParam                             = 0x00104EF8; // type:func
 // os/powerOff.c
 LoaderSysSetPowerOffCallBackFunc                 = 0x00104F58; // type:func
 PreparePowerOff                                  = 0x00104F60; // type:func
+PowerOffThread                                   = 0x00104FF0; // type:func size:0xB0
+PowerOffHandler                                  = 0x001050A0; // type:func
 
 // os/usbSerialSys.c
 usbSerialSysPutString                            = 0x001050B8; // type:func
@@ -183,6 +185,7 @@ SetDrawEnvironment                               = 0x001068D0; // type:func
 SetPrimColor                                     = 0x00106998; // type:func
 SetPrimColorTex                                  = 0x00106AE8; // type:func
 PutChar                                          = 0x00106C58; // type:func
+D_00139420                                       = 0x00139420; // size:0x100
 
 //=============================
 // libkernl.a
