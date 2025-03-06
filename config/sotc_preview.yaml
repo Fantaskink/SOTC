@@ -22,7 +22,7 @@ options:
     compiler: EEGCC
     platform: ps2
 
-    #ld_bss_contains_common: True
+    ld_bss_contains_common: True
     ld_bss_is_noload: true
 
     migrate_rodata_to_functions: True
@@ -223,13 +223,15 @@ segments:
         - [0x3AF00, .sdata, os/loaderSys]
         - [0x3AF68, sdata, os/loaderSys2]
         - [0x3b188, sdata, os/netSys]
-        - [0x3b218, sdata, os/powerOff]
+        - [0x3b218, .sdata, os/powerOff]
         - [0x3b230, sdata, os/putString]
         
         - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: os/loaderSys}
         - {start: 0x3b300, type: sbss, vram: 0x0013A308, name: os/usbSerialSys}
         - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loaderSys}
         - {start: 0x3b370, type: bss, vram: 0x0013D9C0, name: os/padSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013DC40, name: os/powerOff}
+        - {start: 0x3b370, type: bss, vram: 0x0013EC40, name: os/usbSerialSys}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers

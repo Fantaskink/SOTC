@@ -6,11 +6,9 @@
 
 typedef void(cbFunc_t)(void);
 
-extern unsigned char D_0013DC40[STACKSZ] __attribute__((aligned(16)));
-extern s32 D_0013A218;
-extern cbFunc_t *D_0013A21C;
-extern const char D_0013A220[];
-extern const char D_0013A228[];
+u8 D_0013DC40[STACKSZ] __attribute__((aligned(16)));
+s32 D_0013A218 = 0;
+cbFunc_t *D_0013A21C = NULL;
 
 void LoaderSysSetPowerOffCallBackFunc(cbFunc_t *arg0);
 void PreparePowerOff(void);
@@ -26,7 +24,7 @@ void PreparePowerOff(void)
 {
     struct SemaParam sparam;
     struct ThreadParam tparam;
-    int tid;
+    s32 tid;
 
     sparam.initCount = 0;
     sparam.maxCount = 1;
@@ -63,10 +61,10 @@ void PowerOffThread(void *arg)
         PutStringS(0x4080FF80, "\npower off request has come.\n");
 
         // close all files
-        sceDevctl(GSTR(D_0013A220, "pfs:"), PDIOC_CLOSEALL, NULL, 0, NULL, 0);
+        sceDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
 
         // dev9 power off, need to power off PS2
-        while (sceDevctl(GSTR(D_0013A228, "dev9x:"), DDIOC_OFF, NULL, 0, NULL, 0) < 0)
+        while (sceDevctl("dev9x:", DDIOC_OFF, NULL, 0, NULL, 0) < 0)
             ;
 
         // PS2 power off
