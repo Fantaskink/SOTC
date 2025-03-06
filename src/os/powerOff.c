@@ -12,11 +12,15 @@ extern cbFunc_t *D_0013A21C;
 extern const char D_0013A220[];
 extern const char D_0013A228[];
 
+void LoaderSysSetPowerOffCallBackFunc(cbFunc_t *arg0);
 void PreparePowerOff(void);
 void PowerOffThread(void *arg);
 static void PowerOffHandler(void *arg);
 
-INCLUDE_ASM("asm/nonmatchings/os/powerOff", LoaderSysSetPowerOffCallBackFunc);
+void LoaderSysSetPowerOffCallBackFunc(cbFunc_t *arg0)
+{
+    D_0013A21C = arg0;
+}
 
 void PreparePowerOff(void)
 {
