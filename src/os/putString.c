@@ -27,6 +27,8 @@ extern DrawEnv D_00132170;
 extern TexEnv D_00132200;
 extern TexEnv D_001322A0;
 
+extern s32 D_0013A230;
+extern s32 D_0013A234;
 extern u128 D_00137D40;
 extern u128 D_00137D50;
 extern u32 D_0013A244;
@@ -76,7 +78,24 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", SetTextureWithFrameBuffer);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", SetTexDrawEnvironment);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", SetDrawnTextureEnvironment);
+void SetDrawnTextureEnvironment(s16 tbp0)
+{
+    sceGsAlphaEnv *alpha;
+    TexEnv *tx_env;
+
+    tx_env = (TexEnv *)((s32)&D_00132200 | 0x20000000);
+    alpha = &tx_env->gs_alpha;
+    sceGsSetDefTexEnv(&tx_env->gs_tex, 0, tbp0, D_0013A230 / 0x40, SCE_GS_PSMCT32, 10, 8, 0, 0, 0, 0, 1);
+    sceGsSetDefAlphaEnv(alpha, 0);
+    *(u64 *)&alpha->alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
+    tx_env->gs_test1addr = SCE_GS_TEST_1;
+    *(u64 *)&tx_env->gs_tex.tex11 = SCE_GS_SET_TEX1(1, 0, SCE_GS_LINEAR, SCE_GS_LINEAR, 0, 0, 0);
+    *(u64 *)&tx_env->gs_tex.clamp1 = SCE_GS_SET_CLAMP(SCE_GS_REPEAT, SCE_GS_REPEAT, 0, 0, 0, 0);
+    *(u64 *)&tx_env->gs_alpha.fba1 = SCE_GS_SET_FBA(0);
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&tx_env->giftag);
+}
 
 void SetDrawEnvironment(s32 mode)
 {

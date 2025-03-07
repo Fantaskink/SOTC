@@ -29,7 +29,7 @@ void InitDisp(void);
 void RestoreNormalDrawEnvironment(s32 arg0, s32 arg1, s32 arg2);
 void SetTextureWithFrameBuffer(s16 arg0);
 void SetTexDrawEnvironment(s32 arg0);
-void SetDrawnTextureEnvironment(s16 arg0);
+void SetDrawnTextureEnvironment(s16 tbp0);
 void SetDrawEnvironment(s32 mode);
 void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a);
 void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv);
