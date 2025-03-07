@@ -62,7 +62,20 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", ReinitDisp);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", LoaderSysDrawSprite);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", ExecBaseProc);
+void ExecBaseProc(void)
+{
+    TexEnv *tx_env;
+
+    tx_env = (TexEnv *)((s32)&D_001322A0 | 0x20000000);
+    sceGsSetDefAlphaEnv(&tx_env->gs_alpha, 0);
+    *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
+    tx_env->gs_test1addr = SCE_GS_TEST_1;
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&tx_env->giftag);
+    func_00105C50();
+    func_00105A60();
+}
 
 void SetLocate(s32 x, s32 y)
 {
