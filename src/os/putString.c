@@ -44,7 +44,20 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", _putString);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutString);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", PutStringS);
+void PutStringS(PutStringColor color, const char *format, ...)
+{
+    char buffer[0x100];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(buffer, format, args);
+    _putString(color, buffer);
+
+    Sync();
+    ExecBaseProc();
+
+    va_end(args);
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
 

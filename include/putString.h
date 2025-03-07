@@ -20,7 +20,7 @@ struct t_PutStringFBChar
 
 void _putString(s32 color, char *arg1);
 void PutString(s32 color, const char *format, ...);
-void PutStringS(s32 color, const char *format, ...);
+void PutStringS(PutStringColor color, const char *format, ...);
 void Sync(void);
 void ReinitDisp(void);
 void ExecBaseProc(void);
