@@ -66,7 +66,23 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", ExecBaseProc);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", SetLocate);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", ScrollDisplay);
+void ScrollDisplay(void)
+{
+    s32 i, j;
+
+    for (i = 1; i < PUT_STRING_FB_HGHT; i++)
+    {
+        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+        {
+            D_0013EF10[i - 1][j] = D_0013EF10[i][j];
+        }
+    }
+
+    for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+    {
+        D_0013EF10[PUT_STRING_FB_HGHT - 1][j] = D_0013A260;
+    }
+}
 
 void ClearDisplay(void)
 {
