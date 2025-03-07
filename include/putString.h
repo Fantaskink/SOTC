@@ -2,6 +2,7 @@
 #define _PUTSTRING_H_
 
 #include "common.h"
+#include "sdk/ee/eetypes.h"
 
 #define PUT_STRING_FB_WDTH (60)
 #define PUT_STRING_FB_HGHT (40)

@@ -1,6 +1,5 @@
 #include "putString.h"
 #include "common.h"
-#include "sdk/ee/eetypes.h"
 #include "sdk/ee/eestruct.h"
 #include "sdk/ee/libdma.h"
 #include "sdk/ee/libgraph.h"
@@ -76,7 +75,17 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", RestoreNormalDrawEnvironment);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", SetTextureWithFrameBuffer);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", SetTexDrawEnvironment);
+void SetTexDrawEnvironment(s32 arg0)
+{
+    DrawEnv *dw_env;
+
+    dw_env = (DrawEnv *)((s32)&D_00132170 | 0x20000000);
+    sceGsSetDefDrawEnv(&dw_env->draw, SCE_GS_PSMCT32, D_0013A230, D_0013A234, 1, SCE_GS_PSMZ24);
+    dw_env->draw.frame1.FBP = arg0 / 0x20;
+    dw_env->draw.zbuf1.ZMSK = 1;
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&dw_env->giftag);
+}
 
 void SetDrawnTextureEnvironment(s16 tbp0)
 {
