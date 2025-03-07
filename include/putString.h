@@ -16,7 +16,6 @@ struct t_PutStringFBChar
     char ch;              // 04
 }; // = 0x08 / 0x05
 
-void PutChar(PutStringColor color, s8 ch);
 void _putString(s32 color, char *arg1);
 void PutString(s32 color, const char *format, ...);
 void PutStringS(s32 color, const char *format, ...);
@@ -33,5 +32,7 @@ void SetTexDrawEnvironment(s32 arg0);
 void SetDrawnTextureEnvironment(s16 arg0);
 void SetDrawEnvironment(u32 arg0);
 void SetPrimColor(s32 data, s32 r, s32 g, s32 b, s32 a);
+void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv);
+void PutChar(PutStringColor color, char ch);
 
 #endif /* _PUTSTRING_H_ */
