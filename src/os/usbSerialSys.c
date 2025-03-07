@@ -3,10 +3,10 @@
 #include "sdk/ee/sifrpc.h"
 #include "usbSerialSys.h"
 
-extern s32 semaId;
-extern sceSifClientData D_0013EC40;
-extern u32 D_0013EC80[USB_SERIAL_BUF_SEND_SZ/sizeof(u32)] __attribute__((aligned(64)));    //0013EC80, sz=0x40, sent string data; Might have 0x40-align, making it not start at 0013EC70, or there is more between it and 0013EC40(0013EC68). Could also use a union for the char/u32 access but I am lazy, and this is coded semi-bad anyway.
-extern s32 D_0013ECC0[USB_SERIAL_BUF_RECV_SZ/sizeof(int)] __attribute__((aligned(64)));    //0013ECC0, sz=0x20, received result int
+s32 semaId;
+static sceSifClientData D_0013EC40; // 0013EC40
+static u32 D_0013EC80[USB_SERIAL_BUF_SEND_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013EC80, sz=0x40, sent string data; Might have 0x40-align, making it not start at 0013EC70, or there is more between it and 0013EC40(0013EC68). Could also use a union for the char/u32 access but I am lazy, and this is coded semi-bad anyway.
+static u32 D_0013ECC0[USB_SERIAL_BUF_RECV_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013ECC0, sz=0x20, received result int
 
 s32 usbSerialSysPutString(char *strIn) {
     s32 cLen, sLen, cct, res;

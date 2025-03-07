@@ -231,7 +231,8 @@ segments:
         - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loaderSys}
         - {start: 0x3b370, type: bss, vram: 0x0013D9C0, name: os/padSys}
         - {start: 0x3b370, type: .bss, vram: 0x0013DC40, name: os/powerOff}
-        - {start: 0x3b370, type: bss, vram: 0x0013EC40, name: os/usbSerialSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013EC40, name: os/usbSerialSys}
+        - {start: 0x3b370, type: bss, vram: 0x0013ECE0, name: os/putString}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
     - [0x3B3FC, databin] # ELF section headers
