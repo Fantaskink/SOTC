@@ -24,7 +24,7 @@ void PutStringS(s32 color, const char *format, ...);
 void Sync(void);
 void ReinitDisp(void);
 void ExecBaseProc(void);
-void SetLocate(s32 arg0, s32 arg1);
+void SetLocate(s32 x, s32 y);
 void ScrollDisplay(void);
 void ClearDisplay(void);
 void InitDisp(void);

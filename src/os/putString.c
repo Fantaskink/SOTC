@@ -64,7 +64,11 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", LoaderSysDrawSprite);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", ExecBaseProc);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", SetLocate);
+void SetLocate(s32 x, s32 y)
+{
+    D_0013A26C = x;
+    D_0013A270 = y;
+}
 
 void ScrollDisplay(void)
 {
