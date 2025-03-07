@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "sdk/ee/eetypes.h"
+#include "sdk/ee/libgraph.h"
 
 #define PUT_STRING_FB_WDTH (60)
 #define PUT_STRING_FB_HGHT (40)
@@ -27,7 +28,7 @@ void SetLocate(s32 arg0, s32 arg1);
 void ScrollDisplay(void);
 void ClearDisplay(void);
 void InitDisp(void);
-void RestoreNormalDrawEnvironment(s32 arg0, s32 arg1, s32 arg2);
+void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off);
 void SetTextureWithFrameBuffer(s16 tbp0);
 void SetTexDrawEnvironment(s32 arg0);
 void SetDrawnTextureEnvironment(s16 tbp0);

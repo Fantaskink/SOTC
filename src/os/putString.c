@@ -71,7 +71,22 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", ClearDisplay);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", InitDisp);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", RestoreNormalDrawEnvironment);
+void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
+{
+    sceGsDBuff *udbuf;
+
+    udbuf = (sceGsDBuff *)((s32)dbuff | 0x20000000);
+    if (arg1 != 0)
+    {
+        sceGsSetHalfOffset(&udbuf->draw1, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag1);
+    }
+    else
+    {
+        sceGsSetHalfOffset(&udbuf->draw0, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag0);
+    }
+}
 
 void SetTextureWithFrameBuffer(s16 tbp0)
 {
