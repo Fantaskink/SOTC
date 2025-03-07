@@ -32,6 +32,7 @@ extern char *D_001320A0[4];
 extern char *D_001320B8[];
 extern struct sceInetAddress D_001320C0;
 extern joined_t D_0013D180;
+extern s32 D_0013A1EC;
 
 static s32 func_00104090(s32 mode)
 {
