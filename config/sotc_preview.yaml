@@ -52,6 +52,9 @@ segments:
         - [0x5f58, c, os/powerOff]
         - [0x60b8, c, os/usbSerialSys]
         - [0x6408, c, os/putString]
+
+        # what the hell
+        - [0x7c8c, asm, sdk/padding]
     #################
     # SDK Libraries #
     #################

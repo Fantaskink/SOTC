@@ -1,4 +1,9 @@
+#include "putString.h"
 #include "common.h"
+
+extern s32 D_0013A26C;
+extern s32 D_0013A270;
+extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
 
@@ -48,4 +53,8 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", SetPrimColor);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", SetPrimColorTex);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", PutChar);
+void PutChar(PutStringColor color, s8 ch)
+{
+    D_0013EF10[D_0013A270][D_0013A26C].color = color;
+    D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
+}
