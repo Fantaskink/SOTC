@@ -161,8 +161,13 @@ usbSerialSysPrintf                               = 0x00105268; // type:func
 usbSerialSysInit                                 = 0x001052D8; // type:func
 usbSerialSysISignalSema                          = 0x001053F0; // type:func
 
-// data
-semaId                                           = 0x0013A308; // type:s32
+// sbss
+semaid_rpc                                       = 0x0013A308; // type:s32
+
+// bss
+cdUsbSerial                                      = 0x0013EC40; // type:u8 size:0x28
+sdata                                            = 0x0013EC80; // type:u8 size:0x40
+rdata                                            = 0x0013ECC0; // type:u8 size:0x20
 
 // os/putString.c
 PutFont                                          = 0x00105408; // type:func

@@ -9,7 +9,7 @@ int usbSerialSysPrintf(char *format, ...);
 
 int usbSerialSysInit(void);
 
-static void usbSerialSysISignalSema(void);
+static void usbSerialSysISignalSema(void* arg0);
 
 
 //Shared with the IOP module - should really be in a common include for both, together with the transfer buffers sizes.

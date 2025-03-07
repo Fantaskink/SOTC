@@ -3,10 +3,13 @@
 #include "sdk/ee/sifrpc.h"
 #include "usbSerialSys.h"
 
-s32 semaId;
-static sceSifClientData D_0013EC40; // 0013EC40
-static u32 D_0013EC80[USB_SERIAL_BUF_SEND_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013EC80, sz=0x40, sent string data; Might have 0x40-align, making it not start at 0013EC70, or there is more between it and 0013EC40(0013EC68). Could also use a union for the char/u32 access but I am lazy, and this is coded semi-bad anyway.
-static u32 D_0013ECC0[USB_SERIAL_BUF_RECV_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013ECC0, sz=0x20, received result int
+// sbss
+static s32 semaid_rpc; // 0013A308
+
+// bss
+static sceSifClientData cdUsbSerial; // 0013EC40
+static u32 sdata[USB_SERIAL_BUF_SEND_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013EC80, sz=0x40, sent string data; Might have 0x40-align, making it not start at 0013EC70, or there is more between it and 0013EC40(0013EC68). Could also use a union for the char/u32 access but I am lazy, and this is coded semi-bad anyway.
+static u32 rdata[USB_SERIAL_BUF_RECV_SZ/sizeof(u32)] __attribute__((aligned(64))); //0013ECC0, sz=0x20, received result int
 
 s32 usbSerialSysPutString(char *strIn) {
     s32 cLen, sLen, cct, res;
@@ -15,27 +18,27 @@ s32 usbSerialSysPutString(char *strIn) {
     
     while (sLen > 0) {
         if (sLen < USB_SERIAL_BUF_SEND_SZ) {
-            strcpy((char*)D_0013EC80, strIn);
-            //They thought this was char and used the sizeof as number of entries and wrote it as below, yet it should have been cast to char array before accessing. I was thinking of using CONST_ARR_NRE(D_0013EC80), but the original is wrong as below and writes in foreign mem, at 0013EC80 + 0xFC = 0013ED7C = word write of 0.
-            D_0013EC80[sizeof(D_0013EC80) -1] = 0;    //Make sure it ends in 0; but why a word write?
+            strcpy((char*)sdata, strIn);
+            //They thought this was char and used the sizeof as number of entries and wrote it as below, yet it should have been cast to char array before accessing. I was thinking of using CONST_ARR_NRE(sdata), but the original is wrong as below and writes in foreign mem, at 0013EC80 + 0xFC = 0013ED7C = word write of 0.
+            sdata[sizeof(sdata) -1] = 0;    //Make sure it ends in 0; but why a word write?
             cLen = sLen;
         } else {
-            cLen = sizeof(D_0013EC80);
+            cLen = sizeof(sdata);
             //It bravely assumes that the input buffer is aligned to doubleWord.
-            memcpy(D_0013EC80, strIn, sizeof(D_0013EC80));
+            memcpy(sdata, strIn, sizeof(sdata));
         }
 
-        for (cpt = (char*)D_0013EC80, cct = 0; cct < cLen; cct++, cpt++) {
+        for (cpt = (char*)sdata, cct = 0; cct < cLen; cct++, cpt++) {
             if (*cpt == '\n') {
                     *cpt = '\r';    //I guess the PL2023 or their receiver didn't support newlines normally... or sth...
             }
         }
 
-        WaitSema(semaId);    //Wait for any previous transfers to complete.
+        WaitSema(semaid_rpc);    //Wait for any previous transfers to complete.
 
-        res = sceSifCallRpc(&D_0013EC40, USB_SERIAL_FUNC_SEND, 0,
-            D_0013EC80, sizeof(D_0013EC80),
-            D_0013ECC0, sizeof(D_0013ECC0),
+        res = sceSifCallRpc(&cdUsbSerial, USB_SERIAL_FUNC_SEND, 0,
+            sdata, sizeof(sdata),
+            rdata, sizeof(rdata),
             usbSerialSysISignalSema, NULL);
 
         if (res != 0) return res;
@@ -43,7 +46,7 @@ s32 usbSerialSysPutString(char *strIn) {
         strIn += cLen;    //Increment to the next buf to send, from in data.
         sLen -= cLen;
     }
-    return D_0013ECC0[0];    //return result
+    return rdata[0];    //return result
 }
 
 s32 usbSerialSysPrintf(char *format, ...)
@@ -67,8 +70,8 @@ s32 usbSerialSysInit(void) {
     /* Create Sema */
     sema_p.initCount = 1;
     sema_p.maxCount = 1;
-    semaId = CreateSema(&sema_p);
-    if (semaId == -1) {
+    semaid_rpc = CreateSema(&sema_p);
+    if (semaid_rpc == -1) {
       printf("CreateSema Error\n");
       while(1);
     }
@@ -77,11 +80,11 @@ s32 usbSerialSysInit(void) {
     sceSifInitRpc(0);
 
     while( 1 ) {
-        if (sceSifBindRpc(&D_0013EC40, USB_SERIAL_BIND_ID, 0) < 0) {
+        if (sceSifBindRpc(&cdUsbSerial, USB_SERIAL_BIND_ID, 0) < 0) {
             printf("bind errr\n");
             while( 1 );
         }
-        if (D_0013EC40.serve != 0) break;
+        if (cdUsbSerial.serve != 0) break;
         i = 0x10000;
         while(i --);
     }
@@ -89,9 +92,9 @@ s32 usbSerialSysInit(void) {
     return 0;
 }
 
-static void usbSerialSysISignalSema(void)
+static void usbSerialSysISignalSema(void* arg0)
 {
-    iSignalSema(semaId);
+    iSignalSema(semaid_rpc);
 }
 
 // TODO: Remove me when putString's rodata is matched

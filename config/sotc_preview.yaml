@@ -227,7 +227,8 @@ segments:
         - [0x3b230, sdata, os/putString]
         
         - {start: 0x3b300, type: sbss, vram: 0x0013A300, name: os/loaderSys}
-        - {start: 0x3b300, type: sbss, vram: 0x0013A308, name: os/usbSerialSys}
+        - {start: 0x3b300, type: .sbss, vram: 0x0013A308, name: os/usbSerialSys}
+        - {start: 0x3b300, type: sbss, vram: 0x0013A30C, name: sdk}
         - {start: 0x3b370, type: bss, vram: 0x0013A380, name: os/loaderSys}
         - {start: 0x3b370, type: bss, vram: 0x0013D9C0, name: os/padSys}
         - {start: 0x3b370, type: .bss, vram: 0x0013DC40, name: os/powerOff}
