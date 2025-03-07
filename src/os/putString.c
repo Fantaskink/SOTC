@@ -33,6 +33,7 @@ extern u128 D_00137D50;
 extern u32 D_0013A244;
 extern u32 D_0013A248;
 extern u32 D_0013A24C;
+extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
@@ -67,7 +68,19 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", SetLocate);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", ScrollDisplay);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", ClearDisplay);
+void ClearDisplay(void)
+{
+    s32 i, j;
+
+    for (i = 0; i < PUT_STRING_FB_HGHT; i++)
+    {
+        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+        {
+            D_0013EF10[i][j] = D_0013A260;
+        }
+    }
+    return;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", InitDisp);
 
