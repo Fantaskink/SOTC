@@ -36,13 +36,34 @@ extern u32 D_0013A24C;
 extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
+extern s32 D_0013A280;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", _putString);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", PutString);
+void PutString(PutStringColor color, const char *format, ...)
+{
+    char buffer[0x100];
+    va_list args;
+
+    va_start(args, format);
+    vsprintf(buffer, format, args);
+    _putString(color, buffer);
+    va_end(args);
+
+    if (D_0013A280 >= 4)
+    {
+        Sync();
+        ExecBaseProc();
+        D_0013A280 = 0;
+    }
+    else
+    {
+        D_0013A280++;
+    }
+}
 
 void PutStringS(PutStringColor color, const char *format, ...)
 {

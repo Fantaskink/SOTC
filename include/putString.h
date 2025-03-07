@@ -19,7 +19,7 @@ struct t_PutStringFBChar
 }; // = 0x08 / 0x05
 
 void _putString(s32 color, char *arg1);
-void PutString(s32 color, const char *format, ...);
+void PutString(PutStringColor color, const char *format, ...);
 void PutStringS(PutStringColor color, const char *format, ...);
 void Sync(void);
 void ReinitDisp(void);
