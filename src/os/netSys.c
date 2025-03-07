@@ -1,6 +1,7 @@
 #include "netSys.h"
 #include "common.h"
 #include "gcc/malloc.h"
+#include "putString.h"
 
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];
@@ -15,6 +16,7 @@ extern const char D_0013A1C8[];
 extern const char D_0013A1D0[];
 extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
+extern const char D_0013A1E8[];
 
 // The buffer is accessed as an offset from D_0013D180 so it mus be an struct of this form
 // I'd imagine "buffer" is sceNetcnfifData_t but that struct is actually bigger
@@ -242,7 +244,7 @@ INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137160);
 
 INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137170);
 
-static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char* usr_name, s32 flags)
+static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
 {
     s32 ret;
     sceNetcnfifData_t *p_data;
@@ -313,6 +315,50 @@ static inline void unused(void)
     printf("start_thread(): StartThread() failed.\n");
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/netSys", func_00104818);
+int func_00104818(void)
+{
+    s32 s1;
+    s32 r;
+    s32 ret;
+
+    PutStringS(0x80C0FF00, GSTR(D_0013A1E8, "  "));
+
+    s1 = 0;
+    r = 0;
+    while (s1++ < 0x1E && !(r = padSysReadForLoader()))
+    {
+        Sync();
+        ExecBaseProc();
+    }
+
+    switch (r)
+    {
+    case 0x800:
+        ret = 3;
+        PutStringS(0x80C0FF00, "Use hdd ether port\n");
+        break;
+    case 0x20:
+        ret = 1;
+        PutStringS(0x80C0FF00, "Use usb ether port\n");
+        break;
+    case 0x10:
+        ret = 2;
+        PutStringS(0x80C0FF00, "Use usb ether port(ppp on ehter)\n");
+        break;
+    case 0x80:
+        ret = 4;
+        PutStringS(0x80C0FF00, "Use hdd ether port(ppp on ehter)\n");
+        break;
+    case 0x40:
+        ret = 5;
+        PutStringS(0x80C0FF00, "Use modem\n");
+        break;
+    default:
+        ret = 0;
+        PutStringS(0x80C0FF00, "Default startup\n");
+        break;
+    }
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/netSys", LoaderSysInitTCP);
