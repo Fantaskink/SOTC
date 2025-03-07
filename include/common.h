@@ -44,6 +44,7 @@ typedef __gnuc_va_list va_list;
 #define FALSE 0
 #endif
 
+#define IN_RODATA __attribute__((section(".rodata")))
 #define IN_DATA __attribute__((section(".data")))
 #define IN_SDATA __attribute__((section(".sdata")))
 #define IN_SBSS __attribute__((section(".sbss")))
