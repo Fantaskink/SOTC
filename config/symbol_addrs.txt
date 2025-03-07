@@ -159,7 +159,7 @@ PowerOffHandler                                  = 0x001050A0; // type:func
 usbSerialSysPutString                            = 0x001050B8; // type:func
 usbSerialSysPrintf                               = 0x00105268; // type:func
 usbSerialSysInit                                 = 0x001052D8; // type:func
-usbSerialSysISignalSema__sub_1053F0              = 0x001053F0; // type:func
+usbSerialSysISignalSema                          = 0x001053F0; // type:func
 
 // data
 semaId                                           = 0x0013A308; // type:s32
