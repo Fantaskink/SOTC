@@ -28,6 +28,7 @@ extern TexEnv D_001322A0;
 
 extern s32 D_0013A230;
 extern s32 D_0013A234;
+extern s32 D_0013A238;
 extern u128 D_00137D40;
 extern u128 D_00137D50;
 extern u32 D_0013A244;
@@ -37,6 +38,7 @@ extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
 extern s32 D_0013A280;
+extern sceGsDBuff D_0013ECE0;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
@@ -92,7 +94,33 @@ INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137D40);
 
 INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137D50);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", ReinitDisp);
+void ReinitDisp(void)
+{
+    sceGsDBuff *buff = &D_0013ECE0;
+    sceGsSyncV(0);
+    sceDmaReset(1);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_VIF0), 0, 0x64);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_VIF1), 0, 0x64);
+    sceDmaSync(sceDmaGetChan(SCE_DMA_GIF), 0, 0x64);
+    sceDmaGetChan(SCE_DMA_VIF0)->chcr.TTE = 1;
+    sceDmaGetChan(SCE_DMA_VIF1)->chcr.TTE = 1;
+    sceDmaGetChan(SCE_DMA_GIF)->chcr.TTE = 1;
+    sceGsResetPath();
+    sceGsSyncV(0);
+    D_0013A230 = 640;
+    D_0013A234 = 448;
+    sceGsResetGraph(0, SCE_GS_INTERLACE, SCE_GS_NTSC, SCE_GS_FIELD);
+    sceGsSetDefDBuff(buff, SCE_GS_PSMCT32, D_0013A230, D_0013A234, SCE_GS_DEPTH_GEQUAL, SCE_GS_PSMCT32, SCE_GS_CLEAR);
+    sceGsSyncV(0);
+    D_0013A238 = 0;
+    FlushCache(WRITEBACK_DCACHE);
+    sceGsSwapDBuff(buff, D_0013A238);
+
+    while (sceGsSyncPath(1, 0) != 0)
+    {
+        scePrintf("wait gs init\n");
+    }
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", LoaderSysDrawSprite);
 
