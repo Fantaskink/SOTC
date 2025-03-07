@@ -6,6 +6,27 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
+// From samples
+typedef struct
+{
+    sceGifTag giftag;
+    sceGsTest gs_test;
+    s64 gs_test1addr;
+    sceGsAlphaEnv gs_alpha;
+    sceGsTexEnv gs_tex;
+} TexEnv;
+
+typedef struct
+{
+    sceGifTag giftag;
+    sceGsDrawEnv1 draw;
+} DrawEnv;
+
+extern TexEnv D_001320D0;
+extern DrawEnv D_00132170;
+extern TexEnv D_00132200;
+extern TexEnv D_001322A0;
+
 extern u128 D_00137D40;
 extern u128 D_00137D50;
 extern u32 D_0013A244;
@@ -57,7 +78,36 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", SetTexDrawEnvironment);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", SetDrawnTextureEnvironment);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", SetDrawEnvironment);
+void SetDrawEnvironment(s32 mode)
+{
+    TexEnv *tx_env;
+
+    tx_env = (TexEnv *)((s32)&D_001322A0 | 0x20000000);
+    sceGsSetDefAlphaEnv(&tx_env->gs_alpha, 0);
+    switch (mode)
+    {
+    case 0:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 1:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 2:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 3:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0x28);
+        break;
+    case 4:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0);
+        break;
+    }
+
+    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
+    tx_env->gs_test1addr = SCE_GS_TEST_1;
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&tx_env->giftag);
+}
 
 void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
 {
