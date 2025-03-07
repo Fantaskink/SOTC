@@ -28,7 +28,7 @@ void ScrollDisplay(void);
 void ClearDisplay(void);
 void InitDisp(void);
 void RestoreNormalDrawEnvironment(s32 arg0, s32 arg1, s32 arg2);
-void SetTextureWithFrameBuffer(s16 arg0);
+void SetTextureWithFrameBuffer(s16 tbp0);
 void SetTexDrawEnvironment(s32 arg0);
 void SetDrawnTextureEnvironment(s16 tbp0);
 void SetDrawEnvironment(s32 mode);
