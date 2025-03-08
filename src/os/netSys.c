@@ -1,5 +1,7 @@
 #include "netSys.h"
 #include "common.h"
+#include "gcc/malloc.h"
+#include "putString.h"
 
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];
@@ -14,6 +16,23 @@ extern const char D_0013A1C8[];
 extern const char D_0013A1D0[];
 extern const char D_0013A1D8[];
 extern const char D_0013A1E0[];
+extern const char D_0013A1E8[];
+
+// The buffer is accessed as an offset from D_0013D180 so it mus be an struct of this form
+// I'd imagine "buffer" is sceNetcnfifData_t but that struct is actually bigger
+typedef struct joined_t
+{
+    sceSifMClientData client_data;
+    s32 pad;
+    u8 buffer[0x1000];
+} joined_t;
+
+extern int D_0013A304;
+extern char *D_001320A0[4];
+extern char *D_001320B8[];
+extern struct sceInetAddress D_001320C0;
+extern joined_t D_0013D180;
+extern s32 D_0013A1EC;
 
 static s32 func_00104090(s32 mode)
 {
@@ -226,8 +245,121 @@ INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137160);
 
 INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137170);
 
-INCLUDE_ASM("asm/nonmatchings/os/netSys", func_00104668);
+static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
+{
+    s32 ret;
+    sceNetcnfifData_t *p_data;
 
-INCLUDE_ASM("asm/nonmatchings/os/netSys", func_00104818);
+    p_data = memalign(0x40, sizeof(sceNetcnfifData_t));
+
+    if (p_data == NULL)
+    {
+        return sceLIBNETE_INSUFFICIENT_RESOURCES;
+    }
+
+    ret = LoadSetConfiguration(cd, net_buf, p_data, conf_path, usr_name, flags);
+    free(p_data);
+    return ret;
+}
+
+s32 func_00104668(s32 a0, s32 a1)
+{
+    char *conf_path;
+    char *usr_name;
+    u32 flags;
+
+    // I'd like to know why the order is like this...
+    flags = 0;
+    if (a0 == 0)
+    {
+        conf_path = "cdrom0:\\SETTING\\NET.DB;1";
+        usr_name = D_001320A0[a1];
+        PutStringS(0x80FF8000, "from CD default...");
+    }
+    else
+    {
+        PutStringS(0x8080FF00, "from memory card...");
+        conf_path = "mc0:/BWNETCNF/BWNETCNF";
+        usr_name = D_001320B8[a1];
+        flags = 1;
+    }
+
+    printf("ldnet: up interface no auto\n");
+
+    if (load_set_conf_only(&D_0013D180.client_data, &D_0013D180.buffer, conf_path, usr_name, flags) < 0)
+    {
+        printf("load_set_conf_only() failed.\n");
+        return 0;
+    }
+
+    if (sceLibnetWaitGetInterfaceID(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1) < 0)
+    {
+        printf("get_interface_id()\n");
+        return 0;
+    }
+
+    sceInetCtlUpInterface(&D_0013D180.client_data, &D_0013D180.buffer, D_0013A304);
+
+    if (sceLibnetWaitGetAddress(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1, &D_001320C0, 0) < 0)
+    {
+        printf("wait_get_addr_only() failed.\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// These 2 strings are present but unreferenced, so add them to this dummy function
+static inline void unused(void)
+{
+    printf("start_thread(): CreateThread() failed.\n");
+    printf("start_thread(): StartThread() failed.\n");
+}
+
+int func_00104818(void)
+{
+    s32 s1;
+    s32 r;
+    s32 ret;
+
+    PutStringS(0x80C0FF00, GSTR(D_0013A1E8, "  "));
+
+    s1 = 0;
+    r = 0;
+    while (s1++ < 0x1E && !(r = padSysReadForLoader()))
+    {
+        Sync();
+        ExecBaseProc();
+    }
+
+    switch (r)
+    {
+    case 0x800:
+        ret = 3;
+        PutStringS(0x80C0FF00, "Use hdd ether port\n");
+        break;
+    case 0x20:
+        ret = 1;
+        PutStringS(0x80C0FF00, "Use usb ether port\n");
+        break;
+    case 0x10:
+        ret = 2;
+        PutStringS(0x80C0FF00, "Use usb ether port(ppp on ehter)\n");
+        break;
+    case 0x80:
+        ret = 4;
+        PutStringS(0x80C0FF00, "Use hdd ether port(ppp on ehter)\n");
+        break;
+    case 0x40:
+        ret = 5;
+        PutStringS(0x80C0FF00, "Use modem\n");
+        break;
+    default:
+        ret = 0;
+        PutStringS(0x80C0FF00, "Default startup\n");
+        break;
+    }
+    return ret;
+}
 
 INCLUDE_ASM("asm/nonmatchings/os/netSys", LoaderSysInitTCP);

@@ -95,6 +95,7 @@ initmemprintf                                    = 0x00104088; // type:func
 // netSys.c
 LoadSetConfiguration                             = 0x00104428; // type:func
 LoaderSysInitTCP                                 = 0x00104990; // type:func
+D_0013A304                                       = 0x0013A304; // type:s32
 
 D_00136548 = 0x00136548; // force_not_migration:True
 D_00136560 = 0x00136560; // force_not_migration:True
@@ -152,15 +153,22 @@ padSysVibSetAcrParam                             = 0x00104EF8; // type:func
 // os/powerOff.c
 LoaderSysSetPowerOffCallBackFunc                 = 0x00104F58; // type:func
 PreparePowerOff                                  = 0x00104F60; // type:func
+PowerOffThread                                   = 0x00104FF0; // type:func size:0xB0
+PowerOffHandler                                  = 0x001050A0; // type:func
 
 // os/usbSerialSys.c
 usbSerialSysPutString                            = 0x001050B8; // type:func
 usbSerialSysPrintf                               = 0x00105268; // type:func
 usbSerialSysInit                                 = 0x001052D8; // type:func
-usbSerialSysISignalSema__sub_1053F0              = 0x001053F0; // type:func
+usbSerialSysISignalSema                          = 0x001053F0; // type:func
 
-// data
-semaId                                           = 0x0013A308; // type:s32
+// sbss
+semaid_rpc                                       = 0x0013A308; // type:s32
+
+// bss
+cdUsbSerial                                      = 0x0013EC40; // type:u8 size:0x28
+sdata                                            = 0x0013EC80; // type:u8 size:0x40
+rdata                                            = 0x0013ECC0; // type:u8 size:0x20
 
 // os/putString.c
 PutFont                                          = 0x00105408; // type:func
@@ -183,6 +191,7 @@ SetDrawEnvironment                               = 0x001068D0; // type:func
 SetPrimColor                                     = 0x00106998; // type:func
 SetPrimColorTex                                  = 0x00106AE8; // type:func
 PutChar                                          = 0x00106C58; // type:func
+D_00139420                                       = 0x00139420; // size:0x100
 
 //=============================
 // libkernl.a
