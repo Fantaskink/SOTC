@@ -95,6 +95,7 @@ initmemprintf                                    = 0x00104088; // type:func
 // netSys.c
 LoadSetConfiguration                             = 0x00104428; // type:func
 LoaderSysInitTCP                                 = 0x00104990; // type:func
+D_0013A304                                       = 0x0013A304; // type:s32
 
 D_00136548 = 0x00136548; // force_not_migration:True
 D_00136560 = 0x00136560; // force_not_migration:True
