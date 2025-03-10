@@ -5,42 +5,6 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
-// From samples
-typedef struct
-{
-    sceGifTag giftag;
-    sceGsTest gs_test;
-    s64 gs_test1addr;
-    sceGsAlphaEnv gs_alpha;
-    sceGsTexEnv gs_tex;
-} TexEnv;
-
-typedef struct
-{
-    sceGifTag giftag;
-    sceGsDrawEnv1 draw;
-} DrawEnv;
-
-extern TexEnv D_001320D0;
-extern DrawEnv D_00132170;
-extern TexEnv D_00132200;
-extern TexEnv D_001322A0;
-
-extern s32 D_0013A230;
-extern s32 D_0013A234;
-extern s32 D_0013A238;
-extern u128 D_00137D40;
-extern u128 D_00137D50;
-extern u32 D_0013A244;
-extern u32 D_0013A248;
-extern u32 D_0013A24C;
-extern struct t_PutStringFBChar D_0013A260;
-extern s32 D_0013A26C;
-extern s32 D_0013A270;
-extern s32 D_0013A280;
-extern sceGsDBuff D_0013ECE0;
-extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
-
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", _putString);
@@ -177,7 +141,12 @@ void ClearDisplay(void)
     return;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", InitDisp);
+void InitDisp(void)
+{
+    ReinitDisp();
+    __inlined_ClearDisplay();
+    __inlined_SetLocate(0, 0);
+}
 
 void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
 {
