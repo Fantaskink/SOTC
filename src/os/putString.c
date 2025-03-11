@@ -1,5 +1,6 @@
 #include "putString.h"
 #include "common.h"
+#include "gcc/ctype.h"
 #include "sdk/ee/eestruct.h"
 #include "sdk/ee/libdma.h"
 #include "sdk/ee/libgraph.h"
@@ -7,7 +8,57 @@
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", _putString);
+void _putString(PutStringColor color, char *strIn)
+{
+    s32 chIx; // character ptr/ix in the string
+
+    LoaderSysPrintf(strIn); // They seem very sure there won't be any printf() format specifiers inside. The safe way is printf("%s", strIn).
+
+    // Why did they leave the strlen in the loop to be called every iter?
+    for (chIx = 0; chIx < strlen(strIn); chIx++)
+    {
+        if (strIn[chIx] == '\t')
+        {
+            __inlined_PutChar(0xFFFFFF00, ' ');
+            D_0013A26C += 2;
+        }
+        else if (strIn[chIx] == '\n')
+        {
+            __inlined_PutChar(0xFFFFFF00, ' ');
+            D_0013A270++;
+            D_0013A26C = 0;
+            D_0013A274 = 0;
+        }
+        else
+        {
+            // regular symbols:
+            D_0013EF10[D_0013A270][D_0013A26C].color = color;
+
+            if (strIn[chIx] == '\'')
+            {
+                D_0013A278 = !D_0013A278;
+            }
+            if (strIn[chIx] == '"')
+            {
+                D_0013A27C = !D_0013A27C;
+            }
+
+            D_0013EF10[D_0013A270][D_0013A26C].ch = (D_0013A27C) ? strIn[chIx] : toupper(strIn[chIx]);
+            D_0013A26C++;
+        }
+
+        if (D_0013A26C >= PUT_STRING_FB_WDTH)
+        {
+            D_0013A26C = PUT_STRING_FB_WDTH - 1;
+        }
+
+        if (D_0013A270 >= PUT_STRING_FB_HGHT)
+        {
+            __inlined_ScrollDisplay();
+            D_0013A270 = PUT_STRING_FB_HGHT - 1; // keep at the last line
+        }
+    }
+}
 
 void PutString(PutStringColor color, const char *format, ...)
 {
@@ -50,8 +101,6 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
 
 void func_00105C50(void)
 {
-    s32 x;
-
     if ((D_0013A274 >> 4) & 1)
     {
         __inlined_PutChar(0xFFFFFF00, 0x20);

@@ -81,6 +81,8 @@ extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
 extern u32 D_0013A274;
+extern s32 D_0013A27C;
+extern s32 D_0013A278;
 extern s32 D_0013A280;
 extern sceGsDBuff D_0013ECE0;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
@@ -88,8 +90,10 @@ extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDT
 void _putString(s32 color, char *arg1);
 void PutString(PutStringColor color, const char *format, ...);
 void PutStringS(PutStringColor color, const char *format, ...);
+void func_00105C50(void);
 void Sync(void);
 void ReinitDisp(void);
+void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s32 arg4);
 void ExecBaseProc(void);
 void SetLocate(s32 x, s32 y);
 void ScrollDisplay(void);
@@ -206,6 +210,24 @@ static inline void __inlined_PutChar(PutStringColor color, char ch)
 {
     D_0013EF10[D_0013A270][D_0013A26C].color = color;
     D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
+}
+
+static inline void __inlined_ScrollDisplay(void)
+{
+    s32 i, j;
+
+    for (i = 1; i < PUT_STRING_FB_HGHT; i++)
+    {
+        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+        {
+            D_0013EF10[i - 1][j] = D_0013EF10[i][j];
+        }
+    }
+
+    for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+    {
+        D_0013EF10[PUT_STRING_FB_HGHT - 1][j] = D_0013A260;
+    }
 }
 
 #endif /* _PUTSTRING_H_ */
