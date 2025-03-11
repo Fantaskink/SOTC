@@ -6,7 +6,38 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", PutFont);
+void PutFont(s32 arg0, s32 arg1, s32 arg2) {
+    sceVif1Packet pkt;
+    sceDmaChan *dmaVif;
+    s32 i;
+    s32 j;
+    
+    __inlined_SetPrimColor(SCE_GS_PRIM_POINT, D_0013A250, D_0013A254, D_0013A258, 0x80);
+    
+    sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
+    sceVif1PkReset(&pkt);
+    sceVif1PkCnt(&pkt, 0);
+    sceVif1PkOpenDirectCode(&pkt, 0);
+    D_0013A244 = (D_0013A244 + 1) & 1;
+    sceVif1PkOpenGifTag(&pkt, D_00132340); 
+    
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < 8; j++) {
+            if ((D_00137540[arg0][i] >> j) & 1) {
+                sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg1 + j + 0x800) * 0x10, (arg2 + i + 0x800) << 0x4, 0x800000, 0));
+                sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg1 + j + 0x800) * 0x10, ((arg2 + i + 0x800) << 0x4) - 0x10, 0x800000, 0));
+            }
+        }
+    }
+    sceVif1PkCloseGifTag(&pkt);
+    sceVif1PkCloseDirectCode(&pkt);
+    sceVif1PkEnd(&pkt, 0);
+    sceVif1PkTerminate(&pkt);
+    sceGsSyncPath(0, 0);
+    dmaVif = sceDmaGetChan(1);
+    dmaVif->chcr.TTE = 1;
+    sceDmaSend(dmaVif, (u128*)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
+}
 
 void _putString(PutStringColor color, char *strIn)
 {
@@ -161,7 +192,7 @@ void ReinitDisp(void)
 
 void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s32 arg4)
 {
-    sceVif1Packet sp;
+    sceVif1Packet pkt;
     sceDmaChan *dmaVif2;
     sceDmaChan *dmaVif3;
 
@@ -169,45 +200,45 @@ void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s3
     {
         __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
 
-        sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
-        sceVif1PkReset(&sp);
-        sceVif1PkCnt(&sp, 0);
-        sceVif1PkOpenDirectCode(&sp, 0);
+        sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
+        sceVif1PkReset(&pkt);
+        sceVif1PkCnt(&pkt, 0);
+        sceVif1PkOpenDirectCode(&pkt, 0);
         D_0013A244 = (D_0013A244 + 1) & 1;
-        sceVif1PkOpenGifTag(&sp, D_00132350);
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_UV(arg1->u0, arg1->v0));
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_UV(arg1->u1 << 4, arg1->v1 << 4));
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
-        sceVif1PkCloseGifTag(&sp);
-        sceVif1PkCloseDirectCode(&sp);
-        sceVif1PkEnd(&sp, 0);
-        sceVif1PkTerminate(&sp);
+        sceVif1PkOpenGifTag(&pkt, D_00132350);
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_UV(arg1->u0, arg1->v0));
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_UV(arg1->u1 << 4, arg1->v1 << 4));
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkCloseGifTag(&pkt);
+        sceVif1PkCloseDirectCode(&pkt);
+        sceVif1PkEnd(&pkt, 0);
+        sceVif1PkTerminate(&pkt);
         sceGsSyncPath(0, 0);
         dmaVif2 = sceDmaGetChan(1);
         dmaVif2->chcr.TTE = 1;
-        sceDmaSend(dmaVif2, (u128 *)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+        sceDmaSend(dmaVif2, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
     }
     else
     {
         __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
 
-        sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
-        sceVif1PkReset(&sp);
-        sceVif1PkCnt(&sp, 0);
-        sceVif1PkOpenDirectCode(&sp, 0);
+        sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
+        sceVif1PkReset(&pkt);
+        sceVif1PkCnt(&pkt, 0);
+        sceVif1PkOpenDirectCode(&pkt, 0);
         D_0013A244 = (D_0013A244 + 1) & 1;
-        sceVif1PkOpenGifTag(&sp, D_00132360);
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
-        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
-        sceVif1PkCloseGifTag(&sp);
-        sceVif1PkCloseDirectCode(&sp);
-        sceVif1PkEnd(&sp, 0);
-        sceVif1PkTerminate(&sp);
+        sceVif1PkOpenGifTag(&pkt, D_00132360);
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkCloseGifTag(&pkt);
+        sceVif1PkCloseDirectCode(&pkt);
+        sceVif1PkEnd(&pkt, 0);
+        sceVif1PkTerminate(&pkt);
         sceGsSyncPath(0, 0);
         dmaVif3 = sceDmaGetChan(1);
         dmaVif3->chcr.TTE = 1;
-        sceDmaSend(dmaVif3, (u128 *)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+        sceDmaSend(dmaVif3, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
     }
 }
 

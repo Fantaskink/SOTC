@@ -64,8 +64,10 @@ extern TexEnv D_001320D0;
 extern DrawEnv D_00132170;
 extern TexEnv D_00132200;
 extern TexEnv D_001322A0;
+extern u128 D_00132340;
 extern u128 D_00132350;
 extern u128 D_00132360;
+extern u8 D_00137540[100][8];
 
 extern s32 D_0013A230;
 extern s32 D_0013A234;
@@ -77,6 +79,9 @@ extern u128 D_00137D50;
 extern u32 D_0013A244;
 extern u32 D_0013A248;
 extern u32 D_0013A24C;
+extern s32 D_0013A250;
+extern s32 D_0013A254;
+extern s32 D_0013A258;
 extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
@@ -140,6 +145,35 @@ static inline void __inlined_SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b,
     sceVif1PkOpenGifTag(&pkt, D_00137D50);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A24C));
+    sceVif1PkCloseGifTag(&pkt);
+    sceVif1PkCloseDirectCode(&pkt);
+    sceVif1PkEnd(&pkt, 0);
+    sceVif1PkTerminate(&pkt);
+
+    sceGsSyncPath(0, 0);
+
+    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
+    dmaVif->chcr.TTE = 1;
+    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
+}
+
+static inline void __inlined_SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
+{
+    sceVif1Packet pkt;
+    sceVif1Packet *pPkt;
+    sceDmaChan *dmaVif;
+
+    pPkt = &pkt;
+    sceVif1PkInit(pPkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
+    sceVif1PkReset(pPkt);
+    sceVif1PkCnt(pPkt, 0);
+    sceVif1PkOpenDirectCode(pPkt, 0);
+
+    D_0013A244 = (D_0013A244 + 1) & 1;
+
+    sceVif1PkOpenGifTag(&pkt, D_00137D40);
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A248));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);
