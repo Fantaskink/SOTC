@@ -77,6 +77,7 @@ extern u32 D_0013A24C;
 extern struct t_PutStringFBChar D_0013A260;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
+extern u32 D_0013A274;
 extern s32 D_0013A280;
 extern sceGsDBuff D_0013ECE0;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
@@ -196,6 +197,12 @@ static inline void __inlined_RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32
         sceGsSetHalfOffset(&udbuf->draw0, 0x800, 0x800, half_off);
         sceGsPutDrawEnv(&udbuf->giftag0);
     }
+}
+
+static inline void __inlined_PutChar(PutStringColor color, char ch)
+{
+    D_0013EF10[D_0013A270][D_0013A26C].color = color;
+    D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
 }
 
 #endif /* _PUTSTRING_H_ */

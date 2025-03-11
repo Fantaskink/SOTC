@@ -48,7 +48,17 @@ void PutStringS(PutStringColor color, const char *format, ...)
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105C50);
+void func_00105C50(void) {
+    s32 x;
+
+    if ((D_0013A274 >> 4) & 1) {
+        __inlined_PutChar(0xFFFFFF00, 0x20);
+    } else {
+        __inlined_PutChar(0xFFFFFF00, 0x12);
+    }
+    D_0013A274++;
+    D_0013A274 = D_0013A274 & 0xFF;
+}
 
 void Sync(void) {
     FlushCache(0);
