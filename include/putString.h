@@ -67,6 +67,8 @@ extern u128 D_00132360;
 extern s32 D_0013A230;
 extern s32 D_0013A234;
 extern s32 D_0013A238;
+extern s32 D_0013A23C;
+extern s32 D_0013A240;
 extern u128 D_00137D40;
 extern u128 D_00137D50;
 extern u32 D_0013A244;
@@ -146,6 +148,54 @@ static inline void __inlined_SetLocate(s32 x, s32 y)
 {
     D_0013A26C = x;
     D_0013A270 = y;
+}
+
+static inline void __inlined_SetDrawEnvironment(s32 mode)
+{
+    TexEnv *tx_env;
+
+    tx_env = (TexEnv *)((s32)&D_001322A0 | 0x20000000);
+    sceGsSetDefAlphaEnv(&tx_env->gs_alpha, 0);
+    switch (mode)
+    {
+    case 0:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 1:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 2:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 3:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0x28);
+        break;
+    case 4:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0);
+        break;
+    }
+
+    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
+    tx_env->gs_test1addr = SCE_GS_TEST_1;
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&tx_env->giftag);
+}
+
+static inline void __inlined_RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
+{
+    sceGsDBuff *udbuf;
+
+    udbuf = (sceGsDBuff *)((s32)dbuff | 0x20000000);
+    if (arg1 != 0)
+    {
+        sceGsSetHalfOffset(&udbuf->draw1, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag1);
+    }
+    else
+    {
+        sceGsSetHalfOffset(&udbuf->draw0, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag0);
+    }
 }
 
 #endif /* _PUTSTRING_H_ */

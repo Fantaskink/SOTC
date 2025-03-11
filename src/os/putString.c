@@ -50,7 +50,16 @@ INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105C50);
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", Sync);
+void Sync(void) {
+    FlushCache(0);
+    sceGsSyncPath(1, 0);
+    D_0013A240 = sceGsSyncV(0);
+    D_0013A238 = (D_0013A23C+1) & 1;
+    D_0013A23C++;
+    sceGsSwapDBuff(&D_0013ECE0, D_0013A238);
+    __inlined_RestoreNormalDrawEnvironment(&D_0013ECE0, D_0013A238, D_0013A240);
+    __inlined_SetDrawEnvironment(1);
+}
 
 INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137540);
 
