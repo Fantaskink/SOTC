@@ -36,21 +36,24 @@ typedef struct
 } DrawEnv;
 
 // TODO: better names for these
-typedef struct rgba32 {
+typedef struct rgba32
+{
     s32 r;
     s32 g;
     s32 b;
     s32 a;
 } rgba32;
 
-typedef struct uvpair {
+typedef struct uvpair
+{
     s32 u0;
     s32 v0;
     s32 u1;
     s32 v1;
 } uvpair;
 
-typedef struct xypair {
+typedef struct xypair
+{
     s32 x0;
     s32 y0;
     s32 x1;

@@ -48,23 +48,28 @@ void PutStringS(PutStringColor color, const char *format, ...)
 
 INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
 
-void func_00105C50(void) {
+void func_00105C50(void)
+{
     s32 x;
 
-    if ((D_0013A274 >> 4) & 1) {
+    if ((D_0013A274 >> 4) & 1)
+    {
         __inlined_PutChar(0xFFFFFF00, 0x20);
-    } else {
+    }
+    else
+    {
         __inlined_PutChar(0xFFFFFF00, 0x12);
     }
     D_0013A274++;
     D_0013A274 = D_0013A274 & 0xFF;
 }
 
-void Sync(void) {
+void Sync(void)
+{
     FlushCache(0);
     sceGsSyncPath(1, 0);
     D_0013A240 = sceGsSyncV(0);
-    D_0013A238 = (D_0013A23C+1) & 1;
+    D_0013A238 = (D_0013A23C + 1) & 1;
     D_0013A23C++;
     sceGsSwapDBuff(&D_0013ECE0, D_0013A238);
     __inlined_RestoreNormalDrawEnvironment(&D_0013ECE0, D_0013A238, D_0013A240);
@@ -105,12 +110,14 @@ void ReinitDisp(void)
     }
 }
 
-void LoaderSysDrawSprite(xypair* arg0, uvpair* arg1, rgba32* color, s32 arg3, s32 arg4) {
+void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s32 arg4)
+{
     sceVif1Packet sp;
     sceDmaChan *dmaVif2;
     sceDmaChan *dmaVif3;
 
-    if (arg4 != 0) {
+    if (arg4 != 0)
+    {
         __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
 
         sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
@@ -130,10 +137,12 @@ void LoaderSysDrawSprite(xypair* arg0, uvpair* arg1, rgba32* color, s32 arg3, s3
         sceGsSyncPath(0, 0);
         dmaVif2 = sceDmaGetChan(1);
         dmaVif2->chcr.TTE = 1;
-        sceDmaSend(dmaVif2, (u128*)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
-    } else {
+        sceDmaSend(dmaVif2, (u128 *)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+    }
+    else
+    {
         __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
-        
+
         sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
         sceVif1PkReset(&sp);
         sceVif1PkCnt(&sp, 0);
@@ -149,7 +158,7 @@ void LoaderSysDrawSprite(xypair* arg0, uvpair* arg1, rgba32* color, s32 arg3, s3
         sceGsSyncPath(0, 0);
         dmaVif3 = sceDmaGetChan(1);
         dmaVif3->chcr.TTE = 1;
-        sceDmaSend(dmaVif3, (u128*)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+        sceDmaSend(dmaVif3, (u128 *)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
     }
 }
 
