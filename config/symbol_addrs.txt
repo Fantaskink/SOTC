@@ -1,4 +1,11 @@
-func_0                                           = 0x00000000; // ignore:true
+// Ignored symbols
+func_000000                                      = 0x00000000; // ignore:true
+D_20000020                                       = 0x20000020; // ignore:true
+D_20000010                                       = 0x20000010; // ignore:true
+D_20000050                                       = 0x20000050; // ignore:true
+D_20000140                                       = 0x20000140; // ignore:true
+D_20000150                                       = 0x20000150; // ignore:true
+D_20000060                                       = 0x20000060; // ignore:true
 
 // linker symbols
 _stack                                           = 0x01FE0000; // type:label
@@ -7,21 +14,24 @@ _end                                             = 0x0016A518; // type:label
 _heap_size                                       = 0x00040000; // type:label
 _gp                                              = 0x00141E70; // type:label
 
-LOADER_RESET_CALLBACK_NUM                        = 0x0013A17C; // type:s32
-RESET_CALLBACK_LIST                              = 0x0013D120; // size:0x28
-
 // crt0.o
 entry                                            = 0x00100000; // type:func
 _exit                                            = 0x001000C0; // type:func
 _root                                            = 0x001000C8; // type:func
+
+LOADER_RESET_CALLBACK_NUM                        = 0x0013A17C; // type:s32
+RESET_CALLBACK_LIST                              = 0x0013D120; // size:0x28
 
 // os/loadersys.c
 ResolveRelocation                                = 0x001000D0; // type:func
 DecodeSection                                    = 0x00100278; // type:func
 RelocateElfInfoHeader                            = 0x001004B8; // type:func
 OutputLinkerScriptFile                           = 0x00100590; // type:func
+func_00100A58                                    = 0x00100A58; // type:func
+L00100AF4                                        = 0x00100AF4; // type:label
 LoaderSysJumpRecoverPointNoStateSetting          = 0x00100BF8; // type:func
 LoaderSysJumpRecoverPoint                        = 0x00100C80; // type:func
+L00100CD0                                        = 0x00100CD0; // type:label
 MoveElf                                          = 0x00101190; // type:func
 LoaderSysRelocateOnlineElfInfo                   = 0x00101518; // type:func
 RelocateCode                                     = 0x001016E8; // type:func
@@ -31,11 +41,14 @@ SetHeapStartPoint                                = 0x00101A30; // type:func
 DisposeRelocationElement                         = 0x00101950; // type:func
 GetHeapCurrentPoint                              = 0x00101A48; // type:func
 LoaderSysResetSystem                             = 0x00101A50; // type:func
+func_00101AA0                                    = 0x00101AA0; // type:func
 mallocAlignMempool                               = 0x00101AC0; // type:func
 mallocAlign0x100Mempool                          = 0x00101AF0; // type:func
 _checkExistString                                = 0x00101B20; // type:func
 _execProgWithThread                              = 0x00101CC8; // type:func
 execProgWithThread                               = 0x00101D90; // type:func
+
+// os/loadersys2.c
 InitException                                    = 0x001020C0; // type:func
 setCop0Epc                                       = 0x001021D0; // type:func
 LoaderSysDeleteAllExternalIntcHandler            = 0x00102438; // type:func
@@ -91,6 +104,9 @@ loaderSetResetCallback                           = 0x00103F98; // type:func
 memprintf                                        = 0x00103FF8; // type:func
 imemprintf                                       = 0x00104040; // type:func
 initmemprintf                                    = 0x00104088; // type:func
+
+D_00131E00                                       = 0x00131E00; // size:120
+D_00131E80                                       = 0x00131E80; // size:512
 
 // netSys.c
 LoadSetConfiguration                             = 0x00104428; // type:func
@@ -191,7 +207,6 @@ SetDrawEnvironment                               = 0x001068D0; // type:func
 SetPrimColor                                     = 0x00106998; // type:func
 SetPrimColorTex                                  = 0x00106AE8; // type:func
 PutChar                                          = 0x00106C58; // type:func
-D_00139420                                       = 0x00139420; // size:0x100
 
 //=============================
 // libkernl.a
@@ -1243,6 +1258,8 @@ _fstat_r                                         = 0x00131258; // type:func
 _lseek_r                                         = 0x001312B8; // type:func
 _read_r                                          = 0x00131318; // type:func
 _realloc_r                                       = 0x00131378; // type:func
+
+_ctype_                                          = 0x00139420; // size:0x100
 
 //=============================
 // libkernl.a
