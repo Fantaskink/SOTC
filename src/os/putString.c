@@ -86,7 +86,53 @@ void ReinitDisp(void)
     }
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", LoaderSysDrawSprite);
+void LoaderSysDrawSprite(xypair* arg0, uvpair* arg1, rgba32* color, s32 arg3, s32 arg4) {
+    sceVif1Packet sp;
+    sceDmaChan *dmaVif2;
+    sceDmaChan *dmaVif3;
+
+    if (arg4 != 0) {
+        __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
+
+        sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
+        sceVif1PkReset(&sp);
+        sceVif1PkCnt(&sp, 0);
+        sceVif1PkOpenDirectCode(&sp, 0);
+        D_0013A244 = (D_0013A244 + 1) & 1;
+        sceVif1PkOpenGifTag(&sp, D_00132350);
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_UV(arg1->u0, arg1->v0));
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_UV(arg1->u1 << 4, arg1->v1 << 4));
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkCloseGifTag(&sp);
+        sceVif1PkCloseDirectCode(&sp);
+        sceVif1PkEnd(&sp, 0);
+        sceVif1PkTerminate(&sp);
+        sceGsSyncPath(0, 0);
+        dmaVif2 = sceDmaGetChan(1);
+        dmaVif2->chcr.TTE = 1;
+        sceDmaSend(dmaVif2, (u128*)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+    } else {
+        __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
+        
+        sceVif1PkInit(&sp, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
+        sceVif1PkReset(&sp);
+        sceVif1PkCnt(&sp, 0);
+        sceVif1PkOpenDirectCode(&sp, 0);
+        D_0013A244 = (D_0013A244 + 1) & 1;
+        sceVif1PkOpenGifTag(&sp, D_00132360);
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkAddGsData(&sp, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
+        sceVif1PkCloseGifTag(&sp);
+        sceVif1PkCloseDirectCode(&sp);
+        sceVif1PkEnd(&sp, 0);
+        sceVif1PkTerminate(&sp);
+        sceGsSyncPath(0, 0);
+        dmaVif3 = sceDmaGetChan(1);
+        dmaVif3->chcr.TTE = 1;
+        sceDmaSend(dmaVif3, (u128*)(0x80000000 | ((int)sp.pBase & 0x3FF0)));
+    }
+}
 
 void ExecBaseProc(void)
 {

@@ -3,7 +3,9 @@
 
 #include "common.h"
 #include "sdk/ee/eetypes.h"
+#include "sdk/ee/libdma.h"
 #include "sdk/ee/libgraph.h"
+#include "sdk/ee/libvifpk.h"
 
 #define PUT_STRING_FB_WDTH (60)
 #define PUT_STRING_FB_HGHT (40)
@@ -33,10 +35,34 @@ typedef struct
     sceGsDrawEnv1 draw;
 } DrawEnv;
 
+// TODO: better names for these
+typedef struct rgba32 {
+    s32 r;
+    s32 g;
+    s32 b;
+    s32 a;
+} rgba32;
+
+typedef struct uvpair {
+    s32 u0;
+    s32 v0;
+    s32 u1;
+    s32 v1;
+} uvpair;
+
+typedef struct xypair {
+    s32 x0;
+    s32 y0;
+    s32 x1;
+    s32 y1;
+} xypair;
+
 extern TexEnv D_001320D0;
 extern DrawEnv D_00132170;
 extern TexEnv D_00132200;
 extern TexEnv D_001322A0;
+extern u128 D_00132350;
+extern u128 D_00132360;
 
 extern s32 D_0013A230;
 extern s32 D_0013A234;
@@ -73,7 +99,8 @@ void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv);
 void PutChar(PutStringColor color, char ch);
 
 // TODO: remove these
-static inline void __inlined_ClearDisplay(void) {
+static inline void __inlined_ClearDisplay(void)
+{
     s32 i, j;
 
     for (i = 0; i < PUT_STRING_FB_HGHT; i++)
@@ -84,6 +111,35 @@ static inline void __inlined_ClearDisplay(void) {
         }
     }
     return;
+}
+
+static inline void __inlined_SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv)
+{
+    sceVif1Packet pkt;
+    sceVif1Packet *pPkt;
+    sceDmaChan *dmaVif;
+
+    pPkt = &pkt;
+    sceVif1PkInit(pPkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
+    sceVif1PkReset(pPkt);
+    sceVif1PkCnt(pPkt, 0);
+    sceVif1PkOpenDirectCode(pPkt, 0);
+
+    D_0013A244 = (D_0013A244 + 1) & 1;
+
+    sceVif1PkOpenGifTag(&pkt, D_00137D50);
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A24C));
+    sceVif1PkCloseGifTag(&pkt);
+    sceVif1PkCloseDirectCode(&pkt);
+    sceVif1PkEnd(&pkt, 0);
+    sceVif1PkTerminate(&pkt);
+
+    sceGsSyncPath(0, 0);
+
+    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
+    dmaVif->chcr.TTE = 1;
+    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
 }
 
 static inline void __inlined_SetLocate(s32 x, s32 y)
