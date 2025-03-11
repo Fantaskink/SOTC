@@ -10,6 +10,13 @@
 #define PUT_STRING_FB_WDTH (60)
 #define PUT_STRING_FB_HGHT (40)
 
+#define PUTSTR_COL_MAKE(r, g, b, a) ((PutStringColor)(((r) & 0xFF) << 24 | ((g) & 0xFF) << 16 | ((b) & 0xFF) << 8 | ((a) & 0xFF) << 0))
+#define PUTSTR_COL_MAKEW(wi) ((PutStringColor)(wi))
+#define PUTSTR_COL_GET_R(cl) (((int)(cl) >> 24) & 0xFF)
+#define PUTSTR_COL_GET_G(cl) (((int)(cl) >> 16) & 0xFF)
+#define PUTSTR_COL_GET_B(cl) (((int)(cl) >> 8) & 0xFF)
+#define PUTSTR_COL_GET_A(cl) (((int)(cl) >> 0) & 0xFF)
+
 // Number of calls to PutString(), after which to send Sync(), ExecBaseProc() (=Flush perhaps) (at the last call of them).
 #define PUT_STRING_SYNC_ITER (5)
 
@@ -83,6 +90,7 @@ extern s32 D_0013A250;
 extern s32 D_0013A254;
 extern s32 D_0013A258;
 extern struct t_PutStringFBChar D_0013A260;
+extern s32 D_0013A268;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
 extern u32 D_0013A274;
@@ -95,6 +103,7 @@ extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDT
 void _putString(s32 color, char *arg1);
 void PutString(PutStringColor color, const char *format, ...);
 void PutStringS(PutStringColor color, const char *format, ...);
+void func_00105A60(void);
 void func_00105C50(void);
 void Sync(void);
 void ReinitDisp(void);

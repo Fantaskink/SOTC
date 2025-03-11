@@ -6,24 +6,28 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
-void PutFont(s32 arg0, s32 arg1, s32 arg2) {
+void PutFont(s32 arg0, s32 arg1, s32 arg2)
+{
     sceVif1Packet pkt;
     sceDmaChan *dmaVif;
     s32 i;
     s32 j;
-    
+
     __inlined_SetPrimColor(SCE_GS_PRIM_POINT, D_0013A250, D_0013A254, D_0013A258, 0x80);
-    
+
     sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
     sceVif1PkReset(&pkt);
     sceVif1PkCnt(&pkt, 0);
     sceVif1PkOpenDirectCode(&pkt, 0);
     D_0013A244 = (D_0013A244 + 1) & 1;
-    sceVif1PkOpenGifTag(&pkt, D_00132340); 
-    
-    for (i = 0; i < 8; i++) {
-        for (j = 0; j < 8; j++) {
-            if ((D_00137540[arg0][i] >> j) & 1) {
+    sceVif1PkOpenGifTag(&pkt, D_00132340);
+
+    for (i = 0; i < 8; i++)
+    {
+        for (j = 0; j < 8; j++)
+        {
+            if ((D_00137540[arg0][i] >> j) & 1)
+            {
                 sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg1 + j + 0x800) * 0x10, (arg2 + i + 0x800) << 0x4, 0x800000, 0));
                 sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg1 + j + 0x800) * 0x10, ((arg2 + i + 0x800) << 0x4) - 0x10, 0x800000, 0));
             }
@@ -36,7 +40,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2) {
     sceGsSyncPath(0, 0);
     dmaVif = sceDmaGetChan(1);
     dmaVif->chcr.TTE = 1;
-    sceDmaSend(dmaVif, (u128*)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
+    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
 }
 
 void _putString(PutStringColor color, char *strIn)
@@ -128,7 +132,57 @@ void PutStringS(PutStringColor color, const char *format, ...)
     va_end(args);
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/putString", func_00105A60);
+// Send the screen character buffer to the display.
+void func_00105A60(void)
+{
+    s32 ix, iy, sx, s5;
+    PutStringColor color;
+    s32 xb;
+    s32 j;
+
+    s5 = PUT_STRING_FB_WDTH;
+
+    for (iy = 0; iy < PUT_STRING_FB_HGHT; iy++)
+    {
+        char c = ' ';
+
+        for (ix = PUT_STRING_FB_WDTH - 1;; ix--)
+        {
+            if (D_0013EF10[iy][ix].ch != ' ')
+                break;
+            if (ix < 0)
+                break;
+        }
+
+        ix += 1;
+        if (s5 < ix)
+            s5 = ix;
+
+        xb = 0;
+        if (ix >= PUT_STRING_FB_WDTH)
+        {
+            xb = ((ix - D_0013A268 - PUT_STRING_FB_WDTH) >= 0) ? D_0013A268 : (ix - PUT_STRING_FB_WDTH);
+        }
+
+        sx = -30;
+        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+        {
+            if (D_0013EF10[iy][j + xb].ch != c)
+            {
+                color = D_0013EF10[iy][j + xb].color;
+                D_0013A250 = PUTSTR_COL_GET_R(color) * 0.8f;
+                D_0013A254 = PUTSTR_COL_GET_G(color) * 0.8f;
+                D_0013A258 = PUTSTR_COL_GET_B(color) * 0.8f;
+                PutFont(D_0013EF10[iy][j + xb].ch, sx * 10, iy * 10 - 200);
+            }
+            sx++;
+        }
+    }
+
+    // seems correct way
+    if ((s5 - D_0013A268 - PUT_STRING_FB_WDTH) < 0)
+        D_0013A268 = s5 - PUT_STRING_FB_WDTH;
+}
 
 void func_00105C50(void)
 {

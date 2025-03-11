@@ -221,8 +221,8 @@ segments:
         - [0x38540, .rodata, os/putString]
         
         - [0x38D88, rodatabin] # SDK rodata
-        - [0x3AE80, rodatabin] # .lit4
-        #- [0x3AE84, databin] # .data_nop
+        - [0x3AE80, .lit4, os/putString] # .lit4
+        - [0x3AE84, pad] # .data_nop
         - [0x3AF00, .sdata, os/loaderSys]
         - [0x3AF68, sdata, os/loaderSys2]
         - [0x3b188, sdata, os/netSys]
