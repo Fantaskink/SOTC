@@ -98,23 +98,23 @@ s32 D_0013A240 = 0;
 u32 D_0013A244 = 0;
 f32 D_0013A248 = 1.0f;
 f32 D_0013A24C = 1.0f;
-s32 D_0013A250 = 0xFF;
-s32 D_0013A254 = 0xFF;
-s32 D_0013A258 = 0xFF;
-struct t_PutStringFBChar D_0013A260 = {0, PUTSTR_CH_SPACE};
+s32 putScrCrChColorR = 0xFF; // 0x0013A250
+s32 putScrCrChColorG = 0xFF; // 0x0013A254
+s32 putScrCrChColorB = 0xFF; // 0x0013A258
+struct t_PutStringFBChar putStrFbChBlackSpace = {0, PUTSTR_CH_SPACE}; // 0x0013A260
 s32 D_0013A268 = 0;
-s32 D_0013A26C = 0;
-s32 D_0013A270 = 0;
-u32 D_0013A274 = 0;
+s32 putStrFBChOffsX = 0; // 0x0013A26C
+s32 putStrFBChOffsY = 0; // 0x0013A270
+u32 putStrLastChNotNewline = 0; // 0x0013A274
 
 // bss
 static sceGsDBuff D_0013ECE0;
-static struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
+static struct t_PutStringFBChar putStrFrameBuf[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH]; // 0x0013EF10
 
 void PutChar(PutStringColor color, char ch)
 {
-    D_0013EF10[D_0013A270][D_0013A26C].color = color;
-    D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
+    putStrFrameBuf[putStrFBChOffsY][putStrFBChOffsX].color = color;
+    putStrFrameBuf[putStrFBChOffsY][putStrFBChOffsX].ch = ch;
 }
 
 void ScrollDisplay(void)
@@ -125,13 +125,13 @@ void ScrollDisplay(void)
     {
         for (j = 0; j < PUT_STRING_FB_WDTH; j++)
         {
-            D_0013EF10[i - 1][j] = D_0013EF10[i][j];
+            putStrFrameBuf[i - 1][j] = putStrFrameBuf[i][j];
         }
     }
 
     for (j = 0; j < PUT_STRING_FB_WDTH; j++)
     {
-        D_0013EF10[PUT_STRING_FB_HGHT - 1][j] = D_0013A260;
+        putStrFrameBuf[PUT_STRING_FB_HGHT - 1][j] = putStrFbChBlackSpace;
     }
 }
 
@@ -200,7 +200,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
     s32 i;
     s32 j;
 
-    SetPrimColor(SCE_GS_PRIM_POINT, D_0013A250, D_0013A254, D_0013A258, 0x80);
+    SetPrimColor(SCE_GS_PRIM_POINT, putScrCrChColorR, putScrCrChColorG, putScrCrChColorB, 0x80);
 
     sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
     sceVif1PkReset(&pkt);
@@ -220,6 +220,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
             }
         }
     }
+
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);
@@ -232,7 +233,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
 
 void _putString(PutStringColor color, char *strIn)
 {
-    s32 chIx; // character ptr/ix in the string
+    s32 chIx;                       // character ptr/ix in the string
     static s32 isInQuoteSingle = 0; // 0x0013A278
     static s32 isInQuoteDouble = 0; // 0x0013A27C
 
@@ -244,19 +245,19 @@ void _putString(PutStringColor color, char *strIn)
         if (strIn[chIx] == '\t')
         {
             PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
-            D_0013A26C += 2;
+            putStrFBChOffsX += 2;
         }
         else if (strIn[chIx] == '\n')
         {
             PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
-            D_0013A270++;
-            D_0013A26C = 0;
-            D_0013A274 = 0;
+            putStrFBChOffsY++;
+            putStrFBChOffsX = 0;
+            putStrLastChNotNewline = 0;
         }
         else
         {
             // regular symbols:
-            D_0013EF10[D_0013A270][D_0013A26C].color = color;
+            putStrFrameBuf[putStrFBChOffsY][putStrFBChOffsX].color = color;
 
             if (strIn[chIx] == '\'')
             {
@@ -267,19 +268,19 @@ void _putString(PutStringColor color, char *strIn)
                 isInQuoteDouble = !isInQuoteDouble;
             }
 
-            D_0013EF10[D_0013A270][D_0013A26C].ch = (isInQuoteDouble) ? strIn[chIx] : toupper(strIn[chIx]);
-            D_0013A26C++;
+            putStrFrameBuf[putStrFBChOffsY][putStrFBChOffsX].ch = (isInQuoteDouble) ? strIn[chIx] : toupper(strIn[chIx]);
+            putStrFBChOffsX++;
         }
 
-        if (D_0013A26C >= PUT_STRING_FB_WDTH)
+        if (putStrFBChOffsX >= PUT_STRING_FB_WDTH)
         {
-            D_0013A26C = PUT_STRING_FB_WDTH - 1;
+            putStrFBChOffsX = PUT_STRING_FB_WDTH - 1;
         }
 
-        if (D_0013A270 >= PUT_STRING_FB_HGHT)
+        if (putStrFBChOffsY >= PUT_STRING_FB_HGHT)
         {
             ScrollDisplay();
-            D_0013A270 = PUT_STRING_FB_HGHT - 1; // keep at the last line
+            putStrFBChOffsY = PUT_STRING_FB_HGHT - 1; // keep at the last line
         }
     }
 }
@@ -338,7 +339,7 @@ void func_00105A60(void)
 
         for (ix = PUT_STRING_FB_WDTH - 1;; ix--)
         {
-            if (D_0013EF10[iy][ix].ch != PUTSTR_CH_SPACE)
+            if (putStrFrameBuf[iy][ix].ch != PUTSTR_CH_SPACE)
                 break;
             if (ix < 0)
                 break;
@@ -357,13 +358,13 @@ void func_00105A60(void)
         sx = -30;
         for (j = 0; j < PUT_STRING_FB_WDTH; j++)
         {
-            if (D_0013EF10[iy][j + xb].ch != c)
+            if (putStrFrameBuf[iy][j + xb].ch != c)
             {
-                color = D_0013EF10[iy][j + xb].color;
-                D_0013A250 = PUTSTR_COL_GET_R(color) * 0.8f;
-                D_0013A254 = PUTSTR_COL_GET_G(color) * 0.8f;
-                D_0013A258 = PUTSTR_COL_GET_B(color) * 0.8f;
-                PutFont(D_0013EF10[iy][j + xb].ch, sx * 10, iy * 10 - 200);
+                color = putStrFrameBuf[iy][j + xb].color;
+                putScrCrChColorR = PUTSTR_COL_GET_R(color) * 0.8f;
+                putScrCrChColorG = PUTSTR_COL_GET_G(color) * 0.8f;
+                putScrCrChColorB = PUTSTR_COL_GET_B(color) * 0.8f;
+                PutFont(putStrFrameBuf[iy][j + xb].ch, sx * 10, iy * 10 - 200);
             }
             sx++;
         }
@@ -376,7 +377,7 @@ void func_00105A60(void)
 
 void func_00105C50(void)
 {
-    if ((D_0013A274 >> 4) & 1)
+    if ((putStrLastChNotNewline >> 4) & 1)
     {
         PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
     }
@@ -384,8 +385,8 @@ void func_00105C50(void)
     {
         PutChar(0xFFFFFF00, PUTSTR_CH_CURSOR);
     }
-    D_0013A274++;
-    D_0013A274 = D_0013A274 & 0xFF;
+    putStrLastChNotNewline++;
+    putStrLastChNotNewline = putStrLastChNotNewline & 0xFF;
 }
 
 void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
@@ -545,8 +546,8 @@ void ExecBaseProc(void)
 
 void SetLocate(s32 x, s32 y)
 {
-    D_0013A26C = x;
-    D_0013A270 = y;
+    putStrFBChOffsX = x;
+    putStrFBChOffsY = y;
 }
 
 void ClearDisplay(void)
@@ -557,7 +558,7 @@ void ClearDisplay(void)
     {
         for (j = 0; j < PUT_STRING_FB_WDTH; j++)
         {
-            D_0013EF10[i][j] = D_0013A260;
+            putStrFrameBuf[i][j] = putStrFbChBlackSpace;
         }
     }
     return;
