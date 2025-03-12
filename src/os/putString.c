@@ -106,9 +106,6 @@ s32 D_0013A268 = 0;
 s32 D_0013A26C = 0;
 s32 D_0013A270 = 0;
 u32 D_0013A274 = 0;
-s32 D_0013A278 = 0;
-s32 D_0013A27C = 0;
-s32 D_0013A280 = 0;
 
 // bss
 static sceGsDBuff D_0013ECE0;
@@ -183,7 +180,7 @@ inline void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
 
     sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D40);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A248));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&(D_0013A248)));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);
@@ -236,6 +233,8 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
 void _putString(PutStringColor color, char *strIn)
 {
     s32 chIx; // character ptr/ix in the string
+    static s32 isInQuoteSingle = 0; // 0x0013A278
+    static s32 isInQuoteDouble = 0; // 0x0013A27C
 
     LoaderSysPrintf(strIn); // They seem very sure there won't be any printf() format specifiers inside. The safe way is printf("%s", strIn).
 
@@ -261,14 +260,14 @@ void _putString(PutStringColor color, char *strIn)
 
             if (strIn[chIx] == '\'')
             {
-                D_0013A278 = !D_0013A278;
+                isInQuoteSingle = !isInQuoteSingle;
             }
             if (strIn[chIx] == '"')
             {
-                D_0013A27C = !D_0013A27C;
+                isInQuoteDouble = !isInQuoteDouble;
             }
 
-            D_0013EF10[D_0013A270][D_0013A26C].ch = (D_0013A27C) ? strIn[chIx] : toupper(strIn[chIx]);
+            D_0013EF10[D_0013A270][D_0013A26C].ch = (isInQuoteDouble) ? strIn[chIx] : toupper(strIn[chIx]);
             D_0013A26C++;
         }
 
@@ -288,6 +287,7 @@ void _putString(PutStringColor color, char *strIn)
 void PutString(PutStringColor color, const char *format, ...)
 {
     char buffer[0x100];
+    static s32 syncTrigCnt = 0; // 0x0013A280
     va_list args;
 
     va_start(args, format);
@@ -295,15 +295,15 @@ void PutString(PutStringColor color, const char *format, ...)
     _putString(color, buffer);
     va_end(args);
 
-    if (D_0013A280 >= PUT_STRING_SYNC_ITER)
+    if (syncTrigCnt >= PUT_STRING_SYNC_ITER)
     {
         Sync();
         ExecBaseProc();
-        D_0013A280 = 0;
+        syncTrigCnt = 0;
     }
     else
     {
-        D_0013A280++;
+        syncTrigCnt++;
     }
 }
 
