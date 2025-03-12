@@ -208,7 +208,8 @@ segments:
 
         #- [0x32CB4, databin] # .reginfo
         - [0x32D00, .data, os/loaderSys]
-        - [0x32E00, data, os/loaderSys2]
+        - [0x32E00, data, os/loaderSysException]
+        - [0x33080, data, os/loaderSys2]
         - [0x330a0, data, os/netSys]
         - [0x330d0, .data, os/putString]
         - [0x33370, data, sdk/data] # library data
@@ -216,7 +217,9 @@ segments:
         - [0x371D4, databin, section/dtors] # .dtors
         - [0x371E0, databin, section/eh_frame] # .eh_frame
         - [0x37200, .rodata, os/loaderSys]
-        - [0x37630, .rodata, os/loaderSys2]
+        - [0x37630, .rodata, os/loaderSysException]
+        - [0x37a00, .rodata, os/loaderSys2]
+        - [0x37be8, .rodata, os/loaderSys3]
         - [0x37ee0, .rodata, os/netSys]
         - [0x384f0, .rodata, os/powerOff]
         - [0x38510, .rodata, os/usbSerialSys] 
@@ -227,7 +230,9 @@ segments:
         - [0x3AE80, .lit4, os/putString] # .lit4
         - [0x3AE84, pad] # .data_nop
         - [0x3AF00, .sdata, os/loaderSys]
-        - [0x3AF68, sdata, os/loaderSys2]
+        - [0x3AF68, sdata, os/loaderSysException]
+        - [0x3b0f8, sdata, os/loaderSys2]
+        - [0x3b110, sdata, os/loaderSys3]
         - [0x3b188, sdata, os/netSys]
         - [0x3b218, .sdata, os/powerOff]
         - [0x3b230, .sdata, os/putString]
