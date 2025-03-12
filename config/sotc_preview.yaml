@@ -51,7 +51,7 @@ segments:
         - [0x5cc0, c, os/padSys]
         - [0x5f58, c, os/powerOff]
         - [0x60b8, c, os/usbSerialSys]
-        - [0x6408, c, os/putString]
+        - [0x6408, c, os/putString, "-O3"]
 
         # what the hell
         - [0x7c8c, asm, sdk/padding]

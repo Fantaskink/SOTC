@@ -69,6 +69,8 @@ sceGifTag D_00132360 = {
 };
 
 // rodata
+extern u8 D_00137540[256][8]; // Font raster, 1bpp
+
 static const sceGifTag D_00137D40 = {
     .NLOOP = 0,
     .EOP = 1,
@@ -109,8 +111,90 @@ s32 D_0013A27C = 0;
 s32 D_0013A280 = 0;
 
 // bss
-static struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
 static sceGsDBuff D_0013ECE0;
+static struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
+
+void PutChar(PutStringColor color, char ch)
+{
+    D_0013EF10[D_0013A270][D_0013A26C].color = color;
+    D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
+}
+
+void ScrollDisplay(void)
+{
+    s32 i, j;
+
+    for (i = 1; i < PUT_STRING_FB_HGHT; i++)
+    {
+        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+        {
+            D_0013EF10[i - 1][j] = D_0013EF10[i][j];
+        }
+    }
+
+    for (j = 0; j < PUT_STRING_FB_WDTH; j++)
+    {
+        D_0013EF10[PUT_STRING_FB_HGHT - 1][j] = D_0013A260;
+    }
+}
+
+inline void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv)
+{
+    sceVif1Packet pkt;
+    sceVif1Packet *pPkt;
+    sceDmaChan *dmaVif;
+
+    pPkt = &pkt;
+    sceVif1PkInit(pPkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
+    sceVif1PkReset(pPkt);
+    sceVif1PkCnt(pPkt, 0);
+    sceVif1PkOpenDirectCode(pPkt, 0);
+
+    D_0013A244 = (D_0013A244 + 1) & 1;
+
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D50);
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A24C));
+    sceVif1PkCloseGifTag(&pkt);
+    sceVif1PkCloseDirectCode(&pkt);
+    sceVif1PkEnd(&pkt, 0);
+    sceVif1PkTerminate(&pkt);
+
+    sceGsSyncPath(0, 0);
+
+    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
+    dmaVif->chcr.TTE = 1;
+    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
+}
+
+inline void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
+{
+    sceVif1Packet pkt;
+    sceVif1Packet *pPkt;
+    sceDmaChan *dmaVif;
+
+    pPkt = &pkt;
+    sceVif1PkInit(pPkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
+    sceVif1PkReset(pPkt);
+    sceVif1PkCnt(pPkt, 0);
+    sceVif1PkOpenDirectCode(pPkt, 0);
+
+    D_0013A244 = (D_0013A244 + 1) & 1;
+
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D40);
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A248));
+    sceVif1PkCloseGifTag(&pkt);
+    sceVif1PkCloseDirectCode(&pkt);
+    sceVif1PkEnd(&pkt, 0);
+    sceVif1PkTerminate(&pkt);
+
+    sceGsSyncPath(0, 0);
+
+    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
+    dmaVif->chcr.TTE = 1;
+    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
+}
 
 void PutFont(s32 arg0, s32 arg1, s32 arg2)
 {
@@ -119,7 +203,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
     s32 i;
     s32 j;
 
-    __inlined_SetPrimColor(SCE_GS_PRIM_POINT, D_0013A250, D_0013A254, D_0013A258, 0x80);
+    SetPrimColor(SCE_GS_PRIM_POINT, D_0013A250, D_0013A254, D_0013A258, 0x80);
 
     sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
     sceVif1PkReset(&pkt);
@@ -160,12 +244,12 @@ void _putString(PutStringColor color, char *strIn)
     {
         if (strIn[chIx] == '\t')
         {
-            __inlined_PutChar(0xFFFFFF00, ' ');
+            PutChar(0xFFFFFF00, ' ');
             D_0013A26C += 2;
         }
         else if (strIn[chIx] == '\n')
         {
-            __inlined_PutChar(0xFFFFFF00, ' ');
+            PutChar(0xFFFFFF00, ' ');
             D_0013A270++;
             D_0013A26C = 0;
             D_0013A274 = 0;
@@ -195,7 +279,7 @@ void _putString(PutStringColor color, char *strIn)
 
         if (D_0013A270 >= PUT_STRING_FB_HGHT)
         {
-            __inlined_ScrollDisplay();
+            ScrollDisplay();
             D_0013A270 = PUT_STRING_FB_HGHT - 1; // keep at the last line
         }
     }
@@ -294,14 +378,62 @@ void func_00105C50(void)
 {
     if ((D_0013A274 >> 4) & 1)
     {
-        __inlined_PutChar(0xFFFFFF00, 0x20);
+        PutChar(0xFFFFFF00, ' ');
     }
     else
     {
-        __inlined_PutChar(0xFFFFFF00, 0x12);
+        PutChar(0xFFFFFF00, 0x12);
     }
     D_0013A274++;
     D_0013A274 = D_0013A274 & 0xFF;
+}
+
+void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
+{
+    sceGsDBuff *udbuf;
+
+    udbuf = (sceGsDBuff *)((s32)dbuff | 0x20000000);
+    if (arg1 != 0)
+    {
+        sceGsSetHalfOffset(&udbuf->draw1, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag1);
+    }
+    else
+    {
+        sceGsSetHalfOffset(&udbuf->draw0, 0x800, 0x800, half_off);
+        sceGsPutDrawEnv(&udbuf->giftag0);
+    }
+}
+
+void SetDrawEnvironment(s32 mode)
+{
+    TexEnv *tx_env;
+
+    tx_env = (TexEnv *)((s32)&D_001322A0 | 0x20000000);
+    sceGsSetDefAlphaEnv(&tx_env->gs_alpha, 0);
+    switch (mode)
+    {
+    case 0:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 1:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 2:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
+        break;
+    case 3:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0x28);
+        break;
+    case 4:
+        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0);
+        break;
+    }
+
+    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
+    tx_env->gs_test1addr = SCE_GS_TEST_1;
+    sceGsSyncPath(0, 0);
+    sceGsPutDrawEnv(&tx_env->giftag);
 }
 
 void Sync(void)
@@ -312,8 +444,8 @@ void Sync(void)
     D_0013A238 = (D_0013A23C + 1) & 1;
     D_0013A23C++;
     sceGsSwapDBuff(&D_0013ECE0, D_0013A238);
-    __inlined_RestoreNormalDrawEnvironment(&D_0013ECE0, D_0013A238, D_0013A240);
-    __inlined_SetDrawEnvironment(1);
+    RestoreNormalDrawEnvironment(&D_0013ECE0, D_0013A238, D_0013A240);
+    SetDrawEnvironment(1);
 }
 
 void ReinitDisp(void)
@@ -352,7 +484,7 @@ void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s3
 
     if (arg4 != 0)
     {
-        __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
+        SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
 
         sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
         sceVif1PkReset(&pkt);
@@ -375,7 +507,7 @@ void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s3
     }
     else
     {
-        __inlined_SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
+        SetPrimColorTex(SCE_GS_PRIM_SPRITE, color->r, color->g, color->b, color->a, 1);
 
         sceVif1PkInit(&pkt, (u128 *)((D_0013A244 << 0xD) | 0x70000000));
         sceVif1PkReset(&pkt);
@@ -417,24 +549,6 @@ void SetLocate(s32 x, s32 y)
     D_0013A270 = y;
 }
 
-void ScrollDisplay(void)
-{
-    s32 i, j;
-
-    for (i = 1; i < PUT_STRING_FB_HGHT; i++)
-    {
-        for (j = 0; j < PUT_STRING_FB_WDTH; j++)
-        {
-            D_0013EF10[i - 1][j] = D_0013EF10[i][j];
-        }
-    }
-
-    for (j = 0; j < PUT_STRING_FB_WDTH; j++)
-    {
-        D_0013EF10[PUT_STRING_FB_HGHT - 1][j] = D_0013A260;
-    }
-}
-
 void ClearDisplay(void)
 {
     s32 i, j;
@@ -452,25 +566,8 @@ void ClearDisplay(void)
 void InitDisp(void)
 {
     ReinitDisp();
-    __inlined_ClearDisplay();
-    __inlined_SetLocate(0, 0);
-}
-
-void RestoreNormalDrawEnvironment(sceGsDBuff *dbuff, s32 arg1, s32 half_off)
-{
-    sceGsDBuff *udbuf;
-
-    udbuf = (sceGsDBuff *)((s32)dbuff | 0x20000000);
-    if (arg1 != 0)
-    {
-        sceGsSetHalfOffset(&udbuf->draw1, 0x800, 0x800, half_off);
-        sceGsPutDrawEnv(&udbuf->giftag1);
-    }
-    else
-    {
-        sceGsSetHalfOffset(&udbuf->draw0, 0x800, 0x800, half_off);
-        sceGsPutDrawEnv(&udbuf->giftag0);
-    }
+    ClearDisplay();
+    SetLocate(0, 0);
 }
 
 void SetTextureWithFrameBuffer(s16 tbp0)
@@ -520,95 +617,4 @@ void SetDrawnTextureEnvironment(s16 tbp0)
     *(u64 *)&tx_env->gs_alpha.fba1 = SCE_GS_SET_FBA(0);
     sceGsSyncPath(0, 0);
     sceGsPutDrawEnv(&tx_env->giftag);
-}
-
-void SetDrawEnvironment(s32 mode)
-{
-    TexEnv *tx_env;
-
-    tx_env = (TexEnv *)((s32)&D_001322A0 | 0x20000000);
-    sceGsSetDefAlphaEnv(&tx_env->gs_alpha, 0);
-    switch (mode)
-    {
-    case 0:
-        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
-        break;
-    case 1:
-        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
-        break;
-    case 2:
-        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_CS, SCE_GS_ALPHA_AS, SCE_GS_ALPHA_CD, 0);
-        break;
-    case 3:
-        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_CD, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0x28);
-        break;
-    case 4:
-        *(u64 *)&tx_env->gs_alpha.alpha1 = SCE_GS_SET_ALPHA(SCE_GS_ALPHA_CS, SCE_GS_ALPHA_ZERO, SCE_GS_ALPHA_FIX, SCE_GS_ALPHA_CD, 0);
-        break;
-    }
-
-    *(u64 *)&tx_env->gs_test = SCE_GS_SET_TEST(SCE_GS_FALSE, SCE_GS_ALPHA_NEVER, 0, SCE_GS_AFAIL_KEEP, SCE_GS_FALSE, 0, SCE_GS_FALSE, SCE_GS_ALPHA_ALWAYS);
-    tx_env->gs_test1addr = SCE_GS_TEST_1;
-    sceGsSyncPath(0, 0);
-    sceGsPutDrawEnv(&tx_env->giftag);
-}
-
-void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
-{
-    sceVif1Packet pkt;
-    sceDmaChan *dmaVif;
-
-    sceVif1PkInit(&pkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
-    sceVif1PkReset(&pkt);
-    sceVif1PkCnt(&pkt, 0);
-    sceVif1PkOpenDirectCode(&pkt, 0);
-
-    D_0013A244 = (D_0013A244 + 1) & 1;
-
-    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D40);
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A248));
-    sceVif1PkCloseGifTag(&pkt);
-    sceVif1PkCloseDirectCode(&pkt);
-    sceVif1PkEnd(&pkt, 0);
-    sceVif1PkTerminate(&pkt);
-
-    sceGsSyncPath(0, 0);
-
-    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
-    dmaVif->chcr.TTE = 1;
-    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
-}
-
-void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv)
-{
-    sceVif1Packet pkt;
-    sceDmaChan *dmaVif;
-
-    sceVif1PkInit(&pkt, (u128 *)(0x70000000 | (D_0013A244 << 0xd)));
-    sceVif1PkReset(&pkt);
-    sceVif1PkCnt(&pkt, 0);
-    sceVif1PkOpenDirectCode(&pkt, 0);
-
-    D_0013A244 = (D_0013A244 + 1) & 1;
-
-    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D50);
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A24C));
-    sceVif1PkCloseGifTag(&pkt);
-    sceVif1PkCloseDirectCode(&pkt);
-    sceVif1PkEnd(&pkt, 0);
-    sceVif1PkTerminate(&pkt);
-
-    sceGsSyncPath(0, 0);
-
-    dmaVif = sceDmaGetChan(SCE_DMA_VIF1);
-    dmaVif->chcr.TTE = 1;
-    sceDmaSend(dmaVif, (u128 *)(0x80000000 | ((int)pkt.pBase & 0x3FF0)));
-}
-
-void PutChar(PutStringColor color, char ch)
-{
-    D_0013EF10[D_0013A270][D_0013A26C].color = color;
-    D_0013EF10[D_0013A270][D_0013A26C].ch = ch;
 }
