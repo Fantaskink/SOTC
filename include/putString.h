@@ -67,25 +67,29 @@ typedef struct xypair
     s32 y1;
 } xypair;
 
+// data
 extern TexEnv D_001320D0;
 extern DrawEnv D_00132170;
 extern TexEnv D_00132200;
 extern TexEnv D_001322A0;
-extern u128 D_00132340;
-extern u128 D_00132350;
-extern u128 D_00132360;
-extern u8 D_00137540[100][8];
+extern sceGifTag D_00132340;
+extern sceGifTag D_00132350;
+extern sceGifTag D_00132360;
 
+// rodata
+extern u8 D_00137540[256][8];
+extern sceGifTag D_00137D40;
+extern sceGifTag D_00137D50;
+
+// sdata
 extern s32 D_0013A230;
 extern s32 D_0013A234;
 extern s32 D_0013A238;
 extern s32 D_0013A23C;
 extern s32 D_0013A240;
-extern u128 D_00137D40;
-extern u128 D_00137D50;
 extern u32 D_0013A244;
-extern u32 D_0013A248;
-extern u32 D_0013A24C;
+extern f32 D_0013A248;
+extern f32 D_0013A24C;
 extern s32 D_0013A250;
 extern s32 D_0013A254;
 extern s32 D_0013A258;
@@ -94,9 +98,11 @@ extern s32 D_0013A268;
 extern s32 D_0013A26C;
 extern s32 D_0013A270;
 extern u32 D_0013A274;
-extern s32 D_0013A27C;
 extern s32 D_0013A278;
+extern s32 D_0013A27C;
 extern s32 D_0013A280;
+
+// bss
 extern sceGsDBuff D_0013ECE0;
 extern struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
 
@@ -151,9 +157,9 @@ static inline void __inlined_SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b,
 
     D_0013A244 = (D_0013A244 + 1) & 1;
 
-    sceVif1PkOpenGifTag(&pkt, D_00137D50);
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D50);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A24C));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A24C));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);
@@ -180,9 +186,9 @@ static inline void __inlined_SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s3
 
     D_0013A244 = (D_0013A244 + 1) & 1;
 
-    sceVif1PkOpenGifTag(&pkt, D_00137D40);
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D40);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A248));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A248));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);

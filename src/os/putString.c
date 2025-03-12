@@ -6,6 +6,112 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
+// data
+TexEnv D_001320D0 = {
+    .giftag = {
+        .NLOOP = 9,
+        .EOP = 1,
+        .NREG = 1,
+        .REGS0 = SCE_GIF_PACKED_AD,
+    },
+};
+
+DrawEnv D_00132170 = {
+    .giftag = {
+        .NLOOP = 8,
+        .EOP = 1,
+        .NREG = 1,
+        .REGS0 = SCE_GIF_PACKED_AD,
+    },
+};
+
+TexEnv D_00132200 = {
+    .giftag = {
+        .NLOOP = 9,
+        .EOP = 1,
+        .NREG = 1,
+        .REGS0 = SCE_GIF_PACKED_AD,
+    },
+};
+
+TexEnv D_001322A0 = {
+    .giftag = {
+        .NLOOP = 2,
+        .EOP = 1,
+        .NREG = 1,
+        .REGS0 = SCE_GIF_PACKED_AD,
+    },
+};
+
+sceGifTag D_00132340 = {
+    .NLOOP = 0,
+    .EOP = 1,
+    .FLG = 1,
+    .NREG = 1,
+    .REGS0 = SCE_GS_XYZF2,
+};
+
+sceGifTag D_00132350 = {
+    .NLOOP = 0,
+    .EOP = 1,
+    .FLG = 1,
+    .NREG = 2,
+    .REGS0 = SCE_GS_UV,
+    .REGS1 = SCE_GS_XYZF2,
+};
+
+sceGifTag D_00132360 = {
+    .NLOOP = 0,
+    .EOP = 1,
+    .FLG = 1,
+    .NREG = 1,
+    .REGS0 = SCE_GS_XYZF2,
+};
+
+// rodata
+static const sceGifTag D_00137D40 = {
+    .NLOOP = 0,
+    .EOP = 1,
+    .FLG = 1,
+    .NREG = 2,
+    .REGS0 = SCE_GS_PRIM,
+    .REGS1 = SCE_GS_RGBAQ,
+};
+
+static const sceGifTag D_00137D50 = {
+    .NLOOP = 0,
+    .EOP = 1,
+    .FLG = 1,
+    .NREG = 2,
+    .REGS0 = SCE_GS_PRIM,
+    .REGS1 = SCE_GS_RGBAQ,
+};
+
+// sdata
+s32 D_0013A230 = 0;
+s32 D_0013A234 = 0;
+s32 D_0013A238 = 0;
+s32 D_0013A23C = 0;
+s32 D_0013A240 = 0;
+u32 D_0013A244 = 0;
+f32 D_0013A248 = 1.0f;
+f32 D_0013A24C = 1.0f;
+s32 D_0013A250 = 0xFF;
+s32 D_0013A254 = 0xFF;
+s32 D_0013A258 = 0xFF;
+struct t_PutStringFBChar D_0013A260 = {0, ' '};
+s32 D_0013A268 = 0;
+s32 D_0013A26C = 0;
+s32 D_0013A270 = 0;
+u32 D_0013A274 = 0;
+s32 D_0013A278 = 0;
+s32 D_0013A27C = 0;
+s32 D_0013A280 = 0;
+
+// bss
+static struct t_PutStringFBChar D_0013EF10[PUT_STRING_FB_HGHT][PUT_STRING_FB_WDTH];
+static sceGsDBuff D_0013ECE0;
+
 void PutFont(s32 arg0, s32 arg1, s32 arg2)
 {
     sceVif1Packet pkt;
@@ -20,7 +126,7 @@ void PutFont(s32 arg0, s32 arg1, s32 arg2)
     sceVif1PkCnt(&pkt, 0);
     sceVif1PkOpenDirectCode(&pkt, 0);
     D_0013A244 = (D_0013A244 + 1) & 1;
-    sceVif1PkOpenGifTag(&pkt, D_00132340);
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00132340);
 
     for (i = 0; i < 8; i++)
     {
@@ -210,12 +316,6 @@ void Sync(void)
     __inlined_SetDrawEnvironment(1);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137540);
-
-INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137D40);
-
-INCLUDE_RODATA("asm/nonmatchings/os/putString", D_00137D50);
-
 void ReinitDisp(void)
 {
     sceGsDBuff *buff = &D_0013ECE0;
@@ -259,7 +359,7 @@ void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s3
         sceVif1PkCnt(&pkt, 0);
         sceVif1PkOpenDirectCode(&pkt, 0);
         D_0013A244 = (D_0013A244 + 1) & 1;
-        sceVif1PkOpenGifTag(&pkt, D_00132350);
+        sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00132350);
         sceVif1PkAddGsData(&pkt, SCE_GS_SET_UV(arg1->u0, arg1->v0));
         sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
         sceVif1PkAddGsData(&pkt, SCE_GS_SET_UV(arg1->u1 << 4, arg1->v1 << 4));
@@ -282,7 +382,7 @@ void LoaderSysDrawSprite(xypair *arg0, uvpair *arg1, rgba32 *color, s32 arg3, s3
         sceVif1PkCnt(&pkt, 0);
         sceVif1PkOpenDirectCode(&pkt, 0);
         D_0013A244 = (D_0013A244 + 1) & 1;
-        sceVif1PkOpenGifTag(&pkt, D_00132360);
+        sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00132360);
         sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x0 + 0x800) << 4, (arg0->y0 + 0x800) << 4, 0x800000, 0));
         sceVif1PkAddGsData(&pkt, SCE_GS_SET_XYZF2((arg0->x1 + 0x800) << 4, (arg0->y1 + 0x800) << 4, 0x800000, 0));
         sceVif1PkCloseGifTag(&pkt);
@@ -465,9 +565,9 @@ void SetPrimColor(s32 prim_type, s32 r, s32 g, s32 b, s32 a)
 
     D_0013A244 = (D_0013A244 + 1) & 1;
 
-    sceVif1PkOpenGifTag(&pkt, D_00137D40);
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D40);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 0, 0, 1, 0, 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A248));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A248));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);
@@ -492,9 +592,9 @@ void SetPrimColorTex(s32 prim_type, s32 r, s32 g, s32 b, s32 a, s32 use_uv)
 
     D_0013A244 = (D_0013A244 + 1) & 1;
 
-    sceVif1PkOpenGifTag(&pkt, D_00137D50);
+    sceVif1PkOpenGifTag(&pkt, *(u128 *)&D_00137D50);
     sceVif1PkAddGsData(&pkt, SCE_GS_SET_PRIM(prim_type, 0, 1, 0, 0, 0, use_uv != 0, 0, 0));
-    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, D_0013A24C));
+    sceVif1PkAddGsData(&pkt, SCE_GS_SET_RGBAQ(r, g, b, a, *(u32 *)&D_0013A24C));
     sceVif1PkCloseGifTag(&pkt);
     sceVif1PkCloseDirectCode(&pkt);
     sceVif1PkEnd(&pkt, 0);

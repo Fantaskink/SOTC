@@ -208,6 +208,13 @@ SetPrimColor                                     = 0x00106998; // type:func
 SetPrimColorTex                                  = 0x00106AE8; // type:func
 PutChar                                          = 0x00106C58; // type:func
 
+// sdata
+D_0013A258                                       = 0x0013A258; // size:4
+D_0013A260                                       = 0x0013A260; // size:8
+
+// bss
+D_0013EF10                                       = 0x0013EF10; // size:0x4B00
+
 //=============================
 // libkernl.a
 //=============================
