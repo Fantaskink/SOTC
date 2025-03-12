@@ -46,7 +46,9 @@ segments:
       subsegments:
         - [0x1000, asm, sdk/crt0]
         - [0x10d0, c, os/loaderSys, "-O3"]
-        - [0x2ec0, c, os/loaderSys2]
+        - [0x2ec0, c, os/loaderSysException]
+        - [0x3438, c, os/loaderSys2]
+        - [0x43b0, c, os/loaderSys3]
         - [0x5090, c, os/netSys]
         - [0x5cc0, c, os/padSys]
         - [0x5f58, c, os/powerOff]
