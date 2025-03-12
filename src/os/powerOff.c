@@ -1,4 +1,5 @@
 #include "common.h"
+#include "putString.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
 
@@ -58,7 +59,7 @@ void PowerOffThread(void *arg)
             D_0013A21C();
         }
 
-        PutStringS(0x4080FF80, "\npower off request has come.\n");
+        PutStringS(PUTSTR_COL_LBLUEA, "\npower off request has come.\n");
 
         // close all files
         sceDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);

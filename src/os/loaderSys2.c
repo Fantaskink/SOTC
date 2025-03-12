@@ -2,6 +2,7 @@
 #include "common.h"
 #include "fl_xfftype.h"
 #include "gcc/string.h"
+#include "putString.h"
 #include "regnames.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sif.h"
@@ -84,16 +85,16 @@ void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_ex
     switch (mode)
     {
     case 0:
-        PutString(0xFFC04000, "      %s\n\n", D_00131E00[except_code].name);
-        PutString(0x40FFC000, "   pc:%08x ", epc);
-        PutString(0x40C0FF00, "bva:%08x bpa:%08x ", bva, bpa);
-        PutString(0xC0C0C000, "cause:%08x\n", cause);
-        PutString(0xFFFFFF00, GSTR(D_0013A0F0, "\n"));
+        PutString(PUTSTR_COL_YELLOW, "      %s\n\n", D_00131E00[except_code].name);
+        PutString(PUTSTR_COL_TEAL, "   pc:%08x ", epc);
+        PutString(PUTSTR_COL_LBLUE2, "bva:%08x bpa:%08x ", bva, bpa);
+        PutString(PUTSTR_COL_GRAY, "cause:%08x\n", cause);
+        PutString(PUTSTR_COL_WHITE, GSTR(D_0013A0F0, "\n"));
 
         // dump registers
         for (j = 0; j < 8; j++)
         {
-            PutString(0x80A0C000, GSTR(D_00136850, "     %s:%08x %s:%08x %s:%08x %s:%08x \n"),
+            PutString(PUTSTR_COL_LLBLUE2, GSTR(D_00136850, "     %s:%08x %s:%08x %s:%08x %s:%08x \n"),
                       ctx[(j * 4) + 0].name, ctx[(j * 4) + 0].value,
                       ctx[(j * 4) + 1].name, ctx[(j * 4) + 1].value,
                       ctx[(j * 4) + 2].name, ctx[(j * 4) + 2].value,
@@ -105,7 +106,7 @@ void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_ex
         for (i = 0; i < 16; i++)
         {
             D_0013B900.q = ctx[i].value;
-            PutString(0xFFFFFF00, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n", ctx[i].name,
+            PutString(PUTSTR_COL_WHITE, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n", ctx[i].name,
                       D_0013B900.s[3], D_0013B900.s[2],
                       D_0013B900.s[1], D_0013B900.s[0]);
         }
@@ -115,7 +116,7 @@ void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_ex
         for (i = 0; i < 16; i++)
         {
             D_0013B900.q = ctx[i + 0x10].value;
-            PutString(0xFFFFFF00, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n", ctx[i + 0x10].name,
+            PutString(PUTSTR_COL_WHITE, "%s=%8.8x_%8.8x_%8.8x_%8.8x\n", ctx[i + 0x10].name,
                       D_0013B900.s[3], D_0013B900.s[2],
                       D_0013B900.s[1], D_0013B900.s[0]);
         }
@@ -186,11 +187,11 @@ void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128 *gpr)
     D_00131E80[1][COP0_REG_CAUSE].value = cause;
     D_00131E80[1][COP0_REG_EPC].value = epc;
 
-    PutString(0xffffff00, GSTR(D_0013A0F0, "\n"));
-    PutString(0xff802000, "     -----------------------------------------------\n");
-    PutString(0xff802000, "           ios reports critical error message.\n");
-    PutString(0xff802000, "     -----------------------------------------------\n");
-    PutString(0xff603000, GSTR(D_0013A0F0, "\n"));
+    PutString(PUTSTR_COL_WHITE, GSTR(D_0013A0F0, "\n"));
+    PutString(PUTSTR_COL_LORANGE2, "     -----------------------------------------------\n");
+    PutString(PUTSTR_COL_LORANGE2, "           ios reports critical error message.\n");
+    PutString(PUTSTR_COL_LORANGE2, "     -----------------------------------------------\n");
+    PutString(PUTSTR_COL_ORANGE, GSTR(D_0013A0F0, "\n"));
     func_00101EC0(except_code, cause, epc, bva, bpa, (unk_except_s *)&D_00131E80, 0x0);
     LoaderSysJumpRecoverPointNoStateSetting("recovering from exception...\n");
 }
@@ -757,9 +758,9 @@ extern const char D_0013A170[];
 // TODO: Merge with LoaderSysRebootIop once the file is done
 static inline void __inlined_LoaderSysRebootIop(const char *arg0)
 {
-    PutString(0x00FFFF00, "\tRebooting Iop\n\t\twith ");
-    PutString(0x40FFFF80, GSTR(D_0013A118, "\"%s\""), arg0);
-    PutStringS(0xFFFF00, GSTR(D_0013A120, "... "));
+    PutString(PUTSTR_COL_CYAN, "\tRebooting Iop\n\t\twith ");
+    PutString(PUTSTR_COL_TEALA, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(PUTSTR_COL_CYAN, GSTR(D_0013A120, "... "));
 
     while (sceSifRebootIop(arg0) == 0)
         ;
@@ -767,7 +768,7 @@ static inline void __inlined_LoaderSysRebootIop(const char *arg0)
     while (sceSifSyncIop() == 0)
         ;
 
-    PutStringS(0xFFFF00, GSTR(D_0013A128, "Done.\n"));
+    PutStringS(PUTSTR_COL_CYAN, GSTR(D_0013A128, "Done.\n"));
 }
 
 // TODO: Merge with LoaderSysLoadIopModule once the file is done
@@ -775,24 +776,24 @@ static inline s32 __inlined_LoaderSysLoadIopModule(const char *module, s32 arg_c
 {
     s32 result;
 
-    PutString(0x4080FF00, "\t\tLoading ");
-    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), module);
-    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
+    PutString(PUTSTR_COL_LBLUE, "\t\tLoading ");
+    PutString(PUTSTR_COL_LLBLUE, GSTR(D_0013A118, "\"%s\""), module);
+    PutStringS(PUTSTR_COL_LBLUE, GSTR(D_0013A120, "... "));
     result = sceSifLoadModule(module, arg_count, args);
     if (result < 0)
     {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
+        PutStringS(PUTSTR_COL_LORANGE, "ERROR\n\t\t\tCouldn't load \"%s\".\n\t\t\t\t( Error code: %d )\n", module, result);
         return -1;
     }
-    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
+    PutStringS(PUTSTR_COL_LBLUE, GSTR(D_0013A128, "Done.\n"));
     return 0;
 }
 
 // TODO: Remove once the file is done
 static inline void __rodata_LoaderSysUnloadIopModuleByName()
 {
-    PutStringS(0, "\t\tUnloading ");
-    PutStringS(0, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n");
+    PutStringS(PUTSTR_COL_BLACK, "\t\tUnloading ");
+    PutStringS(PUTSTR_COL_BLACK, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n");
 }
 
 #define LOAD_MODULE(path, ident)                                  \
@@ -816,16 +817,16 @@ void func_001033B0()
     sceSifInitRpc(0);
     sceSifInitIopHeap();
 
-    PutString(-256, "Initialize loader (Version: ");
-    // PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), __DATE__, __TIME__);
-    PutString(0x80FFC000, GSTR(D_0013A138, "%s %s"), "Jul 12 2005", "16:20:22");
-    PutStringS(-256, GSTR(D_0013A140, ")\n\n"));
-    PutStringS(0x80C0FF00, "\tWarm up CD/DVD hardware... ");
+    PutString(PUTSTR_COL_WHITE, "Initialize loader (Version: ");
+    // PutString(PUTSTR_COL_LGREEN, GSTR(D_0013A138, "%s %s"), __DATE__, __TIME__);
+    PutString(PUTSTR_COL_LGREEN, GSTR(D_0013A138, "%s %s"), "Jul 12 2005", "16:20:22");
+    PutStringS(PUTSTR_COL_WHITE, GSTR(D_0013A140, ")\n\n"));
+    PutStringS(PUTSTR_COL_LLBLUE, "\tWarm up CD/DVD hardware... ");
 
     sceCdInit(0);
     sceCdMmode(2);
 
-    PutStringS(0x80C0FF00, GSTR(D_0013A128, "Done.\n"));
+    PutStringS(PUTSTR_COL_LLBLUE, GSTR(D_0013A128, "Done.\n"));
 
     // TODO: Use normal LoaderSysRebootIop once the file is done
     __inlined_LoaderSysRebootIop("cdrom0:\\IOPRP300.IMG;1");
@@ -869,11 +870,11 @@ static inline void loaderPrintMessage()
     register int gp asm("gp");
     heap_base = (void *)malloc(1);
     free(heap_base);
-    PutStringS(0xFFFFFF00, " GP: %08p\n", gp);
-    PutStringS(0xFFFFFF00, " SP: %08p\n", sp);
-    PutStringS(0xFFFFFF00, " HEAP: %08p\n", heap_base);
-    PutStringS(0xFFFFFF00, " END: %08p\n\n", &end);
-    PutStringS(0xFFFFFF00, " LOADER HEAP START: %08p\n", D_0013A110);
+    PutStringS(PUTSTR_COL_WHITE, " GP: %08p\n", gp);
+    PutStringS(PUTSTR_COL_WHITE, " SP: %08p\n", sp);
+    PutStringS(PUTSTR_COL_WHITE, " HEAP: %08p\n", heap_base);
+    PutStringS(PUTSTR_COL_WHITE, " END: %08p\n\n", &end);
+    PutStringS(PUTSTR_COL_WHITE, " LOADER HEAP START: %08p\n", D_0013A110);
     memset(&RESET_CALLBACK_LIST, 0, sizeof(RESET_CALLBACK_LIST));
     LOADER_RESET_CALLBACK_NUM = 0;
 }
@@ -917,7 +918,7 @@ void loaderLoop(void)
         LoaderSysDeleteAllExternalSema();
         LoaderSysDeleteAllExternalIopMemory();
         ReinitDisp();
-        PutStringS(0xFFFFFF00, "\nreset: %d\n", reset_count);
+        PutStringS(PUTSTR_COL_WHITE, "\nreset: %d\n", reset_count);
     }
 }
 
@@ -962,7 +963,7 @@ s32 main(s32 argc, char **argv)
     LoaderSysInitExternalSemaList();
     LoaderSysInitExternalIopMemoryList();
     ChangeThreadPriority(D_0013A184, 1);
-    PutStringS(0xFFFFFF00, "\nInitialize loader complete.\n\n\0");
+    PutStringS(PUTSTR_COL_WHITE, "\nInitialize loader complete.\n\n\0");
     D_0013A180 = (s32)sp;
     loaderLoop();
 
@@ -993,9 +994,9 @@ s32 LoaderSysUnloadIopModuleByName(const char *arg0, s32 arg1, s32 arg2, s32 *ar
     s32 success;
     s32 dummy;
 
-    PutString(0x4080FF00, "\t\tUnloading ");
-    PutString(0x80C0FF00, GSTR(D_0013A118, "\"%s\""), arg0);
-    PutStringS(0x4080FF00, GSTR(D_0013A120, "... "));
+    PutString(PUTSTR_COL_LBLUE, "\t\tUnloading ");
+    PutString(PUTSTR_COL_LLBLUE, GSTR(D_0013A118, "\"%s\""), arg0);
+    PutStringS(PUTSTR_COL_LBLUE, GSTR(D_0013A120, "... "));
     modId = sceSifSearchModuleByName(arg0);
 
     if (modId >= 0)
@@ -1013,11 +1014,11 @@ s32 LoaderSysUnloadIopModuleByName(const char *arg0, s32 arg1, s32 arg2, s32 *ar
 
     if (success < 0)
     {
-        PutStringS(0xFF804000, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n", arg0, success);
+        PutStringS(PUTSTR_COL_LORANGE, "ERROR\n\t\t\tCouldn't unload \"%s\".\n\t\t\t\t( Error code: %d )...\n", arg0, success);
         return -1;
     }
 
-    PutStringS(0x4080FF00, GSTR(D_0013A128, "Done.\n"));
+    PutStringS(PUTSTR_COL_LBLUE, GSTR(D_0013A128, "Done.\n"));
     return success;
 }
 

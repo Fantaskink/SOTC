@@ -244,12 +244,12 @@ void _putString(PutStringColor color, char *strIn)
     {
         if (strIn[chIx] == '\t')
         {
-            PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
+            PutChar(PUTSTR_COL_WHITE, PUTSTR_CH_SPACE);
             putStrFBChOffsX += 2;
         }
         else if (strIn[chIx] == '\n')
         {
-            PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
+            PutChar(PUTSTR_COL_WHITE, PUTSTR_CH_SPACE);
             putStrFBChOffsY++;
             putStrFBChOffsX = 0;
             putStrLastChNotNewline = 0;
@@ -379,11 +379,11 @@ void func_00105C50(void)
 {
     if ((putStrLastChNotNewline >> 4) & 1)
     {
-        PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
+        PutChar(PUTSTR_COL_WHITE, PUTSTR_CH_SPACE);
     }
     else
     {
-        PutChar(0xFFFFFF00, PUTSTR_CH_CURSOR);
+        PutChar(PUTSTR_COL_WHITE, PUTSTR_CH_CURSOR);
     }
     putStrLastChNotNewline++;
     putStrLastChNotNewline = putStrLastChNotNewline & 0xFF;

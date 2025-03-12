@@ -2,6 +2,7 @@
 #include "common.h"
 #include "fl_xfftype.h"
 #include "gcc/string.h"
+#include "putString.h"
 #include "regnames.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sif.h"
@@ -230,7 +231,6 @@ void DecodeSection(
     // The zero section is not processed as it is all 0.
     for (; i--; sect++, nmOffs++)
     {
-
         sect->moved = 0;
         if (sect->size != 0)
         {
@@ -490,11 +490,11 @@ void func_00100A58(void)
     }
 
     ChangeThreadPriority(thread_id, 0x7F);
-    PutString(0xFF603000, "\n");
-    PutString(0xFF603000, "in threadid: %d\n", thread_id);
-    PutString(0xFF603000, D_0013B4C8);
-    PutString(0xC0FFE000, "\nhit 'reset' or push 'start key on pad-1' to restart system.");
-    PutString(0xC0FFE000, "\n\tor 'source s' to debugging and tracing.");
+    PutString(PUTSTR_COL_ORANGE, "\n");
+    PutString(PUTSTR_COL_ORANGE, "in threadid: %d\n", thread_id);
+    PutString(PUTSTR_COL_ORANGE, D_0013B4C8);
+    PutString(PUTSTR_COL_LLGREEN, "\nhit 'reset' or push 'start key on pad-1' to restart system.");
+    PutString(PUTSTR_COL_LLGREEN, "\n\tor 'source s' to debugging and tracing.");
     LoaderSysPrintf("\n");
     LoaderSysSendAbort();
     loaderExecResetCallback();
@@ -504,7 +504,7 @@ void func_00100A58(void)
         Sync();
     }
 
-    PutString(0xFF603000, "\n");
+    PutString(PUTSTR_COL_ORANGE, "\n");
     ChangeThreadPriority(GetThreadId(), 0x7F);
     WakeupThread(D_0013A184);
 
@@ -599,7 +599,7 @@ void LoaderSysResetSystem(void)
     s32 thread_id;
 
     LoaderSysExecuteRecoveryFirstProcess();
-    PutString(0xff603000, "\n");
+    PutString(PUTSTR_COL_ORANGE, "\n");
     thread_id = GetThreadId();
     ChangeThreadPriority(thread_id, 127);
     WakeupThread(D_0013A184);
@@ -716,14 +716,14 @@ struct t_xffEntPntHdr *func_00100D48(char *module_path)
     fid = LoaderSysGetstat(module_path, &fstat);
     if (fid != 0x0)
     {
-        PutString(0xffffff00, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
+        PutString(PUTSTR_COL_WHITE, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
         return NULL;
     }
 
     fid = LoaderSysFOpen(module_path, 0x1, 0x0);
     if (fid < 0x0)
     {
-        PutString(0xffffff00, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
+        PutString(PUTSTR_COL_WHITE, "Opening file \"%s\" failed(0x%x).\n", module_path, fid);
         return NULL;
     }
 
@@ -803,7 +803,7 @@ unk_00131D00_s *func_001013C8(const char *filename)
     th_id = LoaderSysGetstat(filename, &stat);
     if (th_id != 0)
     {
-        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
+        PutStringS(PUTSTR_COL_LORANGE, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
         return 0;
     }
 
@@ -811,7 +811,7 @@ unk_00131D00_s *func_001013C8(const char *filename)
     if (th_id < 0)
     {
         D_00131D00.path[0] = '\0';
-        PutStringS(0xFF804000, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
+        PutStringS(PUTSTR_COL_LORANGE, "Can't execute,\nbecause start file:\"%s\" can't read(%d).\n", filename, th_id);
         return 0;
     }
 
@@ -872,7 +872,7 @@ void _execProgWithThread(void *module_path)
     }
     else
     {
-        PutStringS(0xFF804000, "Can't execute, because map fail.\n");
+        PutStringS(PUTSTR_COL_LORANGE, "Can't execute, because map fail.\n");
     }
     LoaderSysDeleteExternalThreadList(th_id);
     ExitDeleteThread();
