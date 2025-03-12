@@ -101,7 +101,7 @@ f32 D_0013A24C = 1.0f;
 s32 D_0013A250 = 0xFF;
 s32 D_0013A254 = 0xFF;
 s32 D_0013A258 = 0xFF;
-struct t_PutStringFBChar D_0013A260 = {0, ' '};
+struct t_PutStringFBChar D_0013A260 = {0, PUTSTR_CH_SPACE};
 s32 D_0013A268 = 0;
 s32 D_0013A26C = 0;
 s32 D_0013A270 = 0;
@@ -244,12 +244,12 @@ void _putString(PutStringColor color, char *strIn)
     {
         if (strIn[chIx] == '\t')
         {
-            PutChar(0xFFFFFF00, ' ');
+            PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
             D_0013A26C += 2;
         }
         else if (strIn[chIx] == '\n')
         {
-            PutChar(0xFFFFFF00, ' ');
+            PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
             D_0013A270++;
             D_0013A26C = 0;
             D_0013A274 = 0;
@@ -334,11 +334,11 @@ void func_00105A60(void)
 
     for (iy = 0; iy < PUT_STRING_FB_HGHT; iy++)
     {
-        char c = ' ';
+        char c = PUTSTR_CH_SPACE;
 
         for (ix = PUT_STRING_FB_WDTH - 1;; ix--)
         {
-            if (D_0013EF10[iy][ix].ch != ' ')
+            if (D_0013EF10[iy][ix].ch != PUTSTR_CH_SPACE)
                 break;
             if (ix < 0)
                 break;
@@ -378,11 +378,11 @@ void func_00105C50(void)
 {
     if ((D_0013A274 >> 4) & 1)
     {
-        PutChar(0xFFFFFF00, ' ');
+        PutChar(0xFFFFFF00, PUTSTR_CH_SPACE);
     }
     else
     {
-        PutChar(0xFFFFFF00, 0x12);
+        PutChar(0xFFFFFF00, PUTSTR_CH_CURSOR);
     }
     D_0013A274++;
     D_0013A274 = D_0013A274 & 0xFF;

@@ -20,6 +20,13 @@
 // Number of calls to PutString(), after which to send Sync(), ExecBaseProc() (=Flush perhaps) (at the last call of them).
 #define PUT_STRING_SYNC_ITER (5)
 
+// TODO: Import all chars in C struct form and add enums with what each char is maybe. Or at least the special ones, as the others should be ASCII.
+enum
+{
+    PUTSTR_CH_CURSOR = 0x12, // Black rectangle.
+    PUTSTR_CH_SPACE = 0x20,  // ' '
+};
+
 typedef s32 PutStringColor;
 struct t_PutStringFBChar
 {
