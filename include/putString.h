@@ -7,6 +7,14 @@
 #include "sdk/ee/libgraph.h"
 #include "sdk/ee/libvifpk.h"
 
+// TODO: Probably makes more sense to have these on their own header
+#define SCREEN_WIDTH            (640)
+#define SCREEN_HEIGHT           (448)
+#define SCREEN_CENTERX          (2048)
+#define SCREEN_CENTERY          (2048)
+#define GS_X_COORD(x)           (((x) + SCREEN_CENTERX) << 4)
+#define GS_Y_COORD(y)           (((y) + SCREEN_CENTERY) << 4)
+
 #define PUT_STRING_FB_WDTH (60)
 #define PUT_STRING_FB_HGHT (40)
 
@@ -18,7 +26,7 @@
 #define PUTSTR_COL_GET_A(cl) (((int)(cl) >> 0) & 0xFF)
 
 // Number of calls to PutString(), after which to send Sync(), ExecBaseProc() (=Flush perhaps) (at the last call of them).
-#define PUT_STRING_SYNC_ITER (5)
+#define PUT_STRING_SYNC_ITER (4)
 
 // TODO: Import all chars in C struct form and add enums with what each char is maybe. Or at least the special ones, as the others should be ASCII.
 enum
