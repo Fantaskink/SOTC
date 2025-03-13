@@ -48,7 +48,7 @@ segments:
         - [0x10d0, c, os/loaderSys, "-O3"]
         - [0x2ec0, c, os/loaderSysException]
         - [0x3438, c, os/loaderSys2]
-        - [0x3CF8, c, os/loaderSysFileIO]
+        - [0x3CF8, c, os/loaderSysFileIO, "-O3"]
         - [0x43b0, c, os/loaderSys3, "-O3"]
         - [0x4ff8, c, os/loaderSysMemprint]
         - [0x5090, c, os/netSys]
@@ -234,7 +234,7 @@ segments:
         - [0x3AE84, pad] # .data_nop
         - [0x3AF00, .sdata, os/loaderSys]
         - [0x3AF68, .sdata, os/loaderSysException]
-        - [0x3b0f8, sdata, os/loaderSysFileIO]
+        - [0x3b0f8, .sdata, os/loaderSysFileIO]
         - [0x3b110, .sdata, os/loaderSys3]
         - [0x3b188, sdata, os/netSys]
         - [0x3b218, .sdata, os/powerOff]
