@@ -3,6 +3,7 @@
 #include "fl_xfftype.h"
 #include "gcc/string.h"
 #include "loaderSys2.h"
+#include "loaderSysMemprint.h"
 #include "padSys.h"
 #include "putString.h"
 #include "regnames.h"
@@ -269,26 +270,11 @@ s32 main(s32 argc, char **argv)
     return 0;
 }
 
-// TODO: Why is this needed?
-IN_RODATA char padding[8];
-
 char *LoaderSysGetBootArg(void)
 {
     return D_0013D110;
 }
 
 void LoaderSysHookPoint(void)
-{
-}
-
-s32 memprintf(const char *in, ...)
-{
-}
-
-s32 imemprintf(const char *in, ...)
-{
-}
-
-void initmemprintf(s32 a, s32 b)
 {
 }

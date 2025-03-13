@@ -15,8 +15,5 @@ void LoaderSysHookPoint(void);
 void LoaderSysRebootIop(const char *arg0);
 void loaderExecResetCallback(void);
 void loaderSetResetCallback(t_resetCallback callback);
-s32 memprintf(const char *in, ...);
-s32 imemprintf(const char *in, ...);
-void initmemprintf(s32 a, s32 b);
 
 #endif /* LOADERSYS3_H */
