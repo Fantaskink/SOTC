@@ -19,14 +19,6 @@ typedef unsigned int u_long128 __attribute__((mode(TI)));
 
 typedef float f32;
 
-#define va_start(v, l) __builtin_stdarg_start((v), l)
-#define va_end __builtin_va_end
-#define va_arg __builtin_va_arg
-#define __va_copy(d, s) __builtin_va_copy((d), (s))
-
-typedef __builtin_va_list __gnuc_va_list;
-typedef __gnuc_va_list va_list;
-
 #define UNK_TYPE s32
 #define UNK_PTR void *
 #define UNK_RET void
@@ -54,7 +46,7 @@ typedef __gnuc_va_list va_list;
 
 #define CONST_ARR_ENTSZ(a) (sizeof(*(a)))
 
-#define ALIGN(v, a) ((v) + (a - 1) & ~(a - 1))
+#define ALIGN(v, a) (((v) + (a - 1)) & ~(a - 1))
 
 #define GSTR_USE_PTR_REF
 

@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.4
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  *                      Emotion Engine Library
@@ -17,6 +17,7 @@
  *       0.1.0         
  *       0.2.0          01/23/2001      akiyuki     addition of const and
  *                                                   sceSifLoadModuleBuffer
+ *       0.3.0          10/5/2003       hana        add sceStdioConvertError
  */
 
 #ifndef _SIFDEV_H_DEFS
@@ -54,6 +55,10 @@ extern "C" {
 
 /* Ioctl Code */
 #define SCE_FS_EXECUTING	0x1
+
+/* devctl Code  system use */
+#define FDIOC_BLKIO             (('F'<<8)|1) 
+
 
 /* dev9 */
 #define DDIOC_MODEL		(('D'<<8)|1)
@@ -115,6 +120,7 @@ extern "C" {
 #define CDIOC_BREAK	        (('C'<<8)|40)
 
 #define CDIOC_SPINNOM           (('C'<<8)|128)
+#define CDIOC_SPINSTM           (('C'<<8)|129)
 #define CDIOC_TRYCNT            (('C'<<8)|130)
 #define CDIOC_STANDBY           (('C'<<8)|132)
 #define CDIOC_STOP              (('C'<<8)|133)
@@ -122,17 +128,34 @@ extern "C" {
 #define CDIOC_GETTOC            (('C'<<8)|135)
 #define CDIOC_READDVDDUALINFO	(('C'<<8)|137)
 #define CDIOC_INIT              (('C'<<8)|138)
+#define CDIOC_FSCACHEINIT       (('C'<<8)|149)
+#define CDIOC_FSCACHEDELETE     (('C'<<8)|151)
+#define CDIOC_SEARCHFILE        (('C'<<8)|153)
 
 
 
 #define SCE_PAD_ADDRESS		0x1
 
 /* Error codes */
+#ifndef SCE_ENXIO
 #define	SCE_ENXIO	6	/* No such device or address */
+#endif
+
+#ifndef	SCE_EBADF
 #define	SCE_EBADF	9	/* Bad file number */
+#endif
+
+#ifndef	SCE_ENODEV
 #define	SCE_ENODEV	19	/* No such device */
+#endif
+
+#ifndef	SCE_EINVAL
 #define	SCE_EINVAL	22	/* Invalid argument */
+#endif
+
+#ifndef	SCE_EMFILE
 #define	SCE_EMFILE	24	/* Too many open files */
+#endif
 
 #define	SCE_EBINDMISS		0x10000
 #define	SCE_ECALLMISS		0x10001
@@ -141,21 +164,21 @@ extern "C" {
 #define	SCE_EVERSIONMISS	0x10004
 
 struct sce_stat {
-        unsigned int    st_mode;        /* ƒtƒ@ƒCƒ‹‚ÌŽí—Þ(file/dir) */
-                                        /* ‚Æƒ‚[ƒh(R/W/X) */
-        unsigned int    st_attr;        /* ƒfƒoƒCƒXˆË‘¶‚Ì‘®« */
-        unsigned int    st_size;        /* ƒtƒ@ƒCƒ‹ƒTƒCƒY ‰ºˆÊ 32 bit */
-        unsigned char   st_ctime[8];    /* ì¬ŽžŠÔ */
-        unsigned char   st_atime[8];    /* ÅIŽQÆŽžŠÔ */
-        unsigned char   st_mtime[8];    /* ÅI•ÏXŽžŠÔ */
-        unsigned int    st_hisize;      /* ƒtƒ@ƒCƒ‹ƒTƒCƒY ãˆÊ 32bit */
-        unsigned int    st_private[6];  /* ‚»‚Ì‘¼ */
+        unsigned int    st_mode;        /* ¥Õ¥¡¥¤¥ë¤Î¼ïÎà(file/dir) */
+                                        /* ¤È¥â¡¼¥É(R/W/X) */
+        unsigned int    st_attr;        /* ¥Ç¥Ð¥¤¥¹°ÍÂ¸¤ÎÂ°À­ */
+        unsigned int    st_size;        /* ¥Õ¥¡¥¤¥ë¥µ¥¤¥º ²¼°Ì 32 bit */
+        unsigned char   st_ctime[8];    /* ºîÀ®»þ´Ö */
+        unsigned char   st_atime[8];    /* ºÇ½ª»²¾È»þ´Ö */
+        unsigned char   st_mtime[8];    /* ºÇ½ªÊÑ¹¹»þ´Ö */
+        unsigned int    st_hisize;      /* ¥Õ¥¡¥¤¥ë¥µ¥¤¥º ¾å°Ì 32bit */
+        unsigned int    st_private[6];  /* ¤½¤ÎÂ¾ */
 };
 
 struct sce_dirent {
-        struct sce_stat d_stat; /* ƒtƒ@ƒCƒ‹‚ÌƒXƒe[ƒ^ƒX */
-        char d_name[256];       /* ƒtƒ@ƒCƒ‹–¼(ƒtƒ‹ƒpƒX‚Å‚Í‚È‚¢) */
-        void    *d_private;     /* ‚»‚Ì‘¼ */
+        struct sce_stat d_stat; /* ¥Õ¥¡¥¤¥ë¤Î¥¹¥Æ¡¼¥¿¥¹ */
+        char d_name[256];       /* ¥Õ¥¡¥¤¥ëÌ¾(¥Õ¥ë¥Ñ¥¹¤Ç¤Ï¤Ê¤¤) */
+        void    *d_private;     /* ¤½¤ÎÂ¾ */
 };
 
 #define SCE_CST_MODE    0x0001
@@ -165,6 +188,20 @@ struct sce_dirent {
 #define SCE_CST_AT      0x0010
 #define SCE_CST_MT      0x0020
 #define SCE_CST_PRVT    0x0040
+
+typedef enum {
+        sceFsREADING,
+        sceFsWRITING
+} sceFsRWTYPE;                        /* system use */
+ 
+typedef struct {
+        unsigned int         lbn;
+        unsigned int         nblk;
+        void                 *addr;
+        unsigned int         blksiz;
+        sceFsRWTYPE          type;
+        unsigned int         mode;
+} sceFsDevctlBlkIO;                   /* system use */
 
 extern int  sceOpen(const char *filename, int flag, ...);
 extern int  sceClose(int fd);
@@ -197,6 +234,48 @@ extern int  sceIoctl2(int fd, int request, const void *argp,
 		 unsigned int arglen, void *bufp, unsigned int buflen);
 extern int  sceFsInit(void); 
 extern int *scePowerOffHandler(void (*func)(void *),void *addr);
+
+extern int  sceFsSetIopBuf(unsigned int buffsize, unsigned int buffcnt);
+extern int  sceFsSetIopPrio(int wkthprio);
+
+/* ------------------------------------------------------------------------- */
+/*
+    sceStdioConvertError
+        convert to sceerrno from sce*** (sceOpen, sceWrite, sceRead ...) error.
+*/
+
+typedef enum SceStdioFunc {
+    SCE_STDIO_FUNC_ANYTHING = 0
+} SceStdioFunc;
+
+#define SCE_STDIO_ERROR_ENCODE(err) SCE_ERROR_ENCODE(SCE_ERROR_PREFIX_STDIO,(err)&0xffff)
+
+#define SCE_STDIO_EBADF             SCE_STDIO_ERROR_ENCODE(SCE_EBADF)
+#define SCE_STDIO_ENODEV            SCE_STDIO_ERROR_ENCODE(SCE_ENODEV)
+#define SCE_STDIO_EINVAL            SCE_STDIO_ERROR_ENCODE(SCE_EINVAL)
+#define SCE_STDIO_EMFILE            SCE_STDIO_ERROR_ENCODE(SCE_EMFILE)
+#define SCE_STDIO_EIO               SCE_STDIO_ERROR_ENCODE(SCE_EIO)
+#define SCE_STDIO_ENOMEM            SCE_STDIO_ERROR_ENCODE(SCE_ENOMEM)
+#define SCE_STDIO_ENOTDIR           SCE_STDIO_ERROR_ENCODE(SCE_ENOTDIR)
+#define SCE_STDIO_ENXIO             SCE_STDIO_ERROR_ENCODE(SCE_ENXIO)
+#define SCE_STDIO_EACCES            SCE_STDIO_ERROR_ENCODE(SCE_EACCES)
+#define SCE_STDIO_EINVAL            SCE_STDIO_ERROR_ENCODE(SCE_EINVAL)
+#define SCE_STDIO_ENOENT            SCE_STDIO_ERROR_ENCODE(SCE_ENOENT)
+#define SCE_STDIO_EBUSY             SCE_STDIO_ERROR_ENCODE(SCE_EBUSY)
+#define SCE_STDIO_ENOSPC            SCE_STDIO_ERROR_ENCODE(SCE_ENOSPC)
+#define SCE_STDIO_EFBIG             SCE_STDIO_ERROR_ENCODE(SCE_EFBIG)
+#define SCE_STDIO_ENAMETOOLONG      SCE_STDIO_ERROR_ENCODE(SCE_ENAMETOOLONG)
+#define SCE_STDIO_ELOOP             SCE_STDIO_ERROR_ENCODE(SCE_ELOOP)
+#define SCE_STDIO_EROFS             SCE_STDIO_ERROR_ENCODE(SCE_EROFS)
+#define SCE_STDIO_EISDIR            SCE_STDIO_ERROR_ENCODE(SCE_EISDIR)
+#define SCE_STDIO_EEXIST            SCE_STDIO_ERROR_ENCODE(SCE_EEXIST)
+#define SCE_STDIO_ENOTEMPTY         SCE_STDIO_ERROR_ENCODE(SCE_ENOTEMPTY)
+#define SCE_STDIO_EVERSION          SCE_STDIO_ERROR_ENCODE(SCE_EVERSION)
+#define SCE_STDIO_EDEVICE_BROKEN    SCE_STDIO_ERROR_ENCODE(SCE_EDEVICE_BROKEN)
+
+int sceStdioConvertError(SceStdioFunc func, int ioerror);
+
+/* ------------------------------------------------------------------------- */
 
 /*
     Memory Card status
@@ -246,6 +325,8 @@ extern int *scePowerOffHandler(void (*func)(void *),void *addr);
 #define SCE_STM_WUGO		(SCE_STM_WUSR|SCE_STM_WGRP|SCE_STM_WOTH)
 #define SCE_STM_XUGO		(SCE_STM_XUSR|SCE_STM_XGRP|SCE_STM_XOTH)
 
+#define SCE_FSTYPE_EMPTY        0x0000
+#define SCE_FSTYPE_PFS          0x0100
 
 extern int sceSifInitIopHeap(void);
 extern void *sceSifAllocIopHeap(unsigned int);
@@ -295,11 +376,31 @@ extern int sceSifSearchModuleByAddress(const void *addr);
     
 extern int sceSifLoadFileReset(void);
 
+/* reboot notify handler */
+typedef void (*sceSifRebootNotifyHandler)(int mode, void *data);
+
+/* structure of reboot notify handler & data */
+typedef struct {
+	sceSifRebootNotifyHandler func;
+	void *data;
+	void *gp;		/* system use */
+	void *reserve;	/* system use */
+} sceSifRebootNotifyData;
+
 extern int sceSifRebootIop(const char *img);
 extern int sceSifSyncIop(void);
 
-#define IOP_IMAGE_FILE "IOPRP254.IMG"
-#define IOP_IMAGE_file "ioprp254.img"
+/* setup IOP reboot notify handler & data buffer */
+extern sceSifRebootNotifyData *sceSifSetRebootNotifyBuffer(sceSifRebootNotifyData *p, int size);
+
+/* register IOP reboot notify handler */
+extern int sceSifAddRebootNotifyHandler(unsigned int pos, sceSifRebootNotifyHandler pFunc, void *data);
+
+/* un-register IOP reboot notify handler */
+extern int  sceSifRemoveRebootNotifyHandler(unsigned int pos);
+
+#define IOP_IMAGE_FILE "IOPRP300.IMG"
+#define IOP_IMAGE_file "ioprp300.img"
 
 /* extern int errno; */
 

@@ -12,7 +12,7 @@
 #define sceNETCNFIF_F_USE_WAITSEMA (0x00010000)
 #define sceLIBNETE_OK (0)
 #define sceLIBNETF_AUTO_LOADMODULE (0x00000004)
-#define	sceLIBNETE_INSUFFICIENT_RESOURCES	( -543 )
+#define sceLIBNETE_INSUFFICIENT_RESOURCES (-543)
 
 typedef void (*sceSifMEndFunc)(void *);
 
@@ -108,9 +108,10 @@ typedef struct sceNetcnfifData
     int p4[5];
 } sceNetcnfifData_t __attribute__((aligned(64)));
 
-typedef struct sceInetAddress {
-	int reserved;	/* must be zero */
-	char data[12];	/* IP address (4 bytes) + reserved (8 bytes) */
+typedef struct sceInetAddress
+{
+    int reserved;  /* must be zero */
+    char data[12]; /* IP address (4 bytes) + reserved (8 bytes) */
 } sceInetAddress_t;
 
 #define WORKAREA_SIZE (0x1000)
@@ -131,8 +132,8 @@ extern int sceInetCtlSetAutoMode(sceSifMClientData *cd, void *net_buf, int f_aut
 extern int sceNetcnfifCheck(void);
 extern int sceLibnetSetConfiguration(sceSifMClientData *cd, void *net_buf, unsigned int env_addr);
 extern void setNewIopIdentifier(const char *identifier);
-extern int sceLibnetWaitGetAddress(sceSifMClientData *cd, void *net_buf, int *if_id, int n, struct sceInetAddress *addr, unsigned int flags );
-extern int sceLibnetWaitGetInterfaceID(sceSifMClientData *cd, void *net_buf, int *if_id, int n );
-extern int sceInetCtlUpInterface(sceSifMClientData *cd, void *net_buf, int id );
+extern int sceLibnetWaitGetAddress(sceSifMClientData *cd, void *net_buf, int *if_id, int n, struct sceInetAddress *addr, unsigned int flags);
+extern int sceLibnetWaitGetInterfaceID(sceSifMClientData *cd, void *net_buf, int *if_id, int n);
+extern int sceInetCtlUpInterface(sceSifMClientData *cd, void *net_buf, int id);
 
 #endif /* _NETSYS_H_ */

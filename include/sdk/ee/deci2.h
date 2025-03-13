@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  * Emotion Engine Library
@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-// deci2 header
+/* deci2 header */
 typedef struct {
 	unsigned short len;
 	unsigned short rsvd;
@@ -33,7 +33,7 @@ typedef struct {
 	unsigned char  dest;
 } sceDeci2Hdr;
 
-// events value for protocol handler
+/* events value for protocol handler */
 #define DECI2_READ	1
 #define	DECI2_READDONE	2
 #define	DECI2_WRITE	3
@@ -41,21 +41,21 @@ typedef struct {
 #define	DECI2_CHSTATUS	5
 #define	DECI2_ERROR	6
 
-// error codes
-#define DECI2_ERR_INVALID	-1 	// invalid argument
-#define DECI2_ERR_INVALSOCK	-2	// invalid socket descriptor
-#define DECI2_ERR_ALREADYUSE	-3	// protocol number already used
-#define DECI2_ERR_MFILE		-4	// too many open protocols
-#define DECI2_ERR_INVALADDR	-5	// invalid address for buffer
-#define DECI2_ERR_PKTSIZE	-6	// buffer is too small
-#define DECI2_ERR_WOULDBLOCK	-7	// blocks inspite of asynchronous
-#define DECI2_ERR_ALREADYLOCK	-8	// already lock
-#define DECI2_ERR_NOTLOCKED	-9	// not locked
-#define DECI2_ERR_NOROUTE	-10	// no route to host
-#define DECI2_ERR_NOSPACE	-11	// no room left on manager
-#define DECI2_ERR_INVALHEAD	-12	// invalid deci2 header
+/* error codes */
+#define DECI2_ERR_INVALID	-1 	/* invalid argument */
+#define DECI2_ERR_INVALSOCK	-2	/* invalid socket descriptor */
+#define DECI2_ERR_ALREADYUSE	-3	/* protocol number already used */
+#define DECI2_ERR_MFILE		-4	/* too many open protocols */
+#define DECI2_ERR_INVALADDR	-5	/* invalid address for buffer */
+#define DECI2_ERR_PKTSIZE	-6	/* buffer is too small */
+#define DECI2_ERR_WOULDBLOCK	-7	/* blocks inspite of asynchronous */
+#define DECI2_ERR_ALREADYLOCK	-8	/* already lock */
+#define DECI2_ERR_NOTLOCKED	-9	/* not locked */
+#define DECI2_ERR_NOROUTE	-10	/* no route to host */
+#define DECI2_ERR_NOSPACE	-11	/* no room left on manager */
+#define DECI2_ERR_INVALHEAD	-12	/* invalid deci2 header */
 
-// function prototypes
+/* function prototypes */
 int  sceDeci2Open(unsigned short protocol, void *opt,
                  void (*handler)(int event, int param, void *opt));
 int  sceDeci2Close(int s);
@@ -71,5 +71,5 @@ int  sceDeci2ExUnLock(int s);
 }
 #endif
 
-#endif _DECI2_H
+#endif /* _DECI2_H */
 

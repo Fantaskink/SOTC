@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  *                      Emotion Engine Library
@@ -37,7 +37,7 @@ typedef struct _sif_client_data {
 	struct _sif_rpc_data	rpcd;
 	unsigned int	command;
 	void		*buff;
-	void		*cbuff;
+	void		*gp;
 	sceSifEndFunc	func;
 	void		*para;
 	struct _sif_serve_data		*serve;

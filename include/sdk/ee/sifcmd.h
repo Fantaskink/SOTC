@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  *                      Emotion Engine Library
@@ -42,6 +42,7 @@ typedef void (* sceSifCmdHandler)(void *, void *);
 typedef struct {
 	sceSifCmdHandler	func;
 	void			*data;
+	void			*gp;
 } sceSifCmdData;
 
 /* system function (defalut) */

@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.4
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
  */
 /* 
  *                      Emotion Engine Library
@@ -51,6 +51,7 @@
 
 #define sceMcFileAttrReadable		SCE_STM_R
 #define sceMcFileAttrWriteable		SCE_STM_W
+#define sceMcFileAttrWritable		SCE_STM_W
 #define sceMcFileAttrExecutable		SCE_STM_X
 #define sceMcFileAttrDupProhibit	SCE_STM_C
 #define sceMcFileAttrSubdir		SCE_STM_D
@@ -72,6 +73,7 @@
 #define sceMcIniErrKernel	(-101)
 #define sceMcIniOldMcserv	(-120)
 #define sceMcIniOldMcman	(-121)
+#define sceMcErrSifRpc		(-91)
 
 #define sceMcErrUnbind		(-100)
 #define sceMcErrSemapho		(-200)
@@ -95,8 +97,8 @@ typedef struct
 	unsigned char Head[4];
 	unsigned short Reserv1;
 	unsigned short OffsLF;
-	unsigned Reserv2;
-	unsigned TransRate;
+	unsigned int Reserv2;
+	unsigned int TransRate;
 	_iconVu0IVECTOR BgColor[4];
 	_iconVu0FVECTOR LightDir[3];
 	_iconVu0FVECTOR LightColor[3];
@@ -121,13 +123,53 @@ typedef struct
 {
 	sceMcStDateTime _Create;
 	sceMcStDateTime _Modify;
-	unsigned FileSizeByte;
+	unsigned int FileSizeByte;
 	unsigned short AttrFile;
 	unsigned short Reserve1;
-	unsigned Reserve2;
-	unsigned PdaAplNo;
+	unsigned int Reserve2;
+	unsigned int PdaAplNo;
 	unsigned char EntryName[32];
 } sceMcTblGetDir __attribute__((aligned (64)));
+
+#ifdef __SCE_MC_OLD_DEFINE__
+#define CSec	_Create.Sec
+#define CMin	_Create.Min
+#define CHour	_Create.Hour
+#define CDay	_Create.Day
+#define CMonth	_Create.Month
+#define CYear	_Create.Year
+#define MSec	_Modify.Sec
+#define MMin	_Modify.Min
+#define MHour	_Modify.Hour
+#define MDay	_Modify.Day
+#define MMonth	_Modify.Month
+#define MYear	_Modify.Year
+#endif /* __SCE_MC_OLD_DEFINE__ */
+
+typedef enum SceMcFunc {
+    SCE_MC_FUNC_GETINFO                 = sceMcFuncNoCardInfo,
+    SCE_MC_FUNC_OPEN                    = sceMcFuncNoOpen,    
+    SCE_MC_FUNC_CLOSE                   = sceMcFuncNoClose,   
+    SCE_MC_FUNC_SEEK                    = sceMcFuncNoSeek,    
+    SCE_MC_FUNC_READ                    = sceMcFuncNoRead,    
+    SCE_MC_FUNC_WRITE                   = sceMcFuncNoWrite,   
+    SCE_MC_FUNC_FLUSH                   = sceMcFuncNoFlush,   
+    SCE_MC_FUNC_MKDIR                   = sceMcFuncNoMkdir,   
+    SCE_MC_FUNC_CHDIR                   = sceMcFuncNoChDir,   
+    SCE_MC_FUNC_GETDIR                  = sceMcFuncNoGetDir,  
+    SCE_MC_FUNC_SETFILEINFO             = sceMcFuncNoFileInfo,
+    SCE_MC_FUNC_DELETE                  = sceMcFuncNoDelete,  
+    SCE_MC_FUNC_FORMAT                  = sceMcFuncNoFormat,  
+    SCE_MC_FUNC_UNFORMAT                = sceMcFuncNoUnformat,
+    SCE_MC_FUNC_GETENTSPACE             = sceMcFuncNoEntSpace,
+    SCE_MC_FUNC_RENAME                  = sceMcFuncNoRename,  
+    SCE_MC_FUNC_CHANGETHREADPRIORITY    = sceMcFuncChgPrior,  
+    SCE_MC_FUNC_GETSLOTMAX              = sceMcFuncSlotMax,   
+    
+    SCE_MC_FUNC_SYNC = 30,
+    SCE_MC_FUNC_INIT,
+    SCE_MC_FUNC_END
+} SceMcFunc;
 
 
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
@@ -145,7 +187,7 @@ int sceMcWrite(int, const void *, int);
 int sceMcFlush(int);
 int sceMcMkdir(int, int, const char *);
 int sceMcChdir(int, int, const char *, char *);
-int sceMcGetDir(int, int, const char *, unsigned, int, sceMcTblGetDir *);
+int sceMcGetDir(int, int, const char *, unsigned int, int, sceMcTblGetDir *);
 int sceMcSetFileInfo(int, int, const char *, const char *, unsigned int);
 int sceMcDelete(int, int, const char *);
 int sceMcFormat(int, int);
@@ -155,6 +197,8 @@ int sceMcRename(int, int, const char *, const char *);
 int sceMcChangeThreadPriority(int);
 int sceMcGetSlotMax(int);
 int sceMcSync(int, int *, int *);
+void *sceMcGetErxEntries(void);
+int sceMcConvertError(SceMcFunc func, int mcerror);
 
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

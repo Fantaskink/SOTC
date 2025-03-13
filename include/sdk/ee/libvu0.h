@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /* 
  *                      Emotion Engine Library
@@ -26,13 +26,13 @@
 extern "C" {
 #endif
 
-// basic type
+/* basic type */
 typedef int		qword[4] 	__attribute__ ((aligned(16)));
 typedef int		sceVu0IVECTOR[4] __attribute__((aligned (16)));
 typedef float		sceVu0FVECTOR[4] __attribute__((aligned (16)));
 typedef float		sceVu0FMATRIX[4][4] __attribute__((aligned (16)));
 
-// prototypes
+/* prototypes */
 void  sceVu0CopyVector(sceVu0FVECTOR v0, sceVu0FVECTOR v1);
 void  sceVu0CopyVectorXYZ(sceVu0FVECTOR v0, sceVu0FVECTOR v1);
 void  sceVu0FTOI0Vector(sceVu0IVECTOR v0, sceVu0FVECTOR v1);
@@ -77,6 +77,8 @@ int sceVu0ClipScreen3(sceVu0FVECTOR v0, sceVu0FVECTOR v1, sceVu0FVECTOR v2);
 void sceVu0RotTransPersN(sceVu0IVECTOR *v0, sceVu0FMATRIX m0, sceVu0FVECTOR *v1, int n, int mode);
 void sceVu0RotTransPers(sceVu0IVECTOR v0, sceVu0FMATRIX m0, sceVu0FVECTOR v1, int mode);
 void sceVpu0Reset(void);
+
+extern void *sceVu0GetErxEntries(void);
 
 #ifdef __cplusplus
 }

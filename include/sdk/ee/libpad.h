@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
  */
 /* 
  *                      Controller Library
@@ -80,11 +80,16 @@
 #define scePadDmaBufferMax	(16)
 #define scePadError		(0)
 
+#define SCE_PAD_DMA_BUFFER_SIZE		(256)
+#define SCE_PAD_BUTTON_BUFFER_SIZE	(32)
+
+typedef volatile void (*scePadDmaCB)(int frame);
+
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 extern "C" {
 #endif
 int scePadInit( int mode );
-int scePadPortOpen( int port, int slot, u_long128* addr );
+int scePadPortOpen( int port, int slot, void* addr );
 int scePadRead( int port, int slot, unsigned char* rdata );
 int scePadInfoAct( int port, int slot, int actno, int term );
 int scePadInfoComb( int port, int slot, int listno, int offs );
@@ -105,6 +110,9 @@ int scePadGetSlotMax( int port );
 int scePadSetWarningLevel(int level);
 int scePadInitGun(int mode);
 int scePadEndGun(void);
+int* scePadSetDmaCallback(int (*func)(int));
+int scePadSetFlushRate(int rate );
+void *scePadGetErxEntries(void);
 
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

@@ -1,6 +1,8 @@
 #include "netSys.h"
 #include "common.h"
 #include "gcc/malloc.h"
+#include "loaderSys3.h"
+#include "padSys.h"
 #include "putString.h"
 
 // These are likely also const char*, used for identifiers
@@ -274,11 +276,11 @@ s32 func_00104668(s32 a0, s32 a1)
     {
         conf_path = "cdrom0:\\SETTING\\NET.DB;1";
         usr_name = D_001320A0[a1];
-        PutStringS(0x80FF8000, "from CD default...");
+        PutStringS(PUTSTR_COL_LGREEN2, "from CD default...");
     }
     else
     {
-        PutStringS(0x8080FF00, "from memory card...");
+        PutStringS(PUTSTR_COL_LLBLUE3, "from memory card...");
         conf_path = "mc0:/BWNETCNF/BWNETCNF";
         usr_name = D_001320B8[a1];
         flags = 1;
@@ -322,7 +324,7 @@ int func_00104818(void)
     s32 r;
     s32 ret;
 
-    PutStringS(0x80C0FF00, GSTR(D_0013A1E8, "  "));
+    PutStringS(PUTSTR_COL_LLBLUE, GSTR(D_0013A1E8, "  "));
 
     s1 = 0;
     r = 0;
@@ -336,27 +338,27 @@ int func_00104818(void)
     {
     case 0x800:
         ret = 3;
-        PutStringS(0x80C0FF00, "Use hdd ether port\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Use hdd ether port\n");
         break;
     case 0x20:
         ret = 1;
-        PutStringS(0x80C0FF00, "Use usb ether port\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Use usb ether port\n");
         break;
     case 0x10:
         ret = 2;
-        PutStringS(0x80C0FF00, "Use usb ether port(ppp on ehter)\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Use usb ether port(ppp on ehter)\n");
         break;
     case 0x80:
         ret = 4;
-        PutStringS(0x80C0FF00, "Use hdd ether port(ppp on ehter)\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Use hdd ether port(ppp on ehter)\n");
         break;
     case 0x40:
         ret = 5;
-        PutStringS(0x80C0FF00, "Use modem\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Use modem\n");
         break;
     default:
         ret = 0;
-        PutStringS(0x80C0FF00, "Default startup\n");
+        PutStringS(PUTSTR_COL_LLBLUE, "Default startup\n");
         break;
     }
     return ret;
