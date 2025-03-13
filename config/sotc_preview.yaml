@@ -47,7 +47,7 @@ segments:
         - [0x1000, asm, sdk/crt0]
         - [0x10d0, c, os/loaderSys, "-O3"]
         - [0x2ec0, c, os/loaderSysException]
-        - [0x3438, c, os/loaderSys2]
+        - [0x3438, c, os/loaderSys2, "-O3"]
         - [0x3CF8, c, os/loaderSysFileIO, "-O3"]
         - [0x43b0, c, os/loaderSys3, "-O3"]
         - [0x4ff8, c, os/loaderSysMemprint]
