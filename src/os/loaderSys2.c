@@ -8,26 +8,6 @@
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
 
-extern char D_0013A100[]; // "host0:"
-
-extern unk_except_s D_00131E00[14];
-extern unk_except_s D_00131E80[2][32];
-
-typedef struct
-{
-    union
-    {
-        u128 q;
-        u64 d[2];
-        u32 s[4];
-    };
-} qword;
-
-extern struct unk_00131D00_s D_00131D00;
-
-extern int D_0013A180;
-extern int D_0013A184;
-
 void LoaderSysDeleteAllExternalIntcHandler(void)
 {
     s32 i;

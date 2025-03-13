@@ -1,27 +1,30 @@
 #include "common.h"
-#include "loaderSys2.h"
+#include "loaderSysFileIO.h"
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
 
+#define MAX_IOP_IDENTIFIERS 64
+
+extern s32 D_0013A108;                           // number of iop modules
+extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
+
+extern s32 D_0013A110;
+extern s32 D_0013A184;
+extern s32 D_0013A114;
+
 extern char D_0013A100[]; // "host0:"
-
-extern unk_except_s D_00131E00[14];
-extern unk_except_s D_00131E80[2][32];
-
-typedef struct
-{
-    union
-    {
-        u128 q;
-        u64 d[2];
-        u32 s[4];
-    };
-} qword;
+extern char D_00136A80[]; // "ldsys: setNewIopIdentifier: set new iop identifier \"%s\" at #%d\n", Referenced in LoaderSysLoadIopModuleFromEEBuffer
 
 extern struct unk_00131D00_s D_00131D00;
 
 extern int D_0013A180;
 extern int D_0013A184;
+
+static inline void __inlined_setNewIopIdentifier(const char *newIdentifier)
+{
+    LoaderSysPrintf(D_00136A80, newIdentifier, D_0013A108);
+    strncpy(D_0013CD10[D_0013A108++], newIdentifier, strlen(newIdentifier));
+}
 
 s32 LoaderSysPrintf(const char *format, ...)
 {
