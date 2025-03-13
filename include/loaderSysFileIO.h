@@ -30,7 +30,7 @@ s32 LoaderSysFRead(s32 fd, void *buf, s32 count);
 s32 LoaderSysFWrite(s32 fd, const void *buf, s32 count);
 s32 LoaderSysRemove(const char *name);
 s32 LoaderSysRmdir(const char *name);
-s32 LoaderSysMkdir(u8 *name, s32 mode);
+s32 LoaderSysMkdir(const char *name, s32 mode);
 s32 LoaderSysGetstat(const char *name, struct sce_stat *buf);
 s32 LoaderSysChstat(const char *name, struct sce_stat *buf, u32 cbit);
 s32 LoaderSysLoadIopModuleFromEEBuffer(const char *module_ident, s32 data, s32 module_size, s32 argc, const char *argp);

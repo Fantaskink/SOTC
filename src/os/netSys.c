@@ -1,6 +1,8 @@
 #include "netSys.h"
 #include "common.h"
 #include "gcc/malloc.h"
+#include "loaderSys3.h"
+#include "padSys.h"
 #include "putString.h"
 
 // These are likely also const char*, used for identifiers

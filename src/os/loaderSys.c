@@ -2,6 +2,7 @@
 #include "common.h"
 #include "ee/sifrpc.h"
 #include "fl_xfftype.h"
+#include "gcc/stdarg.h"
 #include "gcc/stdio.h"
 #include "gcc/string.h"
 #include "loaderSys2.h"
@@ -413,7 +414,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr *xffEp, char *ld_script_path, l
     for (symbol = 0; symbol < xffEp->impSymIxsNrE; symbol++)
     {
         sprintf(
-            &buffer, "%s = 0x%08x;\n", xffEp->symTabStr + xffEp->symTab[xffEp->impSymIxs[symbol].stIx].nameOffs,
+            (char *)&buffer, "%s = 0x%08x;\n", xffEp->symTabStr + xffEp->symTab[xffEp->impSymIxs[symbol].stIx].nameOffs,
             (u32)xffEp->symTab[xffEp->impSymIxs[symbol].stIx].addr);
         LoaderSysFWriteString(linker_fd, (char *)&buffer, 0);
     }
@@ -426,7 +427,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr *xffEp, char *ld_script_path, l
         if (_checkExistString(xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs, D_00131DD0))
         {
             sprintf(
-                &buffer, "\t%s\t%p: {*(%s)}\n", xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs,
+                (char *)&buffer, "\t%s\t%p: {*(%s)}\n", xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs,
                 xffEp->sectTab[section].memPt, xffEp->ssNamesBase + xffEp->ssNamesOffs[section].nmOffs);
             LoaderSysFWriteString(linker_fd, (char *)&buffer, 0);
         }

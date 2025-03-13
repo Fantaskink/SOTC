@@ -33,7 +33,7 @@ void LoaderSysRebootIop(const char *arg0)
     PutStringS(PUTSTR_COL_CYAN, "Done.\n");
 }
 
-s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args)
+s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, const char *args)
 {
     s32 result;
 

@@ -1,11 +1,14 @@
-#include "common.h"
 #include "loaderSysFileIO.h"
+#include "common.h"
+#include "gcc/stdarg.h"
+#include "gcc/stdio.h"
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
+#include "sdk/ee/sifrpc.h"
 
 #define MAX_IOP_IDENTIFIERS 64
 
-s32 D_0013A108 = 0;                           // number of iop modules
+s32 D_0013A108 = 0;                              // number of iop modules
 extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
 
 extern struct unk_00131D00_s D_00131D00;
@@ -17,13 +20,13 @@ s32 LoaderSysPrintf(const char *format, ...)
 {
     char buffer[256];
     va_list args;
-    
+
     va_start(args, format);
     vsprintf(buffer, format, args);
     va_end(args);
-    
+
     printf(buffer);
-    
+
     return strlen(buffer);
 }
 
@@ -222,7 +225,7 @@ s32 LoaderSysRmdir(const char *name)
     return success;
 }
 
-s32 LoaderSysMkdir(u8 *name, s32 mode)
+s32 LoaderSysMkdir(const char *name, s32 mode)
 {
     s32 success = sceMkdir(name, mode);
     return success;

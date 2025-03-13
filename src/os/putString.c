@@ -1,6 +1,10 @@
 #include "putString.h"
 #include "common.h"
 #include "gcc/ctype.h"
+#include "gcc/stdarg.h"
+#include "gcc/stdio.h"
+#include "gcc/string.h"
+#include "loaderSysFileIO.h"
 #include "sdk/ee/eestruct.h"
 #include "sdk/ee/libdma.h"
 #include "sdk/ee/libgraph.h"
@@ -98,13 +102,13 @@ s32 D_0013A240 = 0;
 u32 D_0013A244 = 0;
 f32 D_0013A248 = 1.0f;
 f32 D_0013A24C = 1.0f;
-s32 putScrCrChColorR = 0xFF; // 0x0013A250
-s32 putScrCrChColorG = 0xFF; // 0x0013A254
-s32 putScrCrChColorB = 0xFF; // 0x0013A258
+s32 putScrCrChColorR = 0xFF;                                          // 0x0013A250
+s32 putScrCrChColorG = 0xFF;                                          // 0x0013A254
+s32 putScrCrChColorB = 0xFF;                                          // 0x0013A258
 struct t_PutStringFBChar putStrFbChBlackSpace = {0, PUTSTR_CH_SPACE}; // 0x0013A260
 s32 D_0013A268 = 0;
-s32 putStrFBChOffsX = 0; // 0x0013A26C
-s32 putStrFBChOffsY = 0; // 0x0013A270
+s32 putStrFBChOffsX = 0;        // 0x0013A26C
+s32 putStrFBChOffsY = 0;        // 0x0013A270
 u32 putStrLastChNotNewline = 0; // 0x0013A274
 
 // bss
