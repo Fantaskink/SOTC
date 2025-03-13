@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.3
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*                      Emotion Engine Library
  *                          Version 0.03
@@ -32,6 +32,7 @@
 
 /* Flag for sceOpen() CDVD local usage */
 #define SCE_CdSTREAM      0x40000000  /* CD/DVD Media Stream open */
+#define SCE_CdCACHE       0x10000000  /* CD/DVD Media Cache  open */
 
 /*
  * Macros for READ Data pattan
@@ -41,12 +42,18 @@
 #define SCECdSecS2340		2	/* sector size 2340 System Use */
 
 /*
+ * Macros for CDDA READ Data pattan
+ */
+#define SCECdSecS2352           0       /* sector size 2352  CD-DA read */
+
+/*
  * Macros for Spindle control
  */
 #define SCECdSpinMax		0
 #define SCECdSpinNom		1	/* driverの読みだせる最高速度で回す */
 #define SCECdSpinStm		0	/* ストリームの推奨速度で回す       */
 #define SCECdSpinDvdDL0		0	/* DVDデュアルレイア0推奨速度で回す  */	
+#define SCECdSpinX1             2       /* 標準速で回す CD-DA read          */
 
 /*
  * Macros for Error code
@@ -68,11 +75,14 @@
 #define SCECdErABRT		0x01	/* コマンド処理中にアボート発行	    */
 #define SCECdErREADCF		0xfd	/* 読みだしコマンド発行に失敗した。 */
 #define SCECdErREADCFR  	0xfe	/* 読みだしコマンド発行に失敗した。 */
+#define SCECdErSFRMTNG		0x38    /* コマンドとセクタのフォーマットが */
+					/* 異なる。			    */
 
 /*
  * Macros for sceCdGetDiskType()
  */
 #define SCECdIllgalMedia 	0xff
+#define SCECdIllegalMedia 	0xff
 	/* ILIMEDIA (Illegal Media)
             Disc が 非PS/非PS2 Disc であることを表わす。 */
 #define SCECdDVDV		0xfe
@@ -97,6 +107,9 @@
 	/* NODISC (No disc) Disc が入っていない状態を表わす。*/
 #define SCECdUNKNOWN		0x05
 	/* UNKNOWN          Disc 判別不能	*/
+#define SCECdGDTFUNCFAIL        (-1)
+    /* FUNCFAIL			関数呼び出し失敗 */
+
 
 /*
  * CD-ROM Primitive Commands
@@ -143,6 +156,8 @@
  *	Callback Reason
  */
 #define SCECdFuncRead		1
+#define SCECdFuncReadCDDA       2
+#define SCECdFuncGetToc     3
 #define SCECdFuncSeek		4
 #define SCECdFuncStandby	5
 #define SCECdFuncStop		6
@@ -165,7 +180,6 @@ typedef struct {
 /*
  *	Location
  */
-
 typedef struct {
 	u_char minute;		/* minute (BCD) */
 	u_char second;		/* second (BCD) */
@@ -268,6 +282,7 @@ int sceCdInitEeCB(int cb_prio, void *stack_addr,int stack_size);
 int sceCdDiskReady( int mode );
 int sceCdGetError(void);
 int sceCdGetDiskType( void );
+int sceCdGetDiskType2(void);
 
 int sceCdStatus( void );
 int sceCdBreak( void );
@@ -293,6 +308,20 @@ int sceCdChangeThreadPriority( int prio );
 int sceCdPowerOff( int *stat );
 u_int sceCdSetEEReadMode(u_int mode);
 int sceCdReadDvdDualInfo(int *on_dual, u_int *layer1_start);
+
+void *sceCdGetErxEntries(void);
+int sceCdDriveCheckForErxLoading(int *rdy, u_int *dtype);
+
+int sceCdReadCDDA(u_int lbn, u_int sectors, void *buf , sceCdRMode *mode);
+int sceCdCtrlADout( int param, int *stat );
+int sceCddaStInit(u_int bufmax, u_int bankmax,
+                                 u_int iop_bufaddr, int datapattern);
+int sceCddaStStart(u_int lbn, sceCdRMode *mode);
+int sceCddaStSeek(u_int lbn);
+int sceCddaStSeekF(u_int lbn);
+int sceCddaStStop(void);
+int sceCddaStRead(u_int size, u_int *buf, u_int mode, u_int *err);
+int sceCddaStStat(void);
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

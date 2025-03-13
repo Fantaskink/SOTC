@@ -4,7 +4,6 @@
 #include "ee/sifrpc.h"
 #include "gcc/stdio.h"
 #include "gcc/stdlib.h"
-#include "libcdvd.h"
 #include "loaderSys.h"
 #include "loaderSys2.h"
 #include "loaderSysException.h"
@@ -13,6 +12,7 @@
 #include "padSys.h"
 #include "powerOff.h"
 #include "putString.h"
+#include "sdk/common/libcdvd.h"
 #include "usbSerialSys.h"
 
 s32 D_0013A110 = 0;
