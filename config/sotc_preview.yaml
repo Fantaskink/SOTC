@@ -232,7 +232,7 @@ segments:
         - [0x3AF00, .sdata, os/loaderSys]
         - [0x3AF68, sdata, os/loaderSysException]
         - [0x3b0f8, sdata, os/loaderSys2]
-        - [0x3b110, sdata, os/loaderSys3]
+        - [0x3b110, .sdata, os/loaderSys3]
         - [0x3b188, sdata, os/netSys]
         - [0x3b218, .sdata, os/powerOff]
         - [0x3b230, .sdata, os/putString]

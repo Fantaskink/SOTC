@@ -20,7 +20,6 @@
 
 extern void *D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
-#define MAX_RESET_CALLBACKS 10
 
 struct unk
 {
@@ -62,7 +61,6 @@ typedef struct unk_except_s
     char *name;
 } unk_except_s;
 
-typedef (*t_resetCallback)();
 typedef s32(dispose_reloc_func)(struct t_xffEntPntHdr *, struct t_xffRelocAddrEnt *, unk_stack_40 *);
 typedef void *(mallocAlign_func)(s32, u32);
 typedef void *(mallocMaxAlign_func)(s32);
@@ -114,25 +112,6 @@ void LoaderSysSendAbort(void);
 void LoaderSysFlushPrint(void);
 char *checkHookDesc(char *hook_desc);
 void setNewIopIdentifier(const char *newIdentifier);
-void func_001033B0();
-void loaderLoop(void);
-s32 main(s32 argc, char **argv);
-const char *LoaderSysGetBootArg(void);
-s32 LoaderSysLoadIopModule(const char *path, s32 arg_count, void *args);
-s32 LoaderSysUnloadIopModuleByName(const char *arg0, s32 arg1, s32 arg2, s32 *arg3);
-void LoaderSysHookPoint(void);
-void LoaderSysRebootIop(const char *arg0);
-void loaderExecResetCallback(void);
-void loaderSetResetCallback(t_resetCallback callback);
-s32 memprintf(const char *in, ...);
-s32 imemprintf(const char *in, ...);
-void initmemprintf(s32 a, s32 b);
-
-extern void PutString(s32, const char *, ...);
-extern void PutStringS(s32, const char *, ...);
-
-extern s32 LOADER_RESET_CALLBACK_NUM;
-extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
 
 #define SEMAPHORE_LIST D_0013BD10
 #define THREAD_LIST D_0013B910
