@@ -1,5 +1,5 @@
-/* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+/* SCEI CONFIDENTIAL
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
  */
 /* 
  *                 device basic control library
@@ -27,6 +27,7 @@ extern "C" {
 
 int sceDbcInit( void );
 int sceDbcEnd( void );
+void *sceDbcGetErxEntries(void);
 
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

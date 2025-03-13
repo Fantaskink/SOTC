@@ -1,9 +1,9 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /* 
  *                      Emotion Engine Library
- *                          Version 0.01
+ *                          Version 0.02
  *                           Shift-JIS
  *
  *      Copyright (C) 1998-1999 Sony Computer Entertainment Inc.
@@ -15,6 +15,7 @@
  *       Version        Date            Design      Log
  *  --------------------------------------------------------------------
  *       0.01           Mar,29,1999     shibuya
+ *       0.02           Apr,16,2003     hana        add sceDevGetErxEntries
  */
 
 
@@ -28,14 +29,14 @@
 #include <devvif1.h>
 #include <devfont.h>
 
-/*
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+void *sceDevGetErxEntries(void);
+
 #ifdef __cplusplus
 }
 #endif
-*/
 
 #endif

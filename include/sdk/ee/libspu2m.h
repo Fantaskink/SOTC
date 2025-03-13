@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  * Emotion Engine Library
@@ -23,11 +23,13 @@
 extern "C" {
 #endif
 
-extern int  sceSpu2MemInit (void *, unsigned int, unsigned int);
-extern int  sceSpu2MemQuit (void);
+int  sceSpu2MemInit(void *, unsigned int, unsigned int);
+int  sceSpu2MemQuit(void);
 
-extern int  sceSpu2MemAllocate (unsigned int);
-extern void sceSpu2MemFree (unsigned int);
+int  sceSpu2MemAllocate(unsigned int);
+void sceSpu2MemFree(unsigned int);
+
+void *sceSpu2MemGetErxEntries(void);
 
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

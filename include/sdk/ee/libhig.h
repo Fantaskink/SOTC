@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
 */
 /*
  *                      Emotion Engine Library
@@ -13,13 +13,19 @@
  *  --------------------------------------------------------------------
  *                    Sep,20,2000     kaneko
  */
-/*	$Id: libhig.h,v 1.26.6.5 2002/02/25 12:26:48 xokano Exp $	*/
+/*	$Id: libhig.h,v 1.36 2003/10/08 09:52:53 xkazama Exp $	*/
 #ifndef __HiG_H__
 #define __HiG_H__
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifndef _STDLIB_H_
+#include <stdlib.h>	/* necessary header(for size_t) */
+#endif
+#ifndef _eetypes_h_
+#include <eetypes.h>	/* necessary header */
+#endif
 #ifndef _eestruct_
 #include <eestruct.h>	/* necessary header */
 #endif
@@ -139,8 +145,6 @@ typedef struct _sceHiErrStateType {
     const char	*mes;	/* error message (if no err then NULL) */    
 } sceHiErrStateType;
 
-extern sceHiErrStateType sceHiErrState;
-
 /*********************************************************************************
  *				FUNCTIONS
  *********************************************************************************/
@@ -149,6 +153,7 @@ extern sceHiErr sceHiRegistTable(sceHiPlugTable *, u_int);
 extern sceHiErr sceHiParseHeader(u_int *);
 extern sceHiErr sceHiGetPlug(u_int *, char *, sceHiPlug **);
 extern sceHiErr sceHiCallPlug(sceHiPlug *, int);
+extern sceHiErrStateType *sceHiGetErrStatePtr(void);
 
 extern sceHiErr sceHiGetInsPlug(sceHiPlug *, sceHiPlug **, sceHiType);
 extern sceHiErr sceHiGetPlugList(sceHiPlug *, sceHiList **, sceHiType);
@@ -160,6 +165,8 @@ extern sceHiErr sceHiMakeType(sceHiType *, u_long *);
 extern sceHiErr sceHiGetType(sceHiType *, sceHiType *);
 
 extern sceHiErr sceHiNewPlugBlk(int, int, sceHiPlug **, sceHiType *);
+extern sceHiErr sceHiCalcPlugBlkSize(int, int, size_t *);
+extern sceHiErr sceHiCreatePlugBlk(sceHiPlug *, int, int, const sceHiType *);
 extern sceHiErr sceHiSetPlugType(sceHiPlug *, sceHiType *);
 extern sceHiErr sceHiSetDataType(sceHiData *, sceHiType *);
 extern sceHiErr sceHiSetPluginApi(sceHiPlug *);
@@ -170,6 +177,7 @@ extern sceHiErr sceHiInsDataBlk(sceHiPlug *, sceHiData *, int);
 extern sceHiErr sceHiRmvPlugBlk(sceHiPlug *, sceHiPlug *);
 extern sceHiErr sceHiRmvDataBlk(sceHiPlug *, sceHiData *);
 extern sceHiErr sceHiMakeDataBlk(u_int *, sceHiData **, sceHiType *);
+extern sceHiErr sceHiCreateDataBlk(sceHiData *, const u_int *, sceHiType *);
 extern sceHiErr sceHiGetPlugPlace(sceHiPlug *, sceHiPlug *, int *);
 extern sceHiErr sceHiGetDataPlace(sceHiPlug *, sceHiData *, int *);
 extern sceHiErr sceHiStopPlugStatus(sceHiPlug *);
@@ -230,7 +238,14 @@ typedef struct {
 	sceHiDMAUnpackFormat_t	fmt;		/* unpack format */
 	int			irq;		/* vif irq bit */
 	int			pack_active;/* pack data quantity of activity */
+	int			use_directhl;
 } sceHiDMAState_t;
+
+typedef enum {
+    SCE_HIG_DMA_REGIST_CHAIN,
+    SCE_HIG_DMA_DYNAMIC_CHAIN,
+    SCE_HIG_DMA_STATIC_CHAIN
+} sceHiDMAChainType_t;
 
 extern sceHiErr sceHiDMAInit(void *(*)(size_t, size_t), void (*)(void *), size_t);
 extern sceHiErr sceHiDMAInit_DBuf(int, int);
@@ -239,6 +254,8 @@ extern sceHiErr sceHiDMASend(void);
 extern sceHiErr sceHiDMASendI(void);
 extern sceHiErr sceHiDMAWait(void);
 extern sceHiErr sceHiDMASwap(void);
+extern sceHiErr sceHiDMAGetState(sceHiDMAState_t *);
+extern sceHiErr sceHiDMASetState(const sceHiDMAState_t *);
 extern sceHiErr sceHiDMAMake_ChainStart(void);
 extern sceHiErr sceHiDMAMake_ChainEnd(sceHiDMAChainID_t *);
 extern sceHiErr sceHiDMAMake_DynamicChainStart(void);
@@ -265,7 +282,11 @@ extern sceHiErr sceHiDMAMake_LoadGS(u_int *, size_t);
 extern sceHiErr sceHiDMAGet_ChainAddr(sceHiDMAChainID_t, u_int **);
 extern sceHiErr sceHiDMASet_BufferPtr(u_int *);
 extern sceHiErr sceHiDMAGet_BufferPtr(u_int **);
-
+extern qword *sceHiDMAGetChainHead(sceHiDMAChainID_t);
+extern qword *sceHiDMAGetChainTail(sceHiDMAChainID_t);
+extern void sceHiDMARegistClear(void);
+extern void sceHiDMAMarkup(sceHiDMAChainType_t);
+extern void sceHiDMADeleteMarked(void);
 
 /*********************************************************************************
  *				Gs Services
@@ -604,6 +625,9 @@ extern sceHiErr sceHiGsEnvSetRegTrxdir(sceHiGsEnv *gsenv, int xdr);
 extern sceHiErr sceHiGsEnvSetRegSignal(sceHiGsEnv *gsenv, u_int id, u_int idmsk);
 extern sceHiErr sceHiGsEnvSetRegLabel(sceHiGsEnv *gsenv, u_int id, u_int idmsk);
 
+
+/* ERX */
+extern void *sceHiGetErxEntries(void);
 
 #ifdef __cplusplus
 }

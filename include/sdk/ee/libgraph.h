@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /* 
  *                      Emotion Engine Library
@@ -18,7 +18,7 @@
  *      0.2.0.0	        May.11.1999     okadaa      add functions for 2context
  *      1.10            Feb,  8, 2002   ywashizu    Added DTV480P macro
  * 
- * $Id: libgraph.h,v 1.12.2.2 2002/03/11 05:13:00 xokano Exp $
+ * $Id: libgraph.h,v 1.18 2003/05/22 06:34:08 xkazama Exp $
  *
  */
 
@@ -194,7 +194,7 @@ typedef struct {
 	short		sceGsOutMode;
 	short		sceGsFFMode;
 	short		sceGsVersion;
-	volatile int	(*sceGsVSCfunc)(int);
+	int		(*sceGsVSCfunc)(int);
 	int		sceGsVSCid;
 } sceGsGParam __attribute__((aligned(16)));
 
@@ -338,6 +338,7 @@ void sceGsSetHalfOffset2(sceGsDrawEnv2 *draw, short centerx, short cyntery, shor
 void sceGsSetDefDBuffDc(sceGsDBuffDc *db, short psm, short w, short h, short ztest, short zpsm, short clear);
 int sceGsSwapDBuffDc(sceGsDBuffDc *db, int id);
 
+    extern void *sceGsGetErxEntries(void);
 
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }

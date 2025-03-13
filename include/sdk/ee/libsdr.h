@@ -1,18 +1,17 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.3
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
- *                      Emotion Engine Library
+ * Emotion Engine Library
  *
- *      Copyright (C) 1998-1999 Sony Computer Entertainment Inc.
- *                        All Rights Reserved.
+ * Copyright (C) 2003 Sony Computer Entertainment Inc.
+ * All Rights Reserved.
  *
- *                             libsdr.h
- *
+ * libsdr.h
  */
 
-#ifndef _LIBSDR_H_
-#define _LIBSDR_H_
+#ifndef _SCE_LIBSDR_H
+#define _SCE_LIBSDR_H
 
 #include <sdmacro.h>	/* common/include */
 #include <sdrcmd.h>	/* common/include */
@@ -26,14 +25,17 @@ extern "C" {
  *	Proto Types
  * ---------------------------------------------------------------- */
 
-extern int sceSdRemoteInit( void );
-extern int sceSdRemote( int arg, ... );
-extern int sceSdRemoteCallbackInit( int priority );
-extern sceSifEndFunc sceSdCallBack( sceSifEndFunc end_func );
-extern int sceSdTransToIOP( void *buff, u_int sendAddr, u_int size, u_int isBlock );
+extern int sceSdRemoteInit(void);
+extern int sceSdRemote(int arg, ...);
+extern int sceSdRemoteCallbackInit(int priority);
+extern int sceSdRemoteCallbackQuit(void);
+extern sceSifEndFunc sceSdCallBack(sceSifEndFunc end_func);
+extern int sceSdTransToIOP(void *buff, u_int sendAddr, u_int size, u_int isBlock);
+
+extern void *sceSdGetErxEntries(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _LIBSDR_H_ */
+#endif /* !_SCE_LIBSDR_H */

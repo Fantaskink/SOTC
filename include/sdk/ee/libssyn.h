@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /*
  *                     Emotion Engine Library
@@ -16,8 +16,10 @@
  *  --------------------------------------------------------------------
  *     0.60      Oct.12.1999   katayama   first checked in.
  */
-#ifndef _libssyn_h_
-#define _libssyn_h_
+#ifndef _SCE_LIBSSYN_H
+#define _SCE_LIBSSYN_H
+#include <csl.h>
+
 #define sceSSynNoError	0
 #define sceSSynError		-1
 
@@ -55,9 +57,12 @@ typedef struct {
 extern "C" {
 #endif
 int sceSSyn_Init(sceCslCtx *pCtx, unsigned int interval );
+int sceSSyn_Init2(sceCslCtx *pCtx, unsigned int interval, void *addr);
+int sceSSyn_Quit(sceCslCtx *pCtx);
 int sceSSyn_ATick(sceCslCtx*);
 int sceSSyn_Load(sceCslCtx*,unsigned int,void*);
 int sceSSyn_RegisterRpc(sceCslCtx*,int);
+int sceSSyn_RemoveRpc (sceCslCtx *pCtx);
 int sceSSyn_PrepareParameter(void*,unsigned int);
 #define SSYN_VOLUME_0DB 0x10000
 int sceSSyn_SetMasterVolume(sceCslCtx*,unsigned int);
@@ -95,9 +100,10 @@ int sceSSyn_SetOutputMode(int);
 #define sceSSynTvaEnvMode_Fixed				0
 #define sceSSynTvaEnvMode_ChangeByLevel		1
 int sceSSyn_SetTvaEnvMode(int);
+void *sceSSyn_GetErxEntries(void);
 #if defined(_LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }
 #endif
-#endif //!_libssyn_h_
-/* $Id: libssyn.h,v 1.7.2.1 2002/02/19 09:17:15 xokano Exp $ */
+#endif /* !_SCE_LIBSSYN_H */
+/* $Id: libssyn.h,v 1.12 2003/05/29 06:48:35 kaol Exp $ */
 

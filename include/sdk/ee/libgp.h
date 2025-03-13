@@ -1,5 +1,5 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.3
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0
  */
 /* 
  *                      Emotion Engine Library
@@ -312,6 +312,9 @@ enum {
 extern "C" {
 #endif
 
+extern void *sceGpGetErxEntries(void);
+
+
 /*   chain(dma) operate functions   */
 
 extern int sceGpInitChain(sceGpChain *chain, void *addr, int resolution);
@@ -567,15 +570,6 @@ static __inline__ unsigned int sceGpIndexRgbaSpriteFTS(unsigned int n)    { retu
 static __inline__ unsigned int sceGpIndexXyzfSpriteFTS(unsigned int n)    { return n*3 + 2;  }
 static __inline__ unsigned int sceGpIndexStSpriteFTS_R(unsigned int n)    { return n*3;      }
 static __inline__ unsigned int sceGpIndexQSpriteFTS_R(unsigned int n)     { return n*3 + 1;  }
-
-extern const int _sce_Index_UvFTU[7][3];
-
-extern const int _sce_Index_RgbaF[7][3];
-extern const int _sce_Index_RgbaFTU[7][3];
-extern const int _sce_Index_RgbaFTS[7][3];
-
-extern const int _sce_Index_XyzF[7][3];
-extern const int _sce_Index_XyzFTU[7][3];
 
 
 /* prim type compatible */

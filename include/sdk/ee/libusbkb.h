@@ -2,15 +2,15 @@
 #define INCLUDE_LIBUSBKB_H
 
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5.3
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
  */
 /*
  *      USB Keyboard Library (for EE)
  *
- *                          Version 1.20
+ *                          Version 1.30
  *                          Shift-JIS
  *
- *      Copyright (C) 2000-2001 Sony Computer Entertainment Inc.
+ *      Copyright (C) 2002 Sony Computer Entertainment Inc.
  *                       All Rights Reserved.
  *
  *                              libusbkb.h
@@ -22,6 +22,10 @@
  *      1.01            Mar,29,2001     fukunaga   Bug fix (Ring buffer)
  *      1.10            Apr,9,2001      fukunaga   sceUsbKbSetReadMode()
  *      1.20            June,21,2001    fukunaga   sceUsbKbClearRbuf()
+ *      1.21            June,28,2001    fukunaga   Bug fix (sceUsbKbEnd)
+ *      1.22            Feb,18,2002     fukunaga   printf -> scePrintf
+ *      1.23            May,22,2002     fukunaga   sceUsbKbCnvRawCode() CAPS+Shift
+ *	1.30		June,18,2002	fukunaga   Remove malloc()
  * 
  */
 
@@ -254,6 +258,8 @@ extern int sceUsbKbSync(int mode, int *result);
 extern u_short sceUsbKbCnvRawCode(int arrange, u_int mkey, u_int led, u_short rawcode);
 extern int sceUsbKbSetReadMode(int no, int rmode);
 extern int sceUsbKbClearRbuf(u_int no);
+
+void *sceUsbKbGetErxEntries(void);
 
 #ifdef __cplusplus
               }

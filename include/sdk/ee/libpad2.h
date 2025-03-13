@@ -1,8 +1,8 @@
 /* SCE CONFIDENTIAL
- "PlayStation 2" Programmer Tool Runtime Library Release 2.5
+ "PlayStation 2" Programmer Tool Runtime Library Release 3.0.2
  */
 /* 
- *                       Controller Library
+ *                       Controller Library 2
  *                          Version 2.01
  *                           Shift-JIS
  *
@@ -20,6 +20,11 @@
 
 #ifndef _LIBPAD2_H_
 #define _LIBPAD2_H_
+
+#define SCE_PAD2_DMA_BUFFER_SIZE	(256)
+#define SCE_PAD2_BUTTON_PROFILE_SIZE	(4)
+#define SCE_PAD2_BUTTON_DATA_SIZE	(18)
+#define SCE_PAD2_STATESTR_SIZE		(16)
 
 #define SCE_PAD2_DMA_BUFFER_MAX		(16)
 #define SCE_PAD2_MAX_DEVICE_NAME	(16)
@@ -87,13 +92,14 @@ extern "C" {
 #endif
 int scePad2Init( int );
 int scePad2End( void );
-int scePad2CreateSocket( scePad2SocketParam*, u_long128* );
+int scePad2CreateSocket( scePad2SocketParam*, void* );
 int scePad2DeleteSocket( int );
 int scePad2Read( int, unsigned char* );
 int scePad2GetButtonProfile( int, unsigned char* );
 int scePad2GetState( int );
 int scePad2GetButtonInfo( int, unsigned char*, int );
 void scePad2StateIntToStr( int, unsigned char* );
+void *scePad2GetErxEntries(void);
 #if defined(__LANGUAGE_C_PLUS_PLUS)||defined(__cplusplus)||defined(c_plusplus)
 }
 #endif
