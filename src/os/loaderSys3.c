@@ -1,15 +1,19 @@
 #include "loaderSys3.h"
 #include "common.h"
-#include "fl_xfftype.h"
-#include "gcc/string.h"
+#include "ee/libdbc.h"
+#include "ee/sifrpc.h"
+#include "gcc/stdio.h"
+#include "gcc/stdlib.h"
+#include "libcdvd.h"
+#include "loaderSys.h"
 #include "loaderSys2.h"
+#include "loaderSysException.h"
+#include "loaderSysFileIO.h"
 #include "loaderSysMemprint.h"
 #include "padSys.h"
+#include "powerOff.h"
 #include "putString.h"
-#include "regnames.h"
-#include "sdk/ee/eekernel.h"
-#include "sdk/ee/sif.h"
-#include "sdk/ee/sifdev.h"
+#include "usbSerialSys.h"
 
 s32 D_0013A110 = 0;
 s32 D_0013A114 = 0;
@@ -94,10 +98,6 @@ s32 LoaderSysUnloadIopModuleByName(const char *arg0, s32 arg1, s32 arg2, s32 *ar
 
 void func_001033B0()
 {
-    const char *module;
-    s32 result;
-    s32 r;
-
     sceSifInitRpc(0);
     sceSifInitIopHeap();
 
@@ -198,7 +198,6 @@ void loaderExecResetCallback(void)
 void loaderLoop(void)
 {
     s32 reset_count;
-    s32 i;
 
     reset_count = 0;
     loaderPrintMessage();
@@ -227,7 +226,6 @@ s32 main(s32 argc, char **argv)
 {
     register void *sp asm("sp");
     s32 i;
-    s32 r;
     s32 heap;
     s32 heap_size;
 

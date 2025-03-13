@@ -1,12 +1,13 @@
 #include "loaderSys.h"
 #include "common.h"
+#include "ee/sifrpc.h"
 #include "fl_xfftype.h"
+#include "gcc/stdio.h"
 #include "gcc/string.h"
+#include "loaderSys2.h"
+#include "loaderSysFileIO.h"
+#include "padSys.h"
 #include "putString.h"
-#include "regnames.h"
-#include "sdk/ee/eekernel.h"
-#include "sdk/ee/sif.h"
-#include "sdk/ee/sifdev.h"
 #include "termcolor.h"
 
 // data
@@ -64,7 +65,7 @@ s32 RelocateCode(struct t_xffEntPntHdr *xffEp)
         }
         else
         {
-            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", ((u32)xffEp + xffEp->nextXffHdr));
+            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", (void *)((u32)xffEp + xffEp->nextXffHdr));
             xffEp = (struct t_xffEntPntHdr *)((u32)xffEp + xffEp->nextXffHdr);
         }
     }
@@ -94,7 +95,7 @@ s32 FreeDecodedSection(struct t_xffEntPntHdr *xffEp, char (*arg1)(void *))
         }
         else
         {
-            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", ((u32)xffEp + xffEp->nextXffHdr));
+            printf("ld:\t" ANSI_BLUE "next header: %p" ANSI_RESET "\n", (void *)((u32)xffEp + xffEp->nextXffHdr));
             xffEp = (struct t_xffEntPntHdr *)((u32)xffEp + xffEp->nextXffHdr);
         }
     }
@@ -413,7 +414,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr *xffEp, char *ld_script_path, l
     {
         sprintf(
             &buffer, "%s = 0x%08x;\n", xffEp->symTabStr + xffEp->symTab[xffEp->impSymIxs[symbol].stIx].nameOffs,
-            xffEp->symTab[xffEp->impSymIxs[symbol].stIx].addr);
+            (u32)xffEp->symTab[xffEp->impSymIxs[symbol].stIx].addr);
         LoaderSysFWriteString(linker_fd, (char *)&buffer, 0);
     }
 

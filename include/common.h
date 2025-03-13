@@ -54,7 +54,7 @@ typedef __gnuc_va_list va_list;
 
 #define CONST_ARR_ENTSZ(a) (sizeof(*(a)))
 
-#define ALIGN(v, a) ((v) + (a - 1) & ~(a - 1))
+#define ALIGN(v, a) (((v) + (a - 1)) & ~(a - 1))
 
 #define GSTR_USE_PTR_REF
 
