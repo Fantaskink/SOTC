@@ -8,9 +8,6 @@
 
 #define MAX_IOP_IDENTIFIERS 64
 
-s32 D_0013A108 = 0;                              // number of iop modules
-extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
-
 extern struct unk_00131D00_s D_00131D00;
 extern s32 D_0013A110;
 extern s32 D_0013A114;
@@ -38,6 +35,23 @@ void LoaderSysPutString(char *string)
 void LoaderSysFlushPrint(void)
 {
 }
+
+char *checkHookDesc(char *hook_desc)
+{
+    s32 hasDiff;
+    char *desc;
+
+    hasDiff = strncmp(hook_desc, "host0:", 6);
+    desc = hook_desc + 6;
+    if (hasDiff == 0)
+    {
+        return desc;
+    }
+    return NULL;
+}
+
+s32 D_0013A108 = 0;                              // number of iop modules
+extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
 
 static inline s32 LoaderSysSearchInLoadedIopModules(const char *module_name)
 {
@@ -161,20 +175,6 @@ s32 LoaderSysCheckCDBootMode()
 
 void LoaderSysSendAbort(void)
 {
-}
-
-char *checkHookDesc(char *hook_desc)
-{
-    s32 hasDiff;
-    char *desc;
-
-    hasDiff = strncmp(hook_desc, "host0:", 6);
-    desc = hook_desc + 6;
-    if (hasDiff == 0)
-    {
-        return desc;
-    }
-    return NULL;
 }
 
 s32 LoaderSysFOpen(const char *name, s32 flags, s32 mode)

@@ -211,8 +211,8 @@ segments:
         #- [0x32CB4, databin] # .reginfo
         - [0x32D00, .data, os/loaderSys]
         - [0x32E00, .data, os/loaderSysException]
-        - [0x33080, data, os/loaderSys2]
-        - [0x330a0, data, os/netSys]
+        - [0x33080, .data, os/loaderSys2]
+        - [0x33090, data, os/netSys]
         - [0x330d0, .data, os/putString]
         - [0x33370, data, sdk/data] # library data
         - [0x371CC, databin, section/ctors] # .ctors

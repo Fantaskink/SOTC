@@ -250,9 +250,9 @@ void LoaderSysDeleteAllExternalIntcHandler(void)
     LoaderSysInitExternalIntcHandlerList();
 }
 
-extern u32 D_00132080[3];
 static inline s32 LoaderSysCheckSemaAttribueList(s32 sema_id)
 {
+    static u32 D_00132080[3] = {0x0104EF40, 0x0104EE40, 0x0104FF50};
     struct SemaParam sparam;
     s32 i;
 

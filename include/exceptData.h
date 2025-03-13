@@ -2,9 +2,8 @@
 #define EXCEPTDATA_H
 
 #include "loaderSysException.h"
-#include "common.h"
 
-unk_except_s D_00131E00[14] = {
+unk_except_s D_00131E00[14] __attribute__((aligned(64))) = {
     {
         0,
         ""
@@ -62,7 +61,7 @@ unk_except_s D_00131E00[14] = {
         "trap exception"
     }
 };
-unk_except_s D_00131E80[2][32] = {
+unk_except_s D_00131E80[2][32] __attribute__((aligned(64))) = {
     {
         {
             0,
