@@ -1,3 +1,6 @@
+#ifndef PADSYS_H
+#define PADSYS_H
+
 #include "common.h"
 #include "sdk/ee/libpad2.h"
 
@@ -45,3 +48,11 @@ struct t_padSysData
 
 #define PAD_SYS_NR_PADS 2
 struct t_padSysData D_0013D9C0[PAD_SYS_NR_PADS]; // 13D9C0
+
+void padSysTickProc(void);
+void padsysInit(void);
+struct t_padSysData *padSysGet(s32 padId);
+s32 padSysReadForLoader(void);
+void padSysVibSetAcrParam(struct t_padSysData *arg0, struct t_scePad2ButtonProfile *arg1);
+
+#endif /* PADSYS_H */

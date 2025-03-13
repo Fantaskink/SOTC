@@ -1,4 +1,5 @@
 #include "common.h"
+#include "exceptData.h"
 #include "fl_xfftype.h"
 #include "gcc/string.h"
 #include "loaderSys2.h"
@@ -8,11 +9,6 @@
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
-
-extern char D_0013A100[]; // "host0:"
-
-extern unk_except_s D_00131E00[14];
-extern unk_except_s D_00131E80[2][32];
 
 typedef struct
 {
@@ -29,54 +25,21 @@ extern struct unk_00131D00_s D_00131D00;
 extern int D_0013A180;
 extern int D_0013A184;
 
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136630);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136640);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136660);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136680);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001366A0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001366B8);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001366D0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001366F8);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136718);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136738);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136768);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136788);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001367B8);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001367D0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001367E0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_001367F0);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136800);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136810);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136820);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136830);
-
-INCLUDE_RODATA("asm/nonmatchings/os/loaderSys2", D_00136840);
-
 extern const char D_0013A0F0[];
 extern qword D_0013B900;
 
-// TODO: Get rid of this
-
-const char D_00136850[] = "     %s:%08x %s:%08x %s:%08x %s:%08x \n";
+static inline void LoaderSysDumpRegisterList(unk_except_s *ctx)
+{
+    s32 i;
+    for (i = 0; i < 8; i++)
+    {
+        PutString(PUTSTR_COL_LLBLUE2, "     %s:%08x %s:%08x %s:%08x %s:%08x \n",
+                  ctx[(i * 4) + 0].name, ctx[(i * 4) + 0].value,
+                  ctx[(i * 4) + 1].name, ctx[(i * 4) + 1].value,
+                  ctx[(i * 4) + 2].name, ctx[(i * 4) + 2].value,
+                  ctx[(i * 4) + 3].name, ctx[(i * 4) + 3].value);
+    }
+}
 
 void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_except_s *ctx, u32 mode)
 {
@@ -90,17 +53,8 @@ void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_ex
         PutString(PUTSTR_COL_TEAL, "   pc:%08x ", epc);
         PutString(PUTSTR_COL_LBLUE2, "bva:%08x bpa:%08x ", bva, bpa);
         PutString(PUTSTR_COL_GRAY, "cause:%08x\n", cause);
-        PutString(PUTSTR_COL_WHITE, GSTR(D_0013A0F0, "\n"));
-
-        // dump registers
-        for (j = 0; j < 8; j++)
-        {
-            PutString(PUTSTR_COL_LLBLUE2, GSTR(D_00136850, "     %s:%08x %s:%08x %s:%08x %s:%08x \n"),
-                      ctx[(j * 4) + 0].name, ctx[(j * 4) + 0].value,
-                      ctx[(j * 4) + 1].name, ctx[(j * 4) + 1].value,
-                      ctx[(j * 4) + 2].name, ctx[(j * 4) + 2].value,
-                      ctx[(j * 4) + 3].name, ctx[(j * 4) + 3].value);
-        }
+        PutString(PUTSTR_COL_WHITE, "\n");
+        LoaderSysDumpRegisterList(ctx);
         break;
 
     case 1:
@@ -188,11 +142,11 @@ void func_001021E0(u32 stat, u32 cause, u32 epc, u32 bva, u32 bpa, u128 *gpr)
     D_00131E80[1][COP0_REG_CAUSE].value = cause;
     D_00131E80[1][COP0_REG_EPC].value = epc;
 
-    PutString(PUTSTR_COL_WHITE, GSTR(D_0013A0F0, "\n"));
+    PutString(PUTSTR_COL_WHITE, "\n");
     PutString(PUTSTR_COL_LORANGE2, "     -----------------------------------------------\n");
     PutString(PUTSTR_COL_LORANGE2, "           ios reports critical error message.\n");
     PutString(PUTSTR_COL_LORANGE2, "     -----------------------------------------------\n");
-    PutString(PUTSTR_COL_ORANGE, GSTR(D_0013A0F0, "\n"));
+    PutString(PUTSTR_COL_ORANGE, "\n");
     func_00101EC0(except_code, cause, epc, bva, bpa, (unk_except_s *)&D_00131E80, 0x0);
     LoaderSysJumpRecoverPointNoStateSetting("recovering from exception...\n");
 }
