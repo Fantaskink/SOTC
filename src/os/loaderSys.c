@@ -7,6 +7,7 @@
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sif.h"
 #include "sdk/ee/sifdev.h"
+#include "termcolor.h"
 
 // data
 struct unk_00131D00_s D_00131D00 = {

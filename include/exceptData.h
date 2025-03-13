@@ -1,7 +1,7 @@
 #ifndef EXCEPTDATA_H
 #define EXCEPTDATA_H
 
-#include "loaderSys2.h"
+#include "loaderSysException.h"
 #include "common.h"
 
 unk_except_s D_00131E00[14] = {
@@ -324,4 +324,5 @@ unk_except_s D_00131E80[2][32] = {
         },
     }
 };
+
 #endif /* EXCEPTDATA_H */

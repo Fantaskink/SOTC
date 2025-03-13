@@ -1,14 +1,12 @@
+#include "loaderSysException.h"
 #include "common.h"
 #include "exceptData.h"
-#include "fl_xfftype.h"
-#include "gcc/string.h"
-#include "loaderSys2.h"
+#include "loaderSys.h"
 #include "loaderSys3.h"
+#include "loaderSysFileIO.h"
 #include "putString.h"
 #include "regnames.h"
-#include "sdk/ee/eekernel.h"
-#include "sdk/ee/sif.h"
-#include "sdk/ee/sifdev.h"
+#include "termcolor.h"
 
 typedef struct
 {
@@ -44,7 +42,6 @@ static inline void LoaderSysDumpRegisterList(unk_except_s *ctx)
 void func_00101EC0(s32 except_code, u32 cause, u32 epc, u32 bva, u32 bpa, unk_except_s *ctx, u32 mode)
 {
     s32 i;
-    s32 j;
 
     switch (mode)
     {

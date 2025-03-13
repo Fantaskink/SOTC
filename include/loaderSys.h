@@ -15,24 +15,9 @@
 #define R_MIPS_HI16 (5)
 #define R_MIPS_LO16 (6)
 
-#define ANSI_RED "\x1b[31m"
-#define ANSI_GREEN "\x1b[32m"
-#define ANSI_YELLOW "\x1b[33m"
-#define ANSI_BLUE "\x1b[34m"
-#define ANSI_MAGENTA "\x1b[35m"
-#define ANSI_CYAN "\x1b[36m"
-#define ANSI_WHITE "\x1b[37m"
-#define ANSI_RESET "\x1b[m"
-
 extern void *D_00139F04; // heap pointer
 #define HEAP_START D_00139F04
 #define MAX_RESET_CALLBACKS 10
-
-struct unk
-{
-    s32 unk0;
-    s32 unk4;
-};
 
 typedef struct unk_stack_40
 {
@@ -48,19 +33,6 @@ typedef struct unk_00131D00_s
     s32 stack_size;
     struct t_xffEntPntHdr *unk44;
 } unk_00131D00_s;
-
-typedef struct memory_info
-{
-    void *stack_base;
-    void *stack_end;
-    void *heap_base;
-    void *heap_end;
-    void *module_stack_base;
-    void *module_stack_end;
-    void *unk18;
-    void *stack_base2;
-    unk_00131D00_s module_info;
-} memory_info;
 
 typedef s32(dispose_reloc_func)(struct t_xffEntPntHdr *, struct t_xffRelocAddrEnt *, unk_stack_40 *);
 typedef void *(mallocAlign_func)(s32, u32);
@@ -93,7 +65,6 @@ s32 func_00101B88(struct t_xffEntPntHdr *xffEp, struct t_xffRelocAddrEnt *arg1, 
 void _execProgWithThread(void *module_path);
 s32 execProgWithThread(const char *filename, s32 priority);
 
-extern s32 LoaderSysPrintf(const char *format, ...);
 
 // Legitimate Static inlines
 // TODO: This points to a custom section, so this should be a linker symbol

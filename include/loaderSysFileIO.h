@@ -2,15 +2,10 @@
 #define LOADERSYSFILEIO_H
 
 #include "common.h"
+#include "loaderSys.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
 
-typedef struct unk_00131D00_s
-{
-    char path[0x40];
-    s32 stack_size;
-    struct t_xffEntPntHdr *unk44;
-} unk_00131D00_s;
 typedef struct memory_info
 {
     void *stack_base;
