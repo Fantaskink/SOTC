@@ -33,7 +33,7 @@ void *D_00139F04 = 0; // heap pointer
 s32 D_0013A300;
 
 // bss vars
-char D_0013A4C8[0x1000];
+static char D_0013A4C8[0x1000];
 
 s32 RelocateCode(struct t_xffEntPntHdr *xffEp)
 {
@@ -441,7 +441,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr *xffEp, char *ld_script_path, l
 
 extern s32 D_0013A180;
 extern s32 D_0013A184;
-char D_0013B4C8[0x400];
+static char D_0013B4C8[0x400];
 void loaderLoop(void);
 static inline s32 _ReadPad()
 {

@@ -28,7 +28,7 @@ s32 func_00104668(s32 a0, s32 a1);
 int func_00104818(void);
 joined_t *LoaderSysInitTCP(void);
 
-extern int D_0013A304;
+int D_0013A304;
 static joined_t D_0013D180 __attribute__((aligned(64)));
 
 #define _LOAD_MODULE_ARGS(ident, argc, args)                                             \
