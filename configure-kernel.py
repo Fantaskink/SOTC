@@ -10,7 +10,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Set, Union
 
-from fix_gp import main as fix_gp_main
+#from fix_gp import main as fix_gp_main
 
 import ninja_syntax
 
@@ -118,7 +118,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
 
     # Rules
     cross = "mips-linux-gnu-"
-    ld_args = "-EL -T config/kernel_undefined_syms_auto.txt -T config/kernel_undefined_funcs_auto.txt -T config/kernel_undefined_syms.txt -Map $mapfile -r -T $in -o $out"
+    ld_args = "-EL -T config/kernel_undefined_syms_auto.txt -T config/kernel_undefined_funcs_auto.txt -Map $mapfile -r -T $in -o $out"
 
     ninja.rule(
         "as",
@@ -196,7 +196,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.build(
         ELF_PATH + ".ok",
         "sha1sum",
-        "checksum.sha1",
+        "checksum-kernel.sha1",
         implicit=[ELF_PATH],
     )
 
