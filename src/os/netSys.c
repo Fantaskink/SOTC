@@ -7,24 +7,11 @@
 #include "padSys.h"
 #include "putString.h"
 #include "sdk/common/netcnfif.h"
+#include "sdk/ee/libmc2.h"
 #include "sdk/ee/libmrpc.h"
 #include "sdk/ee/libnet.h"
 #include "sdk/ee/libnet/libnetdefs.h"
-
-// These are likely also const char*, used for identifiers
-extern const char D_0013A188[];
-extern const char D_0013A190[];
-extern const char D_0013A198[];
-extern const char D_0013A1A0[];
-extern const char D_0013A1A8[];
-extern const char D_0013A1B0[];
-extern const char D_0013A1B8[];
-extern const char D_0013A1C0[];
-extern const char D_0013A1C8[];
-extern const char D_0013A1D0[];
-extern const char D_0013A1D8[];
-extern const char D_0013A1E0[];
-extern const char D_0013A1E8[];
+#include "usbSerialSys.h"
 
 // The buffer is accessed as an offset from D_0013D180 so it mus be an struct of this form
 // I'd imagine "buffer" is sceNetcnfifData_t but that struct is actually bigger
@@ -35,12 +22,14 @@ typedef struct joined_t
     u8 buffer[0x1000];
 } joined_t;
 
+static s32 func_00104090(s32 mode);
+static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, const char *fname, const char *usr_name, u32 flags);
+s32 func_00104668(s32 a0, s32 a1);
+int func_00104818(void);
+joined_t *LoaderSysInitTCP(void);
+
 extern int D_0013A304;
-extern char *D_001320A0[4];
-extern char *D_001320B8[];
-extern struct sceInetAddress D_001320C0;
 extern joined_t D_0013D180;
-extern s32 D_0013A1EC;
 
 static s32 func_00104090(s32 mode)
 {
@@ -129,7 +118,7 @@ static s32 func_00104090(s32 mode)
     return 0;
 }
 
-static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, char *fname, char *usr_name, u32 flags)
+static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, const char *fname, const char *usr_name, u32 flags)
 {
     sceNetcnfifArg_t if_arg;
     s32 addr;
@@ -248,17 +237,7 @@ static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfif
     return (sceLIBNETE_OK);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137130);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137140);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137150);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137160);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137170);
-
-static inline s32 _load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
+static inline s32 _load_set_conf_only(sceSifMClientData *cd, void *net_buf, const char *conf_path, const char *usr_name, s32 flags)
 {
     s32 ret;
     sceNetcnfifData_t *p_data;
@@ -275,10 +254,15 @@ static inline s32 _load_set_conf_only(sceSifMClientData *cd, void *net_buf, char
     return ret;
 }
 
+void *func_table[] = {&LoaderSysInitTCP, &sceMc2Init, &loaderSetResetCallback, &usbSerialSysPutString};
+const char *D_001320A0[] = {NULL, "Combination4", "Combination5", "Combination6", "Combination7"};
+const char *D_001320B8[] = {"Combination1"};
+struct sceInetAddress D_001320C0 = {0};
+
 s32 func_00104668(s32 a0, s32 a1)
 {
-    char *conf_path;
-    char *usr_name;
+    const char *conf_path;
+    const char *usr_name;
     u32 flags;
 
     // I'd like to know why the order is like this...
@@ -335,7 +319,7 @@ int func_00104818(void)
     s32 r;
     s32 ret;
 
-    PutStringS(PUTSTR_COL_LLBLUE, GSTR(D_0013A1E8, "  "));
+    PutStringS(PUTSTR_COL_LLBLUE, "  ");
 
     s1 = 0;
     r = 0;
@@ -375,4 +359,88 @@ int func_00104818(void)
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/netSys", LoaderSysInitTCP);
+joined_t *LoaderSysInitTCP(void)
+{
+    static s32 D_0013A1EC = 0;
+    char hostStr[0x80];
+    char ipStr[0x80];
+    s32 temp_v0;
+
+    if (D_0013A1EC != 0)
+    {
+        return &D_0013D180;
+    }
+
+    temp_v0 = func_00104818();
+    func_00104090(temp_v0);
+    sceSifMInitRpc(0);
+    sceLibnetInitialize(&D_0013D180.client_data, 0x800, 0x2000, 0x20);
+    if (sceLibnetRegisterHandler(&D_0013D180.client_data, &D_0013D180.buffer) < 0)
+    {
+        printf("reg_handler() failed.\n");
+        while (1)
+        {
+            // Infinite loop
+        }
+    }
+    LoaderSysLoadIopModule("cdrom0:\\MODULES2\\MCMAN.IRX;1", 0, 0);
+    LoaderSysLoadIopModule("cdrom0:\\MODULES2\\MCSERV.IRX;1", 0, 0);
+    PutString(PUTSTR_COL_WHITE, "\n\tInitialize network environment ");
+
+    switch (temp_v0)
+    {
+    case 0:
+        if (func_00104668(1, temp_v0))
+        {
+            break;
+        }
+        PutStringS(PUTSTR_COL_LORANGE, "failed.\n");
+        PutString(PUTSTR_COL_WHITE, "\t\tRetry by hdd ether ");
+        temp_v0 = 3;
+        /* fallthrough */
+    default:
+        if (func_00104668(0, temp_v0))
+        {
+            break;
+        }
+        PutStringS(PUTSTR_COL_LORANGE, "failed.\n");
+        PutString(PUTSTR_COL_WHITE, "\tCheck your hardware environment...\n");
+    }
+
+    if (sceInetAddress2String(&D_0013D180.client_data, &D_0013D180.buffer, (char *)&ipStr, sizeof(ipStr), &D_001320C0) != 0)
+    {
+        printf("ldnet: invalid addr\n");
+        while (1)
+        {
+            // Infinite loop
+        }
+    }
+
+    if (sceInetAddress2Name(&D_0013D180.client_data, &D_0013D180.buffer, 0, (char *)&hostStr, sizeof(hostStr), &D_001320C0, 0, 0) != 0)
+    {
+        hostStr[0] = 0;
+        printf("ldnet: my address: \"%s\"\n", (char *)&ipStr);
+    }
+    else
+    {
+        printf("ldnet: my address: \"%s\"[%s]\n", (char *)&hostStr, (char *)&ipStr);
+    }
+
+    PutString(PUTSTR_COL_WHITE, "done.\n\n");
+    LoaderSysUnloadIopModuleByName("mcserv", 0, 0, 0);
+    LoaderSysUnloadIopModuleByName("mcman", 0, 0, 0);
+    PutString(PUTSTR_COL_WHITE, "\n");
+    PutString(PUTSTR_COL_CYAN, "\t\t\t---------------------------------------------\n");
+    if (hostStr[0] != 0)
+    {
+        PutString(PUTSTR_COL_CYAN, "\t\t\tWelcome to ");
+        PutString(PUTSTR_COL_LGREEN3, "\"%s\"\n", (char *)&hostStr);
+    }
+    PutString(PUTSTR_COL_CYAN, "\t\t\t     this ps2's ip address is ");
+    PutString(PUTSTR_COL_LGREEN3, "\"%s\"\n", (char *)&ipStr);
+    PutString(PUTSTR_COL_CYAN, "\t\t\t---------------------------------------------\n");
+    PutStringS(PUTSTR_COL_CYAN, "\n");
+    D_0013A1EC = 1;
+
+    return &D_0013D180;
+}

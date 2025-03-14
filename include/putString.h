@@ -43,6 +43,7 @@
 #define PUTSTR_COL_LBLUEA (PUTSTR_COL_MAKEW(0x4080FF80))  // light blue + alpha or sth(?)
 #define PUTSTR_COL_LGREEN (PUTSTR_COL_MAKEW(0x80FFC000))  // light green
 #define PUTSTR_COL_LGREEN2 (PUTSTR_COL_MAKEW(0x80FF8000)) // light green (slightly different shade)
+#define PUTSTR_COL_LGREEN3 (PUTSTR_COL_MAKEW(0x40FF8000)) // light green (slightly different shade)
 #define PUTSTR_COL_LLGREEN (PUTSTR_COL_MAKEW(0xC0FFE000)) // even lighter green
 
 // Number of calls to PutString(), after which to send Sync(), ExecBaseProc() (=Flush perhaps) (at the last call of them).
