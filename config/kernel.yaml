@@ -1,0 +1,1106 @@
+sha1: ac00c937b84cbe2e283a97e59e09a11886118388
+options:
+    # paths
+    basename: KERNEL.XFF
+    target_path: iso/KERNEL.XFF
+    base_path: ..
+
+    asm_path: asm/kernel
+    src_path: src/kernel
+    build_path: build
+
+    symbol_addrs_path: config/kernel.symbols.txt
+    reloc_addrs_path: config/kernel.relocs.txt
+#    create_undefined_funcs_auto: False
+#    create_undefined_syms_auto: False
+
+    create_undefined_funcs_auto: True
+    undefined_funcs_auto_path: config/kernel_undefined_funcs_auto.txt
+    create_undefined_syms_auto: True
+    undefined_syms_auto_path:  config/kernel_undefined_syms_auto.txt
+
+    # compiler
+    compiler: EEGCC
+    platform: ps2
+
+    migrate_rodata_to_functions: True
+    use_gp_rel_macro_nonmatching: False
+
+    string_encoding: EUC-JP
+    rodata_string_guesser_level: 2 # improve string detection
+    disasm_unknown: True
+    named_regs_for_c_funcs: True
+    gp_value: 0x141e70
+    find_file_boundaries: True
+    section_order: [".text", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
+    
+#    ld_align_segment_start: null
+#    segment_end_before_align: True
+    
+segments: 
+    - name: xff_header
+      type: textbin
+      start: 0x0
+      vram: 0x40010000
+      size: 0x21a0
+      align: 0
+      subalign: 0
+
+    - name: text #main
+      type: code
+      start: 0x21A0
+      vram: 0x400121A0
+      size: 0x332f0
+      bss_size: 0xa24ec
+      subalign: 0
+      align: 0
+      subsegments:
+        # file data
+        - [ 0x21A0, c, ios/assert ] # _iosAssert
+        - [ 0x21d0, c, ios/cd ]
+        #- [ 0x40012418, c,  ] # iosIopRead
+        #- [ 0x40012600, c,  ] # iosCdStStart
+        #- [ 0x40012630, c,  ] # iosCdStStop
+        #- [ 0x40012638, c,  ] # iosCdStRead
+        #- [ 0x40012748, c,  ] # iosCdStSkip
+        #- [ 0x40012768, c,  ] # iosCdStSectorAlignSkip
+        #- [ 0x400127C0, c,  ] # iosCdSetErrorCallback
+        #- [ 0x400127D8, c,  ] # iosCdSetMode
+        #- [ 0x40012808, c,  ] # iosCdStInit
+        #- [ 0x400128E8, c,  ] # iosCdInit
+        - [ 0x2948, c, ios/pc ] # iosInitDebPc
+        #- [ 0x40012950, c,  ] # iosStopPc
+        #- [ 0x40012958, c,  ] # iosDebPcVsyncCounterCheck
+        #- [ 0x40012960, c,  ] # iosGetCnt0Pc
+        #- [ 0x40012968, c,  ] # iosGetCnt1Pc
+        #- [ 0x40012970, c,  ] # InitDebPc
+        - [ 0x2978, c, ios/timer ] # iosWaitIdleThread
+        #- [ 0x400129A0, c,  ] # iosCreateIdleThread
+        #- [ 0x400129F8, c,  ] # iosGetClock
+        #- [ 0x40012A08, c,  ] # iosGetClockSecond
+        - [ 0x2B08, c, ios/system ] # iosInit
+        #- [ 0x40012B40, c,  ] # iosAddIntcHandler
+        #- [ 0x40012C00, c,  ] # iosCreateSema
+        #- [ 0x40012C40, c,  ] # iosDeleteSema
+        #- [ 0x40012C68, c,  ] # iosInitIntrSystem
+        #- [ 0x40012D18, c,  ] # iosGetTCount
+        #- [ 0x40012D30, c,  ] # iosGetTCountExtension
+        #- [ 0x40012D58, c,  ] # iosGetSecondFromTCount
+        #- [ 0x40012E30, c,  ] # iosResetCpuRapCounter
+        #- [ 0x40012E60, c,  ] # iosGetCpuRapCountPar1Int
+        #- [ 0x40012ED8, c,  ] # iosDI
+        #- [ 0x40012F50, c,  ] # iosEI
+        #- [ 0x40012FC0, c,  ] # iosLoaderResetEntry
+        #- [ 0x400130E0, c,  ] # iosEE2IopRequest
+        #- [ 0x40013150, c,  ] # iosEE2IopEndChk
+        #- [ 0x40013158, c,  ] # iosCreateIopMgr
+        - [ 0x3160, c, ios/memory ]
+        #- [ 0x400141B8, c,  ] # iosMallocInGarbagePtn
+        #- [ 0x400157A0, c,  ] # iosWaitMalloc
+        #- [ 0x400157C0, c,  ] # iosSignalMalloc
+        #- [ 0x400157E0, c,  ] # iosMallocGarbageTickProc
+        #- [ 0x40015908, c,  ] # iosMallocAlign
+        #- [ 0x40015A20, c,  ] # iosMallocAlignNoCheck
+        #- [ 0x40015AA0, c,  ] # iosMallocSetExecGarbageCallback
+        #- [ 0x40015B38, c,  ] # iosReallocAlign
+        #- [ 0x40015BB8, c,  ] # iosFree
+        #- [ 0x40015C00, c,  ] # iosFreeParts
+        #- [ 0x40015C70, c,  ] # iosCreatePartition
+        #- [ 0x40015CE0, c,  ] # iosCreatePartitionWithPc
+        #- [ 0x40015D50, c,  ] # iosInitMallocSystem
+        #- [ 0x40015DC0, c,  ] # iosGetMallocPtn
+        #- [ 0x40015DE8, c,  ] # iosGetMallocRootPtnRemainSize
+        #- [ 0x40015DF8, c,  ] # iosFollowAllLink
+        #- [ 0x40015E50, c,  ] # iosDebugPartitionDump
+        #- [ 0x40015EB0, c,  ] # iosDebugPartitionFileDump
+        #- [ 0x40015F38, c,  ] # addMemoryDebugCallback
+        #- [ 0x40015F48, c,  ] # getMemorySafetyLockFlag
+        - [ 0x5F88, c, ios/mc ] # iosMcInit
+        #- [ 0x40016080, c,  ] # iosMcGetInfo
+        #- [ 0x400161A8, c,  ] # iosMcChDir
+        #- [ 0x40016250, c,  ] # iosMcMkDir
+        #- [ 0x400162F8, c,  ] # iosMcCreateFile
+        #- [ 0x400163A0, c,  ] # iosMcDeleteFile
+        #- [ 0x40016448, c,  ] # iosMcReadFile
+        #- [ 0x40016540, c,  ] # iosMcWriteFile
+        #- [ 0x40016638, c,  ] # iosMcFormat
+        #- [ 0x40016680, c,  ] # iosMcUnformat
+        #- [ 0x400166C8, c,  ] # iosMcGetDir
+        - [ 0x6850, c, ios/message ] # iosSendMsg
+        #- [ 0x400169C8, c,  ] # iosRecvMsg
+        #- [ 0x40016B40, c,  ] # iosInitMessageSystem
+        #- [ 0x40016B48, c,  ] # iosCreateMsgQueue
+        - [ 0x6c10, c, ios/net ]
+        #- [ 0x40016EA8, c,  ] # iosNetRecvMsg
+        #- [ 0x40017050, c,  ] # InitNet
+        #- [ 0x400171C0, c,  ] # iosNetRecv
+        #- [ 0x400172E8, c,  ] # iosNetSend
+        #- [ 0x400173D8, c,  ] # iosNetRecvMsgWithStateCallback
+        #- [ 0x400175A0, c,  ] # iosNetClose
+        #- [ 0x40017638, c,  ] # iosNetOpen
+        - [ 0x7700, c, ios/pad ] # iosPadTickProc
+        #- [ 0x400178E8, c,  ] # iosPadGetXZInputL
+        #- [ 0x40017AE0, c,  ] # iosPadGetXZInputLwithThreshold
+        #- [ 0x40017CC8, c,  ] # iosPadGetXZInputLwithThresholdIndepAxis
+        #- [ 0x40017E38, c,  ] # iosPadGetXZInputR
+        #- [ 0x40018030, c,  ] # iosPadEntryTickFunc
+        #- [ 0x40018040, c,  ] # iosPadRead
+        #- [ 0x40018130, c,  ] # iosPadChkConnect
+        #- [ 0x40018158, c,  ] # iosPadInit
+        - [ 0x81B0, c, ios/print ] # iosSPrintf
+        #- [ 0x40018208, c,  ] # iosUsbSerialPrintf
+        #- [ 0x40018278, c,  ] # iosCreatePrintMgr
+        #- [ 0x40018280, c,  ] # iosGetPrintfMode
+        - [ 0x8290, c, ios/srp ] # iosSrpWaitDMA
+        #- [ 0x400182A8, c,  ] # iosMemToSprDmaAdrCopy
+        #- [ 0x40018310, c,  ] # iosSprToMemDmaAdrCopy
+        - [ 0x8378, c, ios/thread ] # iosCreateThread
+        #- [ 0x40018698, c,  ] # iosInitThreadSystem
+        #- [ 0x400187F0, c,  ] # iosGetThread
+        #- [ 0x40018828, c,  ] # iosCreateThreadS
+        #- [ 0x400188F0, c,  ] # iosStartThread
+        #- [ 0x40018940, c,  ] # iosSleepThread
+        #- [ 0x40018958, c,  ] # iosWakeupThread
+        #- [ 0x400189B8, c,  ] # iosiWakeupThread
+        #- [ 0x400189D0, c,  ] # iosChangeThreadPriority
+        #- [ 0x40018A18, c,  ] # iosGetThreadPriority
+        #- [ 0x40018A58, c,  ] # iosDeleteThread
+        #- [ 0x40018AD0, c,  ] # iosCallBackThreadMgr
+        - [ 0x8B30, c, ios/kernel ] # ioskernel
+        #- [ 0x40018CA0, c,  ] # iosJumpRecoverPoint
+        #- [ 0x40018D18, c,  ] # iosResetKernel
+        - [ 0x8D80, c, ios/demo ] # endSCEDemo
+        - [ 0x8d88, c, ios/shock ]
+        #- [ 0x400194A8, c,  ] # Init_ShockVoiceSet
+        #- [ 0x400194E0, c,  ] # Init_Shock
+        #- [ 0x400195A0, c,  ] # Shock_SetShockVoiceSet
+        #- [ 0x400195D8, c,  ] # Init_Player
+        #- [ 0x40019618, c,  ] # Init_Controler
+        #- [ 0x40019628, c,  ] # Shock_Request
+        #- [ 0x400196C8, c,  ] # Shock_Decode
+        #- [ 0x400197F8, c,  ] # Shock_SetMotor
+        - [ 0x99b0, c, ios/isys/module ]
+        #- [ 0x4001A4B0, c,  ] # isysMoveModuleObj
+        #- [ 0x4001A5E8, c,  ] # isysCreateModuleObjExisted
+        #- [ 0x4001A820, c,  ] # isysResolveAllModuleObjHasUndefSymbol
+        #- [ 0x4001B040, c,  ] # isysLaunchModule
+        #- [ 0x4001B248, c,  ] # IosCdvdManagerSimulation
+        #- [ 0x4001B518, c,  ] # isysGetXffEntryPointPreRelocation
+        #- [ 0x4001B670, c,  ] # InitDld
+        #- [ 0x4001B6F8, c,  ] # IosLoadIrxSimulation
+        #- [ 0x4001B760, c,  ] # IosGetMergeDataFileName
+        #- [ 0x4001B770, c,  ] # isysSearchSymbol
+        #- [ 0x4001B7C8, c,  ] # isysSearchModuleFuncNameByAddr
+        #- [ 0x4001B918, c,  ] # isysDumpExecutableModules
+        #- [ 0x4001B980, c,  ] # isysSearchModuleSymbolByGroup
+        #- [ 0x4001BAF0, c,  ] # isysRemoveModuleObjGroup
+        #- [ 0x4001BB58, c,  ] # isysResolveOneModuleObj
+        #- [ 0x4001BBF0, c,  ] # isysResolveAllProgramModule
+        #- [ 0x4001BCE8, c,  ] # isysLaunchExecModule
+        #- [ 0x4001BD38, c,  ] # isysInitModuleObjExisted
+        #- [ 0x4001BEF8, c,  ] # isysFlushModuleObj
+        #- [ 0x4001BFE0, c,  ] # GetSymbolByIndex
+        #- [ 0x4001C008, c,  ] # isysRelocateModuleObj
+        #- [ 0x4001C070, c,  ] # isysGetXffWorkSize
+        #- [ 0x4001C0C8, c,  ] # isysGetModuleObjMallocSize
+        #- [ 0x4001C108, c,  ] # isysDisposeModuleObjRelocationElement
+        #- [ 0x4001C200, c,  ] # GetExecModuleSize
+        #- [ 0x4001C210, c,  ] # getModuleSize
+        #- [ 0x4001C270, c,  ] # isysGetUndefModuleObjNum
+        #- [ 0x4001C2E0, c,  ] # isysGetSymdefModuleObjNum
+        #- [ 0x4001C6E8, c,  ] # isysResolveAllModuleObjOfGroup
+        #- [ 0x4001C7D8, c,  ] # readEModule
+        #- [ 0x4001C8A0, c,  ] # isysWriteLinkerScriptFile
+        #- [ 0x4001C908, c,  ] # loadtest
+        #- [ 0x4001C960, c,  ] # iosLoaderGetFileSizeName
+        #- [ 0x4001CAB8, c,  ] # iosFileRead
+        #- [ 0x4001CC18, c,  ] # iosLoaderFOpen
+        #- [ 0x4001CCB8, c,  ] # iosLoaderFClose
+        #- [ 0x4001CD30, c,  ] # iosLoaderFRead
+        #- [ 0x4001CD48, c,  ] # iosLoaderGetFileSize
+        #- [ 0x4001CD98, c,  ] # initDldSys
+        #- [ 0x4001D288, c,  ] # DldExceptionByOriginAdr
+        #- [ 0x4001D2E0, c,  ] # isysSearchCalledModuleFuncNameByAddr
+        #- [ 0x4001D3A0, c,  ] # isysCreateExceptionThread
+        - [ 0xD3C0, c, ios/math/curve ] # iosCubicBezier
+        #- [ 0x4001D400, c,  ] # iosCubicInterVectorXYZ
+        #- [ 0x4001D468, c,  ] # iosFourthBezier
+        #- [ 0x4001D4D0, c,  ] # iosCubicBezierVectorXYZ
+        - [ 0xD560, c, ios/math ] # InitMath
+        #- [ 0x4001DE18, c,  ] # CompareString16
+        - [ 0xD5e0, c, ios/math/matrix ]
+        #- [ 0x4001DE48, c,  ] # iosInitCurrentMatrix
+        #- [ 0x4001DE68, c,  ] # iosUnitCurrentMatrix
+        #- [ 0x4001DE80, c,  ] # iosPushCurrentMatrix
+        #- [ 0x4001DE98, c,  ] # iosPopCurrentMatrix
+        #- [ 0x4001DEB0, c,  ] # iosPushVu0RegistersToWork
+        #- [ 0x4001DFB8, c,  ] # iosPopVu0RegistersFromWork
+        #- [ 0x4001E0C0, c,  ] # iosTransCurrentMatrix
+        #- [ 0x4001E0E0, c,  ] # iosSetTransCurrentMatrix
+        #- [ 0x4001E0F0, c,  ] # iosClearTransCurrentMatrix
+        #- [ 0x4001E100, c,  ] # iosGetRotXVector
+        #- [ 0x4001E1A8, c,  ] # iosGetRotYVector
+        #- [ 0x4001E250, c,  ] # iosRotCurrentMatrixX
+        #- [ 0x4001E2F8, c,  ] # iosRotCurrentMatrixY
+        #- [ 0x4001E3A0, c,  ] # iosRotCurrentMatrixZ
+        #- [ 0x4001E448, c,  ] # iosScaleCurrentMatrix
+        #- [ 0x4001E4D8, c,  ] # iosGetCurrentMatrix
+        #- [ 0x4001E4F0, c,  ] # iosGetCurrentMatrixTrans
+        #- [ 0x4001E500, c,  ] # iosSetCurrentMatrix
+        #- [ 0x4001E518, c,  ] # iosMulCurrentMatrixR
+        #- [ 0x4001E580, c,  ] # iosMulCurrentMatrixL
+        #- [ 0x4001E5D8, c,  ] # iosApplyCurrentMatrix
+        #- [ 0x4001E5F8, c,  ] # iosApplyRotCurrentMatrix
+        #- [ 0x4001E618, c,  ] # iosRotTransPersCurrentMatrix
+        #- [ 0x4001E648, c,  ] # iosTransposeCurrentMatrix
+        #- [ 0x4001E698, c,  ] # iosTransposeRotationCurrentMatrix
+        #- [ 0x4001E6C8, c,  ] # iosInverseCurrentMatrix
+        #- [ 0x4001E718, c,  ] # iosPushVu0Registers
+        #- [ 0x4001E838, c,  ] # iosPopVu0Registers
+        #- [ 0x4001E960, c,  ] # iosInitPushPosVuSema
+        #- [ 0x4001E990, c,  ] # iosCopyMatrix
+        #- [ 0x4001E9B8, c,  ] # iosApplyRotMatrix
+        #- [ 0x4001E9E8, c,  ] # iosUnitMatrix
+        #- [ 0x4001EA10, c,  ] # iosUnitRotation
+        #- [ 0x4001EA38, c,  ] # iosTransposeMatrix
+        #- [ 0x4001EA80, c,  ] # iosInverseMatrix
+        #- [ 0x4001EAF0, c,  ] # iosInverseMatrixPerfect
+        #- [ 0x4001EB18, c,  ] # iosScaleMatrixV
+        #- [ 0x4001EB50, c,  ] # iosFloatModulo
+        #- [ 0x4001EB90, c,  ] # iosSetCameraMatrix
+        #- [ 0x4001ECB0, c,  ] # iosMakeNormalLightMatrix
+        #- [ 0x4001EDA8, c,  ] # iosScaleNormalLightMatrix
+        #- [ 0x4001EDE0, c,  ] # iosMakeLightColorMatrix
+        #- [ 0x4001EE18, c,  ] # iosTransMatrix
+        #- [ 0x4001EE70, c,  ] # iosTransMatrixF
+        #- [ 0x4001EEE8, c,  ] # iosScaleMatrix
+        #- [ 0x4001EF18, c,  ] # iosMulRotMatrixXInt16
+        #- [ 0x4001F020, c,  ] # iosRotMatrixX
+        #- [ 0x4001F090, c,  ] # iosRotMatrixY
+        #- [ 0x4001F100, c,  ] # iosRotMatrixZ
+        #- [ 0x4001F170, c,  ] # iosDumpMatrix
+        #- [ 0x4001F2C0, c,  ] # iosGetScaleMatrixV
+        #- [ 0x4001F308, c,  ] # iosGetYDirXYZFromMatrix
+        #- [ 0x4001F320, c,  ] # iosGetXDirXYZFromMatrix
+        #- [ 0x4001F338, c,  ] # iosFmodf
+        #- [ 0x4001F350, c,  ] # iosRotTransCurrentMatrix
+        - [ 0xF3B0, c, ios/math/mvec ] # iosMvecZero
+        #- [ 0x4001F3C0, c,  ] # iosMvecAllOnes
+        #- [ 0x4001F3D0, c,  ] # iosMvecAllOne
+        #- [ 0x4001F3E0, c,  ] # iosAddMvec
+        #- [ 0x4001F420, c,  ] # iosClampSW_AddMvec
+        #- [ 0x4001F460, c,  ] # iosClampUW_AddMvec
+        #- [ 0x4001F4A0, c,  ] # iosSubMvec
+        #- [ 0x4001F4E0, c,  ] # iosMulMvec
+        #- [ 0x4001F538, c,  ] # iosApplyM_Mat
+        #- [ 0x4001F5A8, c,  ] # iosCalcIcolorToBrightness
+        #- [ 0x4001F630, c,  ] # iosIColScale
+        #- [ 0x4001F6E0, c,  ] # iosIColAddVec
+        #- [ 0x4001F710, c,  ] # iosSwClip255Mvec
+        #- [ 0x4001F740, c,  ] # iosIColAddVecXYZ
+        #- [ 0x4001F7B8, c,  ] # iosUcharColClampAdd
+        #- [ 0x4001F878, c,  ] # iosSWToMmColMvec
+        #- [ 0x4001F8A0, c,  ] # iosMmColToSWMvec
+        #- [ 0x4001F8C8, c,  ] # iosITOF15ToMmColMvec
+        #- [ 0x4001F8F0, c,  ] # iosMmColToITOF15Mvec
+        #- [ 0x4001F918, c,  ] # iosFvecToMmColMvec
+        #- [ 0x4001F958, c,  ] # iosMmColToFvecMvec
+        #- [ 0x4001F998, c,  ] # iosSwClipMvec
+        #- [ 0x4001FA18, c,  ] # iosFvecToICol
+        #- [ 0x4001FA60, c,  ] # iosIColToMvecSl
+        #- [ 0x4001FA90, c,  ] # iosIColToFvec
+        - [ 0xFAD8, c, ios/math/power ] # iosPowf
+        #- [ 0x4001FAF0, c,  ] # iosFastPowf
+        - [ 0xFB08, c, ios/math/quat ] # GetDifferencialQuaternionWithNoRegularize
+        #- [ 0x4001FE98, c,  ] # GetEulerYXZFromQuaternion
+        #- [ 0x400201A8, c,  ] # GetEulerZXYFromQuaternion
+        #- [ 0x400204B8, c,  ] # GetEulerXYZFromQuaternion
+        #- [ 0x400207D8, c,  ] # GetRotLimitationQuaternion
+        #- [ 0x40020B48, c,  ] # GetLimitationQuaternionWithBaseAxis
+        #- [ 0x40020E80, c,  ] # GetCurrentQuaternion
+        #- [ 0x40020EA0, c,  ] # GetLastQuaternion
+        #- [ 0x40020EC0, c,  ] # MultiCurrentQuaternion
+        #- [ 0x40020F18, c,  ] # MultiCurrentQuaternionL
+        #- [ 0x40020F70, c,  ] # InvertCurrentQuaternion
+        #- [ 0x40020FA0, c,  ] # SetCurrentQuaternion
+        #- [ 0x40020FC8, c,  ] # RotCurrentQuaternionX
+        #- [ 0x40021050, c,  ] # RotCurrentQuaternionY
+        #- [ 0x400210D8, c,  ] # RotCurrentQuaternionZ
+        #- [ 0x40021160, c,  ] # PushQuaternion
+        #- [ 0x400211D0, c,  ] # PushQuaternionWithNoCopy
+        #- [ 0x40021220, c,  ] # PopQuaternion
+        #- [ 0x40021240, c,  ] # InitQuaternionDrive
+        #- [ 0x40021260, c,  ] # SetQuaternionByAxisRotate
+        #- [ 0x400212C0, c,  ] # SetQuaternionByAxisRotateWithNoRegularize
+        #- [ 0x40021338, c,  ] # SetQuaternionByAxisRotateV
+        #- [ 0x40021380, c,  ] # SetQuaternionByAxisRotateVExact
+        #- [ 0x400213C0, c,  ] # SetQuaternionByAxisRotateVWithNoRegularize
+        #- [ 0x40021428, c,  ] # DivQuaternion
+        #- [ 0x40021478, c,  ] # GetInverseMatrixFromQuaternionPos
+        #- [ 0x40021510, c,  ] # MultiMatrixByQuaternion
+        #- [ 0x400215A8, c,  ] # GetMirrorQuaternion
+        #- [ 0x40021688, c,  ] # RotQuaternionXExact
+        #- [ 0x40021740, c,  ] # RotQuaternionYExact
+        #- [ 0x400217F8, c,  ] # RotQuaternionZExact
+        #- [ 0x400218B0, c,  ] # GetQuaternionFromMatrix
+        #- [ 0x400218E8, c,  ] # CopyMultiQuaternion
+        #- [ 0x40021920, c,  ] # GetQuaternionByAxisDirZY
+        #- [ 0x40021AC8, c,  ] # GetQuaternionByAxisDirZYExact
+        #- [ 0x40021CB8, c,  ] # GetQuaternionByAxisDirZX
+        #- [ 0x40021E68, c,  ] # SetQuaternionByCosineAxisRotateVWithNoRegularize
+        #- [ 0x40021EB0, c,  ] # SetQuaternionByAxisRotateVWithNoRegularizeRadian
+        #- [ 0x40021F10, c,  ] # GetYRotQuaternionFromDir
+        #- [ 0x40021F80, c,  ] # GetStabYRotQuaternion
+        #- [ 0x40022058, c,  ] # StabilizeToYRotQuaternion
+        #- [ 0x40022128, c,  ] # GetQuaternionByEulerYXZ
+        #- [ 0x40022340, c,  ] # GetQuaternionByEulerYXZExact
+        #- [ 0x40022558, c,  ] # GetEulerYXZFromQuaternionZHalfPI
+        #- [ 0x40022680, c,  ] # GetQuaternionByEulerZXY
+        #- [ 0x40022898, c,  ] # GetQuaternionByEulerZXYExact
+        #- [ 0x40022AB0, c,  ] # GetQuaternionByEulerXYZ
+        #- [ 0x40022CC8, c,  ] # GetQuaternionByEulerXYZExact
+        #- [ 0x40022EE0, c,  ] # GetLimitationQuaternion
+        #- [ 0x40022FE8, c,  ] # GetZDirFromQuaternion
+        #- [ 0x40023088, c,  ] # GetQuaternionByDegEulerYXZ
+        #- [ 0x40023298, c,  ] # GetQuaternionAxisRotInfo
+        #- [ 0x40023318, c,  ] # SetQuaternionByCosineAxisRotateV
+        - [ 0x13390, c, ios/math/trig ] # iosGetAlignSinCosf
+        #- [ 0x400233C8, c,  ] # iosGetSinCosf
+        #- [ 0x40023518, c,  ] # iosGetSinf
+        #- [ 0x40023638, c,  ] # iosGetCosf
+        #- [ 0x40023750, c,  ] # iosGetTanf
+        #- [ 0x40023780, c,  ] # iosGetSinCos
+        #- [ 0x400237C0, c,  ] # iosGetSin
+        #- [ 0x40023800, c,  ] # iosGetCos
+        #- [ 0x40023840, c,  ] # iosGetTan
+        #- [ 0x40023878, c,  ] # iosGetACosf
+        #- [ 0x40023900, c,  ] # iosGetACos
+        #- [ 0x400239A0, c,  ] # iosGetACosfExact
+        #- [ 0x400239F8, c,  ] # iosGetASinfExact
+        #- [ 0x40023A58, c,  ] # iosGetATanfExact
+        #- [ 0x40023A70, c,  ] # iosGetATan2fExact
+        #- [ 0x40023AD8, c,  ] # iosGetASin
+        #- [ 0x40023AE8, c,  ] # iosGetATan2
+        #- [ 0x40023AF8, c,  ] # resetArcFuncCall
+        #- [ 0x40023B20, c,  ] # iosGetTableSin
+        #- [ 0x40023B70, c,  ] # iosGetTableCos
+        #- [ 0x40023BB8, c,  ] # InitTableSinCos
+        - [ 0x13CD0, c, ios/math/convert ] # iosFTOI15Vector
+        #- [ 0x40023CE8, c,  ] # iosFTOI12Vector
+        #- [ 0x40023D00, c,  ] # iosFTOI4Vector
+        #- [ 0x40023D18, c,  ] # iosFTOI0Vector
+        #- [ 0x40023D30, c,  ] # iosITOF15Vector
+        #- [ 0x40023D48, c,  ] # iosITOF12Vector
+        #- [ 0x40023D60, c,  ] # iosITOF4Vector
+        #- [ 0x40023D78, c,  ] # iosITOF0Vector
+        #- [ 0x40023D90, c,  ] # iosGetStabXZVector
+        - [ 0x13DC8, c, ios/math/random ] # iosInitRandom
+        #- [ 0x40023DE8, c,  ] # iosGetRandom
+        - [ 0x13E38, c, ios/math/vector ] # iosGetRandomVector
+        #- [ 0x40023E58, c,  ] # iosGetDRandomVector
+        #- [ 0x40023E80, c,  ] # iosGetRandomVector0
+        #- [ 0x40023E98, c,  ] # iosAbsVector
+        #- [ 0x40023EB0, c,  ] # iosGetReflectVector
+        #- [ 0x40023EE0, c,  ] # iosDumpFVector
+        #- [ 0x40023EE8, c,  ] # iosDumpIVector
+        #- [ 0x40023EF0, c,  ] # iosGetArbitraryUpVectorElement
+        #- [ 0x40023F80, c,  ] # iosGetScaleInverseVector
+        #- [ 0x40023FE0, c,  ] # iosGetStabXYVector
+        #- [ 0x40024018, c,  ] # iosGetStabYZVector
+        #- [ 0x40024050, c,  ] # iosGetLengthPointToLine
+        #- [ 0x40024108, c,  ] # iosGetInverseVectorXYZ
+        #- [ 0x40024130, c,  ] # iosGetExceptAxisVector
+        #- [ 0x40024188, c,  ] # iosCalcFColorToBrightness
+        #- [ 0x400241C0, c,  ] # iosITOF15VectorXYZ
+        #- [ 0x400241D8, c,  ] # iosScaleColorTo255
+        #- [ 0x400241F8, c,  ] # iosScaleColorToONE
+        - [ 0x14218, c, ios/dc ]
+        #- [ 0x40024528, c,  ] # iosCreateDC
+        #- [ 0x40024600, c,  ] # iosReleaseDC
+        #- [ 0x40024648, c,  ] # iosSetDCParam
+        #- [ 0x40024670, c,  ] # iosSetDCClearParam
+        #- [ 0x400246B0, c,  ] # iosSetDCViewPort
+        #- [ 0x40024760, c,  ] # iosSetDCViewPortCenter
+        #- [ 0x400247E8, c,  ] # iosSetDC
+        #- [ 0x40024830, c,  ] # iosPushDC
+        #- [ 0x40024888, c,  ] # iosPopDC
+        #- [ 0x400248D8, c,  ] # iosGetRootDC
+        #- [ 0x400248E8, c,  ] # iosSetRootDC
+        #- [ 0x40024908, c,  ] # iosGetCurrentDC
+        #- [ 0x40024918, c,  ] # iosSetCurrentDC
+        #- [ 0x40024938, c,  ] # iosResetDC
+        #- [ 0x40024A00, c,  ] # iosInitDC
+        #- [ 0x40024A20, c,  ] # iosGetDCGroup
+        #- [ 0x40024A40, c,  ] # iosSetDCWithClear
+        #- [ 0x40024AA0, c,  ] # _iosPushDC
+        #- [ 0x40024B20, c,  ] # iosPushDCWithClear
+        - [ 0x14b90, c, ios/dl ]
+        #- [ 0x40024EC0, c,  ] # iosDlPopLayer
+        #- [ 0x400250D8, c,  ] # iosUsedPacketBufferSize
+        #- [ 0x40025150, c,  ] # iosCreateIVArbitrationSema
+        #- [ 0x40025180, c,  ] # iosDlGetTransAdrs
+        #- [ 0x400251A8, c,  ] # iosGetPacketPtrPath1
+        #- [ 0x400251F0, c,  ] # iosSetPacketPtrPath1
+        #- [ 0x40025208, c,  ] # iosAllocPacketPtrPath1
+        #- [ 0x40025230, c,  ] # iosDlChainHead
+        #- [ 0x400252F8, c,  ] # iosDlChainTail
+        #- [ 0x400253C0, c,  ] # iosDlChainHeadCurrent
+        #- [ 0x40025488, c,  ] # iosDlChainTailCurrent
+        #- [ 0x40025550, c,  ] # iosDlSwap
+        #- [ 0x40025658, c,  ] # iosDlTrans
+        #- [ 0x400256C8, c,  ] # iosDlLockObj
+        #- [ 0x40025738, c,  ] # iosDlGetWorkBufId
+        #- [ 0x40025750, c,  ] # iosDlGetTransBufId
+        #- [ 0x40025768, c,  ] # iosDlGetEndAdrs
+        #- [ 0x40025798, c,  ] # iosDlGetLayer
+        #- [ 0x400257B0, c,  ] # iosDlSetLayer
+        #- [ 0x40025810, c,  ] # iosDlPushLayer
+        #- [ 0x400258C8, c,  ] # iosDlGetLayerNum
+        #- [ 0x400258E0, c,  ] # iosDlRelease
+        #- [ 0x40025978, c,  ] # InitDL
+        #- [ 0x400259B8, c,  ] # iosDlCheckAdrs
+        #- [ 0x400259F0, c,  ] # iosDlCheckSize
+        #- [ 0x40025A58, c,  ] # iosDlGetCreateAdrs
+        #- [ 0x40025A80, c,  ] # iosAllocPacketPtrPath1UnCachedA
+        #- [ 0x40025AA8, c,  ] # iosDlTransNow
+        - [ 0x15B08, c, ios/graph/gs ] # iosDumpDMAStatus
+        #- [ 0x40025E48, c,  ] # iosDumpVIF1Status
+        #- [ 0x400261E8, c,  ] # iosDumpGIFStatus
+        #- [ 0x400265E0, c,  ] # iosSyncPath
+        #- [ 0x40026CF0, c,  ] # iosGsResizeRootDC
+        #- [ 0x40026D90, c,  ] # iosGsSetMode
+        #- [ 0x40026E20, c,  ] # iosGsSetDrawContext
+        #- [ 0x40026FD8, c,  ] # iosCopyFrameBuffer
+        #- [ 0x400274C0, c,  ] # getDispScreenWidth
+        #- [ 0x400274D0, c,  ] # getDispScreenHeight
+        #- [ 0x400274E0, c,  ] # getDrawScreenWidth
+        #- [ 0x400274F0, c,  ] # getDrawScreenHeight
+        #- [ 0x40027500, c,  ] # getFrameBufferSize
+        #- [ 0x40027530, c,  ] # getFrameBufferSizeFBP
+        #- [ 0x40027560, c,  ] # getFrameBufferSizeTBP
+        #- [ 0x40027590, c,  ] # getDispBufferAddressTBP
+        #- [ 0x40027598, c,  ] # getDispBufferAddressFBP
+        #- [ 0x400275A0, c,  ] # getDrawBufferAddressTBP
+        #- [ 0x400275D0, c,  ] # getDrawBufferAddressFBP
+        #- [ 0x40027600, c,  ] # getZBufferAddressTBP
+        #- [ 0x40027620, c,  ] # getZBufferAddressFBP
+        #- [ 0x40027640, c,  ] # getTextureAreaAddressTBP
+        #- [ 0x40027678, c,  ] # getTextureAreaAddressFBP
+        #- [ 0x400276B0, c,  ] # getScreenOffsetX
+        #- [ 0x400276C0, c,  ] # getScreenOffsetY
+        #- [ 0x400276D0, c,  ] # getAntiAlias
+        #- [ 0x400276E0, c,  ] # getProgressiveMode
+        #- [ 0x400276F0, c,  ] # iosResetGraph
+        #- [ 0x40027760, c,  ] # iosDmaSendPath1
+        #- [ 0x40027848, c,  ] # iosDmaSendPath2
+        #- [ 0x40027930, c,  ] # iosDmaSendPath3
+        #- [ 0x40027A18, c,  ] # iosDmaSendSChainPath1
+        #- [ 0x40027AF0, c,  ] # iosDmaSendSChainPath2
+        #- [ 0x40027BC8, c,  ] # iosDmaSendSChainPath3
+        #- [ 0x40027CA0, c,  ] # iosResetPath
+        #- [ 0x40027D00, c,  ] # iosSyncV
+        #- [ 0x40027D58, c,  ] # iosGetField
+        #- [ 0x40027D80, c,  ] # iosGsChangeMode
+        #- [ 0x40027DD0, c,  ] # iosSetBGColor
+        #- [ 0x40027EB0, c,  ] # iosGsResetCRTC
+        #- [ 0x40027F58, c,  ] # iosSetSyncNoReturnFunc
+        #- [ 0x40027F68, c,  ] # iosSetScreenEnv
+        #- [ 0x40028090, c,  ] # iosCheckDrawFinish
+        #- [ 0x40028128, c,  ] # iosGsInitDC
+        - [ 0x18168, c, ios/graph/gp ] # InitGp
+        #- [ 0x400281D0, c,  ] # iosWaitDMA
+        #- [ 0x400281F8, c,  ] # iosWaitVU1
+        #- [ 0x40028220, c,  ] # getCRTCoffsetU
+        #- [ 0x40028230, c,  ] # getCRTCoffsetV
+        #- [ 0x40028240, c,  ] # iosGsChangeScreenOffset
+        #- [ 0x40028258, c,  ] # iosSyncGP
+        #- [ 0x40028358, c,  ] # bootGPThread
+        #- [ 0x40028420, c,  ] # iosTransGP
+        #- [ 0x40028480, c,  ] # iosChkGpDlTransExec
+        #- [ 0x400284C0, c,  ] # iosGPFrameInit
+        #- [ 0x40028530, c,  ] # iosSetIStartFunc
+        #- [ 0x40028540, c,  ] # iosSetGpFinishFunc
+        #- [ 0x40028550, c,  ] # iosSetIFinishFunc
+        #- [ 0x40028560, c,  ] # getIntrGpCount
+        #- [ 0x40028578, c,  ] # iosSetDlTransFunc
+        #- [ 0x40028588, c,  ] # iosSetVSchedulerFunc
+        #- [ 0x40028598, c,  ] # iosWaitGPFinish
+        #- [ 0x40028688, c,  ] # iStart
+        #- [ 0x400286B0, c,  ] # iFinish
+        #- [ 0x400287F8, c,  ] # gsRegBegin
+        #- [ 0x400288E0, c,  ] # gsRegEnd
+        #- [ 0x40028AD0, c,  ] # gsRegEndWithPtr
+        #- [ 0x40028CD0, c,  ] # gsReglistBegin
+        #- [ 0x40028DB8, c,  ] # gsReglistEnd
+        #- [ 0x40029020, c,  ] # gsBox
+        #- [ 0x40029468, c,  ] # gsBox2
+        #- [ 0x40029A08, c,  ] # gsBoxLine
+        #- [ 0x40029F20, c,  ] # spriteNoTexFast
+        #- [ 0x4002A358, c,  ] # spriteTexFast
+        #- [ 0x4002A910, c,  ] # gsReg
+        #- [ 0x4002A958, c,  ] # getSpriteDrawFirst
+        #- [ 0x4002A968, c,  ] # gsReglist
+        #- [ 0x4002A970, c,  ] # iosTransTex
+        #- [ 0x4002AC10, c,  ] # getTWH
+        - [ 0x1AC70, c, ios/isys/obj ] # isysDeleteObjManager
+        #- [ 0x4002B360, c,  ] # isysAddGroupWithLinkParam
+        #- [ 0x4002B5C0, c,  ] # isysAddGroupRelativeWithLinkParam
+        #- [ 0x4002B808, c,  ] # _isysDeleteGroup
+        #- [ 0x4002B9E0, c,  ] # isysDeleteGroupWithLinkParam
+        #- [ 0x4002BBC8, c,  ] # isysDeleteGroupAllObj
+        #- [ 0x4002BD60, c,  ] # isysDeleteAllGroup
+        #- [ 0x4002BF20, c,  ] # isysGroupForFirst
+        #- [ 0x4002C070, c,  ] # isysGroupForFirstForce
+        #- [ 0x4002C170, c,  ] # isysGroupGetObjNumForce
+        #- [ 0x4002C298, c,  ] # _isysCreateObj
+        #- [ 0x4002C350, c,  ] # isysSetObjImmediateDeleteFunc
+        #- [ 0x4002C358, c,  ] # isysRequestDeleteObj
+        #- [ 0x4002C468, c,  ] # isysInitGroup
+        #- [ 0x4002C478, c,  ] # isysAddGroupWithLinkParamNoWait
+        #- [ 0x4002C490, c,  ] # isysObjDeleteLock
+        #- [ 0x4002C4B8, c,  ] # isysObjDeleteUnLock
+        #- [ 0x4002C4E0, c,  ] # isysGroupForNext
+        #- [ 0x4002C568, c,  ] # isysGroupForNextForce
+        #- [ 0x4002C5C8, c,  ] # isysGroupForExit
+        #- [ 0x4002C6A0, c,  ] # isysInitObjSystem
+        #- [ 0x4002C758, c,  ] # isysGetLinkNum
+        #- [ 0x4002C7B8, c,  ] # isysGetLinkMax
+        #- [ 0x4002C7C0, c,  ] # isysGetObjIdentifierByObj
+        #- [ 0x4002C7F0, c,  ] # isysGetGroupSrhNext
+        #- [ 0x4002C828, c,  ] # isysObjWaitSema
+        #- [ 0x4002C8A0, c,  ] # isysObjSignalSema
+        - [ 0x1C8f0, c, ios/sched ]
+        #- [ 0x4002CB90, c,  ] # getVIntrCnt
+        #- [ 0x4002CBA8, c,  ] # waitVscheduler
+        #- [ 0x4002CBD0, c,  ] # bootSchedulerThread
+        #- [ 0x4002CC70, c,  ] # iosAddISchedulerTaskList
+        #- [ 0x4002CCB0, c,  ] # iosGetISchedulerExecCnt
+        #- [ 0x4002CCC0, c,  ] # ischedStop
+        #- [ 0x4002CD00, c,  ] # ischedRestart
+        #- [ 0x4002CD38, c,  ] # iosSetISchedulerSubthreadTask
+        #- [ 0x4002CD48, c,  ] # iosSetIVSyncMode
+        #- [ 0x4002CD58, c,  ] # iosGetIVSyncMode
+        #- [ 0x4002CD68, c,  ] # vschedSetNextFrameForceGarbage
+        #- [ 0x4002CD78, c,  ] # GetGarbageTime
+        - [ 0x1CF48, c, ios/isys/letter ] # isysInitISYSLetterObj
+        #- [ 0x4002CF70, c,  ] # isysFlushISYSLetterObj
+        #- [ 0x4002CF88, c,  ] # isysGetLetterObj
+        #- [ 0x4002CFC8, c,  ] # isysLetterObjDiscardLetterAll
+        #- [ 0x4002D078, c,  ] # create_letter
+        #- [ 0x4002D1B0, c,  ] # init_letter
+        #- [ 0x4002D1C8, c,  ] # is_hope_letter_type
+        #- [ 0x4002D1D8, c,  ] # get_letter_contents_data
+        #- [ 0x4002D1F0, c,  ] # increment_letter_refcount
+        #- [ 0x4002D200, c,  ] # decrement_letter_refcount
+        #- [ 0x4002D260, c,  ] # is_letter_reach_time
+        #- [ 0x4002D288, c,  ] # is_init_letter_called
+        #- [ 0x4002D290, c,  ] # get_reference_letter_type
+        #- [ 0x4002D298, c,  ] # get_letter_receiver_obj_group
+        #- [ 0x4002D2A0, c,  ] # get_letter_receiver_data
+        #- [ 0x4002D2A8, c,  ] # doit_letter_manager
+        #- [ 0x4002D408, c,  ] # init_letter_manager
+        #- [ 0x4002D440, c,  ] # send_letter
+        #- [ 0x4002D4F8, c,  ] # create_letter_post
+        #- [ 0x4002D538, c,  ] # check_free_letter_post
+        #- [ 0x4002D578, c,  ] # discard_all_letter_in_post
+        #- [ 0x4002D5E8, c,  ] # get_total_letter_in_post
+        #- [ 0x4002D5F0, c,  ] # open_letter_post
+        #- [ 0x4002D600, c,  ] # get_next_letter_in_post
+        #- [ 0x4002D628, c,  ] # close_letter_post
+        #- [ 0x4002D650, c,  ] # push_back_letter_in_post
+        #- [ 0x4002D6E8, c,  ] # discard_selecting_letter_in_post
+        #- [ 0x4002D7C0, c,  ] # constructor_letter_type
+        #- [ 0x4002D7E0, c,  ] # entry_new_letter_type
+        #- [ 0x4002D820, c,  ] # init_letter_type_store
+        #- [ 0x4002D858, c,  ] # get_letter_type
+        - [ 0x1D888, c, ios/font ]
+        #- [ 0x4002DA78, c,  ] # iosConvertStringSJIStoEUC
+        #- [ 0x4002DBB8, c,  ] # iosConvertStringEUCtoSJIS
+        #- [ 0x4002DC88, c,  ] # iosConvertStringEUCtoID
+        #- [ 0x4002DDC0, c,  ] # iosGetDataSizeOfFont
+        #- [ 0x4002DDD8, c,  ] # iosGetFontDataWithID
+        #- [ 0x4002DE50, c,  ] # iosGetFontDataWithJIS
+        #- [ 0x4002DEE8, c,  ] # iosGetFontDataWithSJIS
+        #- [ 0x4002E010, c,  ] # iosGetFontDataWithEUC
+        #- [ 0x4002E160, c,  ] # iosGetFontIDWithJIS
+        #- [ 0x4002E188, c,  ] # iosGetFontIDWithSJIS
+        #- [ 0x4002E240, c,  ] # iosGetFontIDWithEUC
+        #- [ 0x4002E310, c,  ] # iosEntryLocaleFontNoLoad
+        #- [ 0x4002E368, c,  ] # iosGetFontInfo
+        #- [ 0x4002E3F8, c,  ] # iosGet2ByteCharCode
+        - [ 0x1E410, c, ios/isys/subthread ] # _isysCreateSubMsgQueue
+        #- [ 0x4002E428, c,  ] # _isysRecvSubMsg
+        #- [ 0x4002E498, c,  ] # _isysSendSubMsg
+        #- [ 0x4002E518, c,  ] # InitSubThread
+        #- [ 0x4002E538, c,  ] # isysInitSubThreadExecEnv
+        #- [ 0x4002E590, c,  ] # isysStartSubThread
+        #- [ 0x4002E618, c,  ] # isysDeleteSubThread
+        #- [ 0x4002E680, c,  ] # isysDumpSubThreadStatus
+        #- [ 0x4002E730, c,  ] # isysWakeupSubThread
+        #- [ 0x4002EB3C, c,  ] # isysSleepSubThread
+        #- [ 0x4002ECE0, c,  ] # SubThreadTerminateRestorePoint
+        #- [ 0x4002EEA0, c,  ] # isysGetThisSubThread
+        #- [ 0x4002EEB0, c,  ] # isysInitSubThreadObj
+        #- [ 0x4002EF80, c,  ] # isysCreateSubThreadS
+        #- [ 0x4002F080, c,  ] # isysSleepSubThreadM
+        #- [ 0x4002F0B8, c,  ] # isysJumpSubThread
+        #- [ 0x4002F190, c,  ] # isysGetSubThreadWorkSize
+        #- [ 0x4002F198, c,  ] # isysGetSubThreadStackUse
+        #- [ 0x4002F248, c,  ] # isysGetSubThreadStackSize
+        #- [ 0x4002F290, c,  ] # isysDumpSubThreadPC
+        #- [ 0x4002F298, c,  ] # isysDebugSetSubThreadSleepProtection
+        - [ 0x1F2a8, c, ios/snd ]
+        #- [ 0x4002F4F0, c,  ] # sndSepTickProc
+        #- [ 0x4002F700, c,  ] # sndSepReq
+        #- [ 0x4002F870, c,  ] # sndSepPlayerSrh
+        #- [ 0x4002F8F8, c,  ] # sndSepPlayerSrh2
+        #- [ 0x4002F970, c,  ] # sndSepStopReq
+        #- [ 0x4002F988, c,  ] # sndSepSetVol
+        #- [ 0x4002F9C8, c,  ] # sndSepSetPan
+        #- [ 0x4002FA20, c,  ] # sndSepSetDefaultParam
+        #- [ 0x4002FA80, c,  ] # sndSepPauseAll
+        #- [ 0x4002FAA8, c,  ] # sndSepPause
+        #- [ 0x4002FAC0, c,  ] # sndSepCont
+        #- [ 0x4002FAE8, c,  ] # sndSepStopTypeAll
+        #- [ 0x4002FB38, c,  ] # sndSepInitTickParam
+        #- [ 0x4002FBA8, c,  ] # sndSepInit
+        #- [ 0x4002FC00, c,  ] # sndVabCreate
+        #- [ 0x4002FC78, c,  ] # sndVabDelete
+        #- [ 0x4002FC90, c,  ] # sndVabHDOpen
+        #- [ 0x4002FCE8, c,  ] # sndVabHDClose
+        #- [ 0x4002FD00, c,  ] # sndBDOpen
+        #- [ 0x4002FE58, c,  ] # sndBDClose
+        #- [ 0x4002FE60, c,  ] # sndVabInit
+        #- [ 0x4002FE98, c,  ] # initSound
+        #- [ 0x4002FFB0, c,  ] # tickProcSound
+        #- [ 0x40030090, c,  ] # addAdpcmTickProcFunc
+        #- [ 0x400300A0, c,  ] # setPcmTickProcFunc
+        #- [ 0x400300B0, c,  ] # soundGetTickProcCnt
+        #- [ 0x400300C0, c,  ] # soundSetRevMode
+        #- [ 0x400300F8, c,  ] # soundGetRevMode
+        #- [ 0x40030108, c,  ] # getSlotInfo
+        #- [ 0x40030120, c,  ] # setSoundMode
+        - [ 0x20150, c, ios/iop ] # iosAllocIopHeap
+        #- [ 0x400301A8, c,  ] # iosFreeIopHeap
+        #- [ 0x400301F0, c,  ] # iosLoadIopModule
+        #- [ 0x400302C0, c,  ] # iosGetIopTotalFreeMemSize
+        #- [ 0x40030308, c,  ] # iosGetIopTotalMemSize
+        #- [ 0x40030338, c,  ] # iosWaitIopSema
+        #- [ 0x40030358, c,  ] # iosSignalIopSema
+        #- [ 0x40030378, c,  ] # InitIopDev
+        - [ 0x203a8, c, ios/dev ]
+        #- [ 0x400305C0, c,  ] # iosKeybdInit
+        #- [ 0x400305F8, c,  ] # iosKeybdSetCallBackFunc
+        #- [ 0x40030640, c,  ] # iosKeybdGetInfo
+        #- [ 0x40030920, c,  ] # iosMouseInit
+        #- [ 0x40030948, c,  ] # iosMouseSetCallBackFunc
+        - [ 0x20990, c, ios/hash ] # GetStrHashWorkBuffer
+        #- [ 0x400309A8, c,  ] # InitStrHash
+        #- [ 0x40030A48, c,  ] # AddStrHashKey
+        #- [ 0x40030A90, c,  ] # MakeStrHashValue
+        #- [ 0x40030B48, c,  ] # SearchStrHashKey
+        #- [ 0x40030BA0, c,  ] # ReleaseStrHashKeyAll
+        #- [ 0x40030BD0, c,  ] # DeleteStrHashKey
+
+        - [ 0x20C68, c, Sg2/chip ] # Sg2ChipSetDigitalOutputMode
+        #- [ 0x40030C98, c,  ] # Sg2ChipInit
+        #- [ 0x40030CD0, c,  ] # Sg2ChipInitHot
+        - [ 0x20D08, c, Sg2/ctrl ] # Sg2CtrlEntryTickProc
+        #- [ 0x40030DA0, c,  ] # Sg2CtrlEntryTickProcById
+        #- [ 0x40030DE0, c,  ] # Sg2CtrlRemoveTickProc
+        #- [ 0x40030E98, c,  ] # Sg2CtrlTickProc
+        #- [ 0x40030F00, c,  ] # Sg2CtrlSetTickMode
+        #- [ 0x40030F18, c,  ] # Sg2CtrlGetTickMode
+        #- [ 0x40030F28, c,  ] # Sg2CtrlSetTickTime
+        #- [ 0x40030F40, c,  ] # Sg2CtrlGetTickTime
+        #- [ 0x40030F50, c,  ] # Sg2CtrlInit
+        - [ 0x20FA8, c, Sg2/dma ] # Sg2DmaTransVoice
+        #- [ 0x40030FD8, c,  ] # Sg2DmaTransStatus
+        - [ 0x20FF0, c, Sg2/dsp ] # Sg2DmaInit
+        #- [ 0x40030FF8, c,  ] # Sg2DspEffectSetEndAdr
+        #- [ 0x40031060, c,  ] # Sg2DspEffectSetType
+        #- [ 0x400310C8, c,  ] # Sg2DspEffectSetDepth
+        #- [ 0x40031130, c,  ] # Sg2DspEffectSetDepth2
+        #- [ 0x400311A8, c,  ] # Sg2DspEffectSetDelay
+        #- [ 0x40031208, c,  ] # Sg2DspEffectSetFeedBack
+        #- [ 0x40031268, c,  ] # Sg2DspEffectChange
+        #- [ 0x400313C8, c,  ] # Sg2DspEffectSetSwitch
+        #- [ 0x400313F0, c,  ] # Sg2DspSetMasterVolume
+        #- [ 0x40031480, c,  ] # Sg2DspSetMasterVolumeMax
+        #- [ 0x400314B0, c,  ] # Sg2DspGetMasterVolume
+        #- [ 0x400314D0, c,  ] # Sg2DspInit
+        - [ 0x21510, c, Sg2/ex/st_adpcm ] # Sg2ExStAdpcmInit
+        #- [ 0x40031570, c,  ] # Sg2ExStAdpcmStopMode
+        #- [ 0x40031580, c,  ] # Sg2ExStAdpcmQuit
+        #- [ 0x400315A0, c,  ] # Sg2ExStAdpcmSlotMalloc
+        #- [ 0x400315C0, c,  ] # Sg2ExStAdpcmSlotReserv
+        #- [ 0x40031670, c,  ] # Sg2ExStAdpcmSlotFree
+        #- [ 0x400316E0, c,  ] # Sg2ExStAdpcmWorkClear
+        #- [ 0x400319C0, c,  ] # Sg2ExStAdpcmOpenFake
+        #- [ 0x40031A48, c,  ] # Sg2ExStAdpcmOpen
+        #- [ 0x40031BA8, c,  ] # Sg2ExStAdpcmSetFd
+        #- [ 0x40031BB8, c,  ] # Sg2ExStAdpcmGetFd
+        #- [ 0x40031BC0, c,  ] # Sg2ExStAdpcmSetLsn
+        #- [ 0x40031BD0, c,  ] # Sg2ExStAdpcmGetLsn
+        #- [ 0x40031BD8, c,  ] # Sg2ExStAdpcmGetTargetLsn
+        #- [ 0x40031BF0, c,  ] # Sg2ExStAdpcmSetUserParam
+        #- [ 0x40031C00, c,  ] # Sg2ExStAdpcmGetUserParam
+        #- [ 0x40031D10, c,  ] # Sg2ExStAdpcmVolumePercent
+        #- [ 0x40031DC8, c,  ] # Sg2ExStAdpcmTrkVolumeDirect
+        #- [ 0x40031EF0, c,  ] # Sg2ExStAdpcmTrkVolumePercent
+        #- [ 0x40031F90, c,  ] # Sg2ExStAdpcmTrkDspSw
+        #- [ 0x40032090, c,  ] # ____VolReflection
+        #- [ 0x40032120, c,  ] # ____VolPerBackup
+        #- [ 0x40032170, c,  ] # Sg2ExStAdpcmPitchPercent
+        #- [ 0x400321D0, c,  ] # Sg2ExStAdpcmPlay
+        #- [ 0x40032248, c,  ] # Sg2ExStAdpcmPause
+        #- [ 0x40032290, c,  ] # Sg2ExStAdpcmCont
+        #- [ 0x400322B8, c,  ] # Sg2ExStAdpcmStop
+        #- [ 0x40032338, c,  ] # Sg2ExStAdpcmIopReadAdr
+        #- [ 0x400323A0, c,  ] # Sg2ExStAdpcmSetOutputMode
+        #- [ 0x400323D0, c,  ] # Sg2ExStAdpcmLoopSecNum
+        #- [ 0x400323E8, c,  ] # Sg2ExStAdpcmGetBuffer
+        #- [ 0x40032410, c,  ] # Sg2ExStAdpcmSetSignal
+        #- [ 0x400328F8, c,  ] # Sg2ExStAdpcmPreLoad
+        #- [ 0x40032988, c,  ] # Sg2ExStAdpcmClose
+        #- [ 0x40032A60, c,  ] # Sg2ExStAdpcmTickProc
+        #- [ 0x40032D40, c,  ] # all_keyoff
+        #- [ 0x40032DE0, c,  ] # all_soundoff
+        #- [ 0x40032E90, c,  ] # all_soundpause
+        #- [ 0x40032F18, c,  ] # all_soundmute
+        - [ 0x22ac0, c, Sg2/mod ]
+        #- [ 0x40032FA0, c,  ] # Sg2ModMidiout1
+        #- [ 0x40033028, c,  ] # Sg2ModMidiout1Exclusive
+        #- [ 0x400330C8, c,  ] # Sg2ModMidiout
+        #- [ 0x400331C8, c,  ] # Sg2ModTickProc
+        #- [ 0x40033570, c,  ] # Sg2ModOpenBgm
+        #- [ 0x40033740, c,  ] # Sg2ModOpenSe
+        #- [ 0x40033910, c,  ] # Sg2ModCheckSndOn
+        #- [ 0x40033948, c,  ] # Sg2ModClose
+        #- [ 0x40033978, c,  ] # Sg2ModSetParam
+        #- [ 0x400343C0, c,  ] # Sg2ModGetParam
+        #- [ 0x40034488, c,  ] # Sg2ModSetOutputMode
+        #- [ 0x400344A0, c,  ] # Sg2ModInit
+        #- [ 0x40034520, c,  ] # debug_mod_config
+        - [ 0x26CE8, c, Sg2/remote ] # Sg2RemoteSend
+        #- [ 0x40036D78, c,  ] # Sg2RemoteSendDmaCom
+        #- [ 0x40036E28, c,  ] # Sg2RemoteDmaTransStatus
+        #- [ 0x40036E48, c,  ] # Sg2RemoteGetAdpStmAdr
+        #- [ 0x40036E60, c,  ] # Sg2RemoteGetPcmStmTransOffset
+        #- [ 0x40036E70, c,  ] # Sg2RemoteGetSlotReleaseLv
+        #- [ 0x40036E88, c,  ] # Sg2RemoteGetDspChangeStatus
+        #- [ 0x40036EA0, c,  ] # Sg2RemoteSyncStatus
+        #- [ 0x40036EC0, c,  ] # Sg2RemoteTickProc
+        #- [ 0x400370B0, c,  ] # Sg2RemoteInit
+        - [ 0x27188, c, Sg2/sep ]
+        #- [ 0x40037290, c,  ] # Sg2SepPlay
+        #- [ 0x400372A8, c,  ] # Sg2SepPlaySelectCore
+        #- [ 0x400374C0, c,  ] # Sg2SepStop
+        #- [ 0x40037578, c,  ] # Sg2SepStopSndOff
+        #- [ 0x40037630, c,  ] # Sg2SepPause
+        #- [ 0x40037708, c,  ] # Sg2SepCont
+        #- [ 0x400377C0, c,  ] # Sg2SepVabStopSndOff
+        #- [ 0x40037830, c,  ] # Sg2SepAllStopSndOff
+        #- [ 0x40037870, c,  ] # Sg2SepStatus
+        #- [ 0x400378A0, c,  ] # Sg2SepCheckSndOn
+        #- [ 0x400378E0, c,  ] # Sg2SepSetParam
+        #- [ 0x40037A78, c,  ] # Sg2SepMidiOut
+        #- [ 0x40037B38, c,  ] # Sg2SepMasterVol
+        #- [ 0x40037BD8, c,  ] # Sg2SepTickProc
+        #- [ 0x40037E78, c,  ] # Sg2SepInit
+        #- [ 0x40037F20, c,  ] # debug_sep_config
+        - [ 0x287E0, c, Sg2/slot ] # Sg2SlotGetSlotClassIdx
+        #- [ 0x40038800, c,  ] # Sg2SlotFreeSearch
+        #- [ 0x40038C08, c,  ] # Sg2SlotFreeSearchTerm
+        #- [ 0x40038FC8, c,  ] # Sg2SlotSearchPriority
+        #- [ 0x400393C0, c,  ] # Sg2SlotSearchPriorityOlder
+        #- [ 0x400397C8, c,  ] # Sg2SlotSearchParam
+        #- [ 0x40039C80, c,  ] # Sg2SlotSearchParamOlder0
+        #- [ 0x4003A140, c,  ] # Sg2SlotSearchParamOlder1
+        #- [ 0x4003A598, c,  ] # Sg2SlotSearchTypeOlder
+        #- [ 0x4003A990, c,  ] # Sg2SlotBlock
+        #- [ 0x4003AA00, c,  ] # Sg2SlotFree
+        #- [ 0x4003AA30, c,  ] # Sg2SlotCheckSlotClass
+        #- [ 0x4003AA88, c,  ] # Sg2SlotFindLoop
+        #- [ 0x4003AAD0, c,  ] # Sg2SlotFindVab
+        #- [ 0x4003AB20, c,  ] # Sg2SlotFindVabCh
+        #- [ 0x4003AB80, c,  ] # Sg2SlotFindVabChNote
+        #- [ 0x4003ABE8, c,  ] # Sg2SlotFindVabChSsaBaseNote
+        #- [ 0x4003AC60, c,  ] # Sg2SlotFindSlotClass
+        #- [ 0x4003ACB0, c,  ] # Sg2SlotFindSlotClassCh
+        #- [ 0x4003AD10, c,  ] # Sg2SlotFindSlotClassChNote
+        #- [ 0x4003AD78, c,  ] # Sg2SlotFindSlotClassChSsaBaseNote
+        #- [ 0x4003ADF0, c,  ] # Sg2SlotSetBasicParam
+        #- [ 0x4003AEE0, c,  ] # Sg2SlotSetSsa
+        #- [ 0x4003AF28, c,  ] # Sg2SlotSetGroup
+        #- [ 0x4003AF48, c,  ] # Sg2SlotSetMute
+        #- [ 0x4003AFC8, c,  ] # Sg2SlotSetMasVol
+        #- [ 0x4003B038, c,  ] # Sg2SlotSetSeMasVol
+        #- [ 0x4003B090, c,  ] # Sg2SlotSetBaseVol
+        #- [ 0x4003B0E8, c,  ] # Sg2SlotSetVol
+        #- [ 0x4003B118, c,  ] # Sg2SlotSetMasPan
+        #- [ 0x4003B178, c,  ] # Sg2SlotSetBasePan
+        #- [ 0x4003B1D0, c,  ] # Sg2SlotSetPan
+        #- [ 0x4003B200, c,  ] # Sg2SlotSetBendRange
+        #- [ 0x4003B220, c,  ] # Sg2SlotSetBendValue
+        #- [ 0x4003B250, c,  ] # Sg2SlotSetPitch
+        #- [ 0x4003B2C8, c,  ] # Sg2SlotSetPause
+        #- [ 0x4003B348, c,  ] # Sg2SlotSetDirectPitch
+        #- [ 0x4003B378, c,  ] # Sg2SlotSetMasTune
+        #- [ 0x4003B3A8, c,  ] # Sg2SlotSetAdsr
+        #- [ 0x4003B3F8, c,  ] # Sg2SlotSetVolPhase
+        #- [ 0x4003B430, c,  ] # Sg2SlotSetLoop
+        #- [ 0x4003B458, c,  ] # Sg2SlotSetDumperOn
+        #- [ 0x4003B480, c,  ] # Sg2SlotSetLfoPitchTbl
+        #- [ 0x4003B4C8, c,  ] # Sg2SlotSetLfoPitchSpeed
+        #- [ 0x4003B580, c,  ] # Sg2SlotSetLfoPitchDepth
+        #- [ 0x4003B628, c,  ] # Sg2SlotSetLfoVolTbl
+        #- [ 0x4003B670, c,  ] # Sg2SlotSetLfoVolSpeed
+        #- [ 0x4003B7C0, c,  ] # Sg2SlotSetLfoVolDepth
+        #- [ 0x4003B908, c,  ] # Sg2SlotSetTimeVolParam
+        #- [ 0x4003B948, c,  ] # Sg2SlotSetTimePitchParam
+        #- [ 0x4003B988, c,  ] # Sg2SlotSetTimePanParam
+        #- [ 0x4003B9C8, c,  ] # Sg2SlotSetPoltamentParam
+        #- [ 0x4003BA28, c,  ] # Sg2SlotGetVol
+        #- [ 0x4003BA48, c,  ] # Sg2SlotGetPan
+        #- [ 0x4003BA68, c,  ] # Sg2SlotSetDumperOff
+        #- [ 0x4003BB48, c,  ] # Sg2SlotModKeyOff
+        #- [ 0x4003BC58, c,  ] # Sg2SlotVabKeyOff
+        #- [ 0x4003BD68, c,  ] # Sg2SlotVabKeyOffGroup
+        #- [ 0x4003BEB0, c,  ] # Sg2SlotSetKeyOnBit
+        #- [ 0x4003BF18, c,  ] # Sg2SlotSetKeyOffBit
+        #- [ 0x4003BF80, c,  ] # Sg2SlotSetReverbOnBit
+        #- [ 0x4003BFE8, c,  ] # Sg2SlotSetReverbOffBit
+        #- [ 0x4003C058, c,  ] # Sg2SlotSetNoiseOnBit
+        #- [ 0x4003C0C0, c,  ] # Sg2SlotSetNoiseOffBit
+        #- [ 0x4003C130, c,  ] # Sg2SlotSetOutputMode
+        #- [ 0x4003C148, c,  ] # Sg2SlotSetVolShiftDownParam
+        #- [ 0x4003C160, c,  ] # Sg2SlotGetVolShiftDownParam
+        #- [ 0x4003C170, c,  ] # Sg2SlotTickProc
+        #- [ 0x4003CB28, c,  ] # Sg2SlotInit
+        #- [ 0x4003CCD8, c,  ] # Sg2SlotTbl
+        #- [ 0x4003CDA0, c,  ] # Sg2SlotEnvTbl
+        - [ 0x2Ce68, c, Sg2/smfp ]
+        #- [ 0x4003CF40, c,  ] # Sg2SmfpOpen
+        #- [ 0x4003CF58, c,  ] # Sg2SmfpOpenSelCore
+        #- [ 0x4003D170, c,  ] # Sg2SmfpClose
+        #- [ 0x4003D1C8, c,  ] # Sg2SmfpVabStopSndOff
+        #- [ 0x4003D238, c,  ] # Sg2SmfpPlay
+        #- [ 0x4003D428, c,  ] # Sg2SmfpStop
+        #- [ 0x4003D490, c,  ] # Sg2SmfpStopSndOff
+        #- [ 0x4003D4F8, c,  ] # Sg2SmfpPause
+        #- [ 0x4003D578, c,  ] # Sg2SmfpCont
+        #- [ 0x4003D5D0, c,  ] # Sg2SmfpStatus
+        #- [ 0x4003D5F8, c,  ] # Sg2SmfpCheckSndOn
+        #- [ 0x4003D630, c,  ] # Sg2SmfpSetParam
+        #- [ 0x4003D9E8, c,  ] # Sg2SmfpGetParam
+        #- [ 0x4003DAB8, c,  ] # Sg2SmfpMidiOut
+        #- [ 0x4003DB50, c,  ] # Sg2SmfpSetSignal
+        #- [ 0x4003DB60, c,  ] # Sg2SmfpTickProc
+        #- [ 0x4003DE50, c,  ] # Sg2SmfpInit
+        #- [ 0x4003DED8, c,  ] # debug_smfp_mod_config
+        #- [ 0x4003E1C0, c,  ] # debug_set_smfp_time_count_delta_per
+        - [ 0x2E8F0, c, Sg2/st_adpcm ] # Sg2StAdpcmOpen
+        #- [ 0x4003E978, c,  ] # Sg2StAdpcmClose
+        #- [ 0x4003E9A8, c,  ] # Sg2StAdpcmSetVolume
+        #- [ 0x4003EA20, c,  ] # Sg2StAdpcmSetPitch
+        #- [ 0x4003EA88, c,  ] # Sg2StAdpcmPlay
+        #- [ 0x4003EAD8, c,  ] # Sg2StAdpcmStop
+        #- [ 0x4003EB28, c,  ] # Sg2StAdpcmIopReadAdr
+        #- [ 0x4003EB40, c,  ] # Sg2StAdpcmInit
+        #- [ 0x4003EB70, c,  ] # Sg2StAdpcmQuit
+        - [ 0x2EBA0, c, Sg2/vab ] # get_vabid
+        #- [ 0x4003ED78, c,  ] # vab_check_alive
+        #- [ 0x4003EDB8, c,  ] # vab_get_info
+        #- [ 0x4003EDF8, c,  ] # vab_get_seseq
+        #- [ 0x4003EEC0, c,  ] # vab_get_seprogchunk
+        #- [ 0x4003EF58, c,  ] # vab_get_progchunk
+        #- [ 0x4003F008, c,  ] # vab_get_splitchunk
+        #- [ 0x4003F020, c,  ] # vab_get_veltbl
+        #- [ 0x4003F058, c,  ] # vab_get_lfotbl_param
+        #- [ 0x4003F0A0, c,  ] # vab_set_semastervol
+        #- [ 0x4003F0D0, c,  ] # vab_get_semastervol
+        #- [ 0x4003F0F8, c,  ] # Sg2VabHdOpen
+        #- [ 0x4003F180, c,  ] # Sg2VabGetBdSize
+        #- [ 0x4003F208, c,  ] # Sg2VabBdOpen
+        #- [ 0x4003F270, c,  ] # Sg2VabClose
+        #- [ 0x4003F2C8, c,  ] # Sg2VabHdClose
+        #- [ 0x4003F388, c,  ] # Sg2VabInit
+        - [ 0x2f3c8, c, Sg2/ex/pcm ]
+        #- [ 0x400404F0, c,  ] # Sg2ExPcmInputOpenDoubleBuffer
+        #- [ 0x40040528, c,  ] # Sg2ExPcmInputOpen
+        #- [ 0x40040598, c,  ] # Sg2ExPcmInputClose
+        #- [ 0x40040628, c,  ] # Sg2ExPcmInputCtrl
+        #- [ 0x400406C0, c,  ] # Sg2ExPcmInputGetLipFrame
+        #- [ 0x400406E8, c,  ] # Sg2ExPcmInputGetRealPlayFrameCount
+        #- [ 0x40040798, c,  ] # Sg2ExPcmInputSetVol
+        #- [ 0x400407E0, c,  ] # Sg2ExPcmInputSetPan
+        #- [ 0x40040828, c,  ] # Sg2ExPcmInputSetPhase
+        #- [ 0x40040878, c,  ] # Sg2ExPcmInputSetOutputMode
+        #- [ 0x400408A0, c,  ] # Sg2ExPcmInputAutoFilterInit
+        #- [ 0x400408E8, c,  ] # Sg2ExPcmInputSetAutoFilterDirect
+        #- [ 0x400409D8, c,  ] # Sg2ExPcmInputSetAutoFilter
+        #- [ 0x40040A68, c,  ] # Sg2ExPcmInputAutoFilterCtrl
+        #- [ 0x40040AA8, c,  ] # Sg2ExPcmOutputOpen
+        #- [ 0x40040B88, c,  ] # Sg2ExPcmOutputClose
+        #- [ 0x40040BE8, c,  ] # Sg2ExPcmOutputBufferClear
+        #- [ 0x40040C60, c,  ] # Sg2ExPcmOutputSetVol
+        #- [ 0x40040C78, c,  ] # Sg2ExPcmOutputSetEffect
+        #- [ 0x40040C90, c,  ] # Sg2ExPcmOutputSetOutputMode
+        #- [ 0x40040CA0, c,  ] # Sg2ExPcmOutputCtrl
+        #- [ 0x40040D40, c,  ] # Sg2ExPcmOutputGetLipFrame
+        #- [ 0x40040D50, c,  ] # Sg2ExPcmOutputAutoFilterInit
+        #- [ 0x40040D70, c,  ] # Sg2ExPcmOutputSetAutoFilterDirect
+        #- [ 0x40040E38, c,  ] # Sg2ExPcmOutputSetAutoFilter
+        #- [ 0x40040EA8, c,  ] # Sg2ExPcmOutputAutoFilterCtrl
+        #- [ 0x40040ED0, c,  ] # Sg2ExPcmCheckAutoFilterSeq
+        #- [ 0x40040EE8, c,  ] # Sg2ExPcmTickProc
+        #- [ 0x40040FA8, c,  ] # Sg2ExPcmSetSignal
+        #- [ 0x40040FB8, c,  ] # Sg2ExPcmInit
+        - [ 0x31048, c, Sg2/iir ]
+        #- [ 0x40041700, c,  ] # IirInit
+        #- [ 0x40041720, c,  ] # IirParam
+        #- [ 0x40041820, c,  ] # IirFilter
+        - [ 0x31960, c, Sg2/st_pcm ] # Sg2StPcmStart
+        #- [ 0x40041990, c,  ] # Sg2StPcmStop
+        #- [ 0x400419C0, c,  ] # Sg2StPcmSetVolume
+        #- [ 0x400419F0, c,  ] # Sg2StPcmSetEffect
+        #- [ 0x40041A20, c,  ] # Sg2StPcmIopTransOffset
+        #- [ 0x40041A38, c,  ] # Sg2StPcmInit
+        #- [ 0x40041A68, c,  ] # Sg2StPcmQuit
+
+        # sce
+        - [ 0x31a98, textbin, sce ]
+        #- [ 0x40041E68, asm, mktime ] # mktime
+        #- [ 0x40042100, textbin,  ] # strstr
+        #- [ 0x40042188, textbin,  ] # div
+        #- [ 0x40042210, textbin,  ] # atanf
+        #- [ 0x400424A0, textbin,  ] # cosf
+        #- [ 0x40042578, textbin,  ] # fabsf
+        #- [ 0x400425A0, textbin,  ] # sinf
+        #- [ 0x40042688, textbin,  ] # sqrt
+        #- [ 0x400426A0, textbin,  ] # acosf
+        #- [ 0x400426B8, textbin,  ] # asinf
+        #- [ 0x400426D0, textbin,  ] # atan2f
+        #- [ 0x400426E8, textbin,  ] # fmodf
+        #- [ 0x40042700, textbin,  ] # powf
+        #- [ 0x40042718, textbin,  ] # sqrtf
+        #- [ 0x40042730, textbin,  ] # __ieee754_sqrt
+        #- [ 0x40042A50, textbin,  ] # __ieee754_acosf
+        #- [ 0x40042E78, textbin,  ] # __ieee754_asinf
+        #- [ 0x40043218, textbin,  ] # __ieee754_atan2f
+        #- [ 0x400433F8, textbin,  ] # __ieee754_fmodf
+        #- [ 0x400435C8, textbin,  ] # __ieee754_powf
+        #- [ 0x40043DA8, textbin,  ] # __ieee754_rem_pio2f
+        #- [ 0x40044158, textbin,  ] # __ieee754_sqrtf
+        #- [ 0x40044228, textbin,  ] # __kernel_cosf
+        #- [ 0x40044378, textbin,  ] # __kernel_rem_pio2f
+        #- [ 0x40044BE0, textbin,  ] # __kernel_sinf
+        #- [ 0x40044CE8, textbin,  ] # floorf
+        #- [ 0x40044DC0, textbin,  ] # scalbnf
+        #- [ 0x40044E88, textbin,  ] # copysignf
+        #- [ 0x40044EC8, textbin,  ] # sceGsPutIMR
+        #- [ 0x40044F08, textbin,  ] # sceGsGetIMR
+        #- [ 0x40044F28, textbin,  ] # isceGsPutIMR
+        #- [ 0x40044F68, textbin,  ] # sceCdRead
+        #- [ 0x40045148, textbin,  ] # sceCdReadIOPm
+        #- [ 0x400452A0, textbin,  ] # sceCdGetError
+        #- [ 0x40045338, textbin,  ] # sceCdStatus
+        #- [ 0x400453F0, textbin,  ] # sceCdReadClock
+
+
+    - name: data
+      type: databin
+      start: 0x354b0
+      vram: 0x400454b0
+      size: 0x3637
+      align: 0
+      subalign: 0
+      subsegments:
+        - [ 0x354b0, databin, ios/cd ]
+        - [ 0x354c0, databin, ios/system ]
+#        - [ 0x40045558, data,  ] # iosSystemSema
+        - [ 0x35540, databin, ios/memory ]
+#        - [ 0x40045564, data,  ] # gbPtn
+#        - [ 0x400455F8, data,  ] # rootPtn
+#        - [ 0x40045604, data,  ] # mallocStartAdrs
+        - [ 0x35608, databin, ios/mc ]
+        - [ 0x35710, databin, ios/net ]
+        - [ 0x35718, databin, ios/pad ]
+#        - [ 0x40045720, data,  ] # iosDefaultPadData
+        - [ 0x35810, databin, ios/print ]
+        - [ 0x35814, databin, ios/thread ]
+        - [ 0x35818, databin, ios/shock ]
+#        - [ 0x4004581C, data,  ] # ShockVoiceSetCommon
+        - [ 0x35820, databin, ios/isys/module ]
+#        - [ 0x40045830, data,  ] # executableModuleGroup
+#        - [ 0x40045838, data,  ] # needResolveModuleGroup
+#        - [ 0x40045840, data,  ] # symbolDefModuleGroup
+#        - [ 0x40045844, data,  ] # DldSysUndefSymbol
+        - [ 0x35850, databin, ios/math ]
+        - [ 0x35870, databin, ios/math/matrix ] # UnitMatrix
+        - [ 0x358b0, databin, ios/math/quat ] # IdentityQuaternion
+#        - [ 0x400458C0, data,  ] # RotX90Quaternion
+        - [ 0x358e4, databin, ios/math/trig ]
+        - [ 0x35900, databin, ios/math/vector ] # ZeroVector
+#        - [ 0x40045910, data,  ] # XUnitVector
+#        - [ 0x40045920, data,  ] # YUnitVector
+#        - [ 0x40045930, data,  ] # ZUnitVector
+#        - [ 0x40045940, data,  ] # ZeroPoint
+#        - [ 0x40045950, data,  ] # All1Vector
+#        - [ 0x40045960, data,  ] # XUnitVectorInv
+#        - [ 0x40045970, data,  ] # YUnitVectorInv
+#        - [ 0x40045980, data,  ] # ZUnitVectorInv
+#        - [ 0x40045990, data,  ] # ZDirVector
+#        - [ 0x400459A0, data,  ] # XUnitPoint
+#        - [ 0x400459B0, data,  ] # YUnitPoint
+#        - [ 0x400459C0, data,  ] # ZUnitPoint
+#        - [ 0x400459D0, data,  ] # XUnitPointInv
+#        - [ 0x400459E0, data,  ] # YUnitPointInv
+#        - [ 0x400459F0, data,  ] # ZUnitPointInv
+        - [ 0x35a00, databin, ios/dc ]
+        - [ 0x35a10, databin, ios/dl ]
+#        - [ 0x40045A30, data,  ] # fin
+        - [ 0x35a50, databin, ios/graph/gs ]
+        - [ 0x35ab8, databin, ios/graph/gp ]
+#        - [ 0x40045AF0, data,  ] # gpMainCallCounter
+        - [ 0x35b30, databin, ios/isys/obj ]
+        - [ 0x35c64, databin, ios/sched ]
+#        - [ 0x40045C70, data,  ] # ischedExecSubThread
+#        - [ 0x40045C78, data,  ] # schedGarbageDisableFlag
+#        - [ 0x40045C84, data,  ] # vschedGameTime
+#        - [ 0x40045C88, data,  ] # vschedGameTimeExec
+        - [ 0x35c8c, databin, ios/isys/letter ] # g_pLetterMem
+        - [ 0x35c90, databin, ios/font ]
+        - [ 0x35e98, databin, ios/isys/subthread ]
+#        - [ 0x40045EA0, data,  ] # subThreadGroup
+        - [ 0x35ea4, databin, ios/snd ]
+#        - [ 0x40045EAC, data,  ] # soundTickProcCnt
+        - [ 0x35eb4, databin, ios/dev ]
+        - [ 0x35ec8, databin, Sg2/mod ] # pan_tbl
+#        - [ 0x4004602C, data,  ] # sg2NicoReverbMode
+#        - [ 0x40046030, data,  ] # control_change_ev
+#        - [ 0x40046230, data,  ] # channel_ev
+#        - [ 0x400462A8, data,  ] # systemcommon_ev
+        - [ 0x36328, databin, Sg2/sep ]
+        - [ 0x36398, databin, Sg2/slot ]
+        - [ 0x363d8, databin, Sg2/smfp ]
+      
+    - name: rodata
+      type: rodatabin
+      start: 0x36430
+      vram: 0x40046430
+      size: 0x3637
+      align: 0
+      subalign: 0
+
+    - name: xff_footer
+      type: rodatabin
+      start: 0x39a68
+      vram: 0x40049a68
+      size: 0x2a120
+      align: 0
+      subalign: 0
+      
+      
+    - [0x63B88]
