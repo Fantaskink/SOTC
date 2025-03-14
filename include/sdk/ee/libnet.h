@@ -42,10 +42,15 @@
 
 /*** IOP header ***/
 #define	__LIBNET__
-#include <../../iop/include/inet/inet.h>
-#include <../../iop/include/inet/inetctl.h>
+// #include <../../iop/include/inet/inet.h>
+// #include <../../iop/include/inet/inetctl.h>
+// #include <libnet/in.h>
+// #include <../../iop/include/inet/netdev.h>
+#include <iop/inet/inet.h>
+#include <iop/inet/inet.h>
+#include <iop/inet/inetctl.h>
 #include <libnet/in.h>
-#include <../../iop/include/inet/netdev.h>
+#include <iop/inet/netdev.h>
 
 #if defined(__cplusplus)
 extern "C" {

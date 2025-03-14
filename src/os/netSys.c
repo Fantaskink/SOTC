@@ -1,9 +1,15 @@
 #include "netSys.h"
 #include "common.h"
 #include "gcc/malloc.h"
+#include "gcc/stdio.h"
 #include "loaderSys3.h"
+#include "loaderSysFileIO.h"
 #include "padSys.h"
 #include "putString.h"
+#include "sdk/common/netcnfif.h"
+#include "sdk/ee/libmrpc.h"
+#include "sdk/ee/libnet.h"
+#include "sdk/ee/libnet/libnetdefs.h"
 
 // These are likely also const char*, used for identifiers
 extern const char D_0013A188[];
@@ -177,7 +183,12 @@ static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfif
         }
 
         /* Get a destination address of sceNetcnfifData(). */
+        {
+            // Bug? sceNetcnfifGetAddr doesn't take any arguments, whatever it is, we need
+            // this compiling so override the declaration here
+            int sceNetcnfifGetAddr();
         sceNetcnfifGetAddr(parg->data);
+        }
     }
     {
         sceNetcnfifArg_t *parg = &if_arg;
@@ -247,7 +258,7 @@ INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137160);
 
 INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137170);
 
-static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
+static inline s32 _load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
 {
     s32 ret;
     sceNetcnfifData_t *p_data;
@@ -288,13 +299,13 @@ s32 func_00104668(s32 a0, s32 a1)
 
     printf("ldnet: up interface no auto\n");
 
-    if (load_set_conf_only(&D_0013D180.client_data, &D_0013D180.buffer, conf_path, usr_name, flags) < 0)
+    if (_load_set_conf_only(&D_0013D180.client_data, &D_0013D180.buffer, conf_path, usr_name, flags) < 0)
     {
         printf("load_set_conf_only() failed.\n");
         return 0;
     }
 
-    if (sceLibnetWaitGetInterfaceID(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1) < 0)
+    if (get_interface_id(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304) < 0)
     {
         printf("get_interface_id()\n");
         return 0;
@@ -302,7 +313,7 @@ s32 func_00104668(s32 a0, s32 a1)
 
     sceInetCtlUpInterface(&D_0013D180.client_data, &D_0013D180.buffer, D_0013A304);
 
-    if (sceLibnetWaitGetAddress(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1, &D_001320C0, 0) < 0)
+    if (wait_get_addr_only(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, &D_001320C0) < 0)
     {
         printf("wait_get_addr_only() failed.\n");
         return 0;
