@@ -31,44 +31,38 @@ joined_t *LoaderSysInitTCP(void);
 extern int D_0013A304;
 extern joined_t D_0013D180;
 
+#define _LOAD_MODULE_ARGS(ident, argc, args)                                             \
+    {                                                                                    \
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\" ident ".IRX;1", argc, args) < 0) \
+            return -1;                                                                   \
+        setNewIopIdentifier(ident);                                                      \
+    }
+
+#define LOAD_MODULE_ARGS(ident, args) _LOAD_MODULE_ARGS(ident, sizeof(args), args)
+#define LOAD_MODULE(ident) _LOAD_MODULE_ARGS(ident, 0, NULL)
+
 static s32 func_00104090(s32 mode)
 {
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INET.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A188);
+    LOAD_MODULE("INET");
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\NETCNF.IRX;1", 70, "icon=cdrom0:\\SETTING\\SYS_NET.ICO;1\0iconsys=cdrom0:\\SETTING\\ICON.SYS;1") < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A190);
+    LOAD_MODULE_ARGS("NETCNF", "icon=cdrom0:\\SETTING\\SYS_NET.ICO;1\0iconsys=cdrom0:\\SETTING\\ICON.SYS;1");
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 20, "-no_auto\0-no_decode") < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A198);
+    LOAD_MODULE_ARGS("INETCTL", "-no_auto\0-no_decode");
 
     switch (mode)
     {
     case 1:
     case 2:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A8);
+        LOAD_MODULE("USBD");
+        LOAD_MODULE("AN986");
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A0);
+        LOAD_MODULE("USBD");
         break;
     case 3:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1B0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1B8);
+        LOAD_MODULE("DEV9");
+        LOAD_MODULE("SMAP");
         break;
     case 0:
         break;
@@ -78,20 +72,12 @@ static s32 func_00104090(s32 mode)
     {
     case 2:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C8);
+        LOAD_MODULE("PPP");
+        LOAD_MODULE("PPPOE");
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\.IRX;1", 1, D_0013A1D0) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1D0);
+        LOAD_MODULE("PPP");
+        LOAD_MODULE_ARGS("", "");
         break;
     case 0:
         LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL);
@@ -103,14 +89,9 @@ static s32 func_00104090(s32 mode)
         break;
     }
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\MSIFRPC.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A1D8);
-
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\LIBNET.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A1E0);
-
+    LOAD_MODULE("MSIFRPC");
+    LOAD_MODULE("LIBNET");
+    
     if (LoaderSysLoadIopModule("cdrom0:\\MODULES2\\NETCNFIF.IRX;1", 0, NULL) < 0)
         return -1;
     setNewIopIdentifier("NETCNFIF");
@@ -176,7 +157,7 @@ static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfif
             // Bug? sceNetcnfifGetAddr doesn't take any arguments, whatever it is, we need
             // this compiling so override the declaration here
             int sceNetcnfifGetAddr();
-        sceNetcnfifGetAddr(parg->data);
+            sceNetcnfifGetAddr(parg->data);
         }
     }
     {
