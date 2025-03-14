@@ -24,7 +24,7 @@ extern int D_0013A180;
 extern int D_0013A184;
 
 extern const char D_0013A0F0[];
-extern qword D_0013B900;
+qword D_0013B900 __attribute__((aligned(64)));
 
 static inline void LoaderSysDumpRegisterList(unk_except_s *ctx)
 {

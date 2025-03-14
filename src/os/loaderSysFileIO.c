@@ -51,7 +51,7 @@ char *checkHookDesc(char *hook_desc)
 }
 
 s32 D_0013A108 = 0;                              // number of iop modules
-extern char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
+char D_0013CD10[MAX_IOP_IDENTIFIERS][16]; // iop module identifiers
 
 static inline s32 LoaderSysSearchInLoadedIopModules(const char *module_name)
 {

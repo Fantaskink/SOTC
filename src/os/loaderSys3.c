@@ -147,8 +147,9 @@ s32 LOADER_RESET_CALLBACK_NUM = 0; // 0x0013A17C
 s32 D_0013A180 = 0;
 s32 D_0013A184 = 0;
 
+static char D_0013D110[16]; // Filled at runtime: "cdrom0:\SCPS_15"
 #define MAX_RESET_CALLBACKS 10
-extern t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
+static t_resetCallback RESET_CALLBACK_LIST[MAX_RESET_CALLBACKS];
 
 s32 end;
 static inline void loaderPrintMessage()
@@ -221,7 +222,6 @@ void loaderLoop(void)
     }
 }
 
-extern char D_0013D110[]; // Filled at runtime: "cdrom0:\SCPS_15"
 s32 main(s32 argc, char **argv)
 {
     register void *sp asm("sp");

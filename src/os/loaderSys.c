@@ -30,10 +30,10 @@ s32 D_00139F00 = 0;
 void *D_00139F04 = 0; // heap pointer
 
 // sbss vars
-extern s32 D_0013A300;
+s32 D_0013A300;
 
 // bss vars
-extern char D_0013A4C8[0x1000];
+char D_0013A4C8[0x1000];
 
 s32 RelocateCode(struct t_xffEntPntHdr *xffEp)
 {
@@ -358,9 +358,9 @@ s32 _checkExistString(char *string, char **strings)
 }
 
 char *D_00131DD0[12] = {".text", ".vutext", ".data", ".vudata", ".rodata", ".bss", ".vubss", ".DVP.ovlytab"};
-u32 D_00139F40 = 0;
 static inline void LoaderSysFWriteString(s32 fd, char *str, s32 flush)
 {
+    static u32 D_00139F40 = 0;
     s32 len;
 
     if (D_0013A300 == fd)
@@ -441,7 +441,7 @@ s32 OutputLinkerScriptFile(struct t_xffEntPntHdr *xffEp, char *ld_script_path, l
 
 extern s32 D_0013A180;
 extern s32 D_0013A184;
-extern char D_0013B4C8[];
+char D_0013B4C8[0x400];
 void loaderLoop(void);
 static inline s32 _ReadPad()
 {

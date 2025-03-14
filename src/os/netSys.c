@@ -19,7 +19,7 @@ typedef struct joined_t
 {
     sceSifMClientData client_data;
     s32 pad;
-    u8 buffer[0x1000];
+    u8 buffer[0x800];
 } joined_t;
 
 static s32 func_00104090(s32 mode);
@@ -29,7 +29,7 @@ int func_00104818(void);
 joined_t *LoaderSysInitTCP(void);
 
 extern int D_0013A304;
-extern joined_t D_0013D180;
+static joined_t D_0013D180 __attribute__((aligned(64)));
 
 #define _LOAD_MODULE_ARGS(ident, argc, args)                                             \
     {                                                                                    \
@@ -91,7 +91,7 @@ static s32 func_00104090(s32 mode)
 
     LOAD_MODULE("MSIFRPC");
     LOAD_MODULE("LIBNET");
-    
+
     if (LoaderSysLoadIopModule("cdrom0:\\MODULES2\\NETCNFIF.IRX;1", 0, NULL) < 0)
         return -1;
     setNewIopIdentifier("NETCNFIF");
