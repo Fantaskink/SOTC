@@ -11,8 +11,6 @@ options:
 
     symbol_addrs_path: config/kernel.symbols.txt
     reloc_addrs_path: config/kernel.relocs.txt
-#    create_undefined_funcs_auto: False
-#    create_undefined_syms_auto: False
 
     create_undefined_funcs_auto: True
     undefined_funcs_auto_path: config/kernel_undefined_funcs_auto.txt
@@ -34,8 +32,6 @@ options:
     find_file_boundaries: True
     section_order: [".text", ".data", ".rodata", ".lit4", ".sdata", ".sbss", ".bss"]
     
-#    ld_align_segment_start: null
-#    segment_end_before_align: True
     
 segments: 
     - name: xff_header
@@ -46,12 +42,10 @@ segments:
       align: 0
       subalign: 0
 
-    - name: text #main
+    - name: main
       type: code
       start: 0x21A0
       vram: 0x400121A0
-      size: 0x332f0
-      bss_size: 0xa24ec
       subalign: 0
       align: 0
       subsegments:
@@ -970,79 +964,74 @@ segments:
         #- [ 0x40041A68, c,  ] # Sg2StPcmQuit
 
         # sce
-        - [ 0x31a98, textbin, sce ]
-        #- [ 0x40041E68, asm, mktime ] # mktime
-        #- [ 0x40042100, textbin,  ] # strstr
-        #- [ 0x40042188, textbin,  ] # div
-        #- [ 0x40042210, textbin,  ] # atanf
-        #- [ 0x400424A0, textbin,  ] # cosf
-        #- [ 0x40042578, textbin,  ] # fabsf
-        #- [ 0x400425A0, textbin,  ] # sinf
-        #- [ 0x40042688, textbin,  ] # sqrt
-        #- [ 0x400426A0, textbin,  ] # acosf
-        #- [ 0x400426B8, textbin,  ] # asinf
-        #- [ 0x400426D0, textbin,  ] # atan2f
-        #- [ 0x400426E8, textbin,  ] # fmodf
-        #- [ 0x40042700, textbin,  ] # powf
-        #- [ 0x40042718, textbin,  ] # sqrtf
-        #- [ 0x40042730, textbin,  ] # __ieee754_sqrt
-        #- [ 0x40042A50, textbin,  ] # __ieee754_acosf
-        #- [ 0x40042E78, textbin,  ] # __ieee754_asinf
-        #- [ 0x40043218, textbin,  ] # __ieee754_atan2f
-        #- [ 0x400433F8, textbin,  ] # __ieee754_fmodf
-        #- [ 0x400435C8, textbin,  ] # __ieee754_powf
-        #- [ 0x40043DA8, textbin,  ] # __ieee754_rem_pio2f
-        #- [ 0x40044158, textbin,  ] # __ieee754_sqrtf
-        #- [ 0x40044228, textbin,  ] # __kernel_cosf
-        #- [ 0x40044378, textbin,  ] # __kernel_rem_pio2f
-        #- [ 0x40044BE0, textbin,  ] # __kernel_sinf
-        #- [ 0x40044CE8, textbin,  ] # floorf
-        #- [ 0x40044DC0, textbin,  ] # scalbnf
-        #- [ 0x40044E88, textbin,  ] # copysignf
-        #- [ 0x40044EC8, textbin,  ] # sceGsPutIMR
-        #- [ 0x40044F08, textbin,  ] # sceGsGetIMR
-        #- [ 0x40044F28, textbin,  ] # isceGsPutIMR
-        #- [ 0x40044F68, textbin,  ] # sceCdRead
-        #- [ 0x40045148, textbin,  ] # sceCdReadIOPm
-        #- [ 0x400452A0, textbin,  ] # sceCdGetError
-        #- [ 0x40045338, textbin,  ] # sceCdStatus
-        #- [ 0x400453F0, textbin,  ] # sceCdReadClock
+        #- [ 0x31a98, textbin, sce ]
+        - [ 0x31a98, asm, sce/mktime ]
+        #- [ 0x31E68, asm, sce/mktime ] # mktime
+        - [ 0x32100, asm, sce/strstr ] # strstr
+        - [ 0x32188, asm, sce/div ] # div
+        - [ 0x32210, asm, sce/atanf ] # atanf
+        - [ 0x324A0, asm, sce/cosf ] # cosf
+        - [ 0x32578, asm, sce/fabsf ] # fabsf
+        - [ 0x325A0, asm, sce/sinf] # sinf
+        - [ 0x32688, asm, sce/sqrt] # sqrt
+        - [ 0x326A0, asm, sce/acosf] # acosf
+        - [ 0x326B8, asm, sce/asinf ] # asinf
+        - [ 0x326D0, asm, sce/atan2f ] # atan2f
+        - [ 0x326E8, asm, sce/fmodf ] # fmodf
+        - [ 0x32700, asm, sce/powf ] # powf
+        - [ 0x32718, asm, sce/sqrtf ] # sqrtf
+        - [ 0x32730, asm, sce/__ieee754_sqrt ] # __ieee754_sqrt
+        - [ 0x32A50, asm, sce/__ieee754_acosf ] # __ieee754_acosf
+        - [ 0x32E78, asm, sce/__ieee754_asinf ] # __ieee754_asinf
+        - [ 0x33218, asm, sce/__ieee754_atan2f ] # __ieee754_atan2f
+        - [ 0x333F8, asm, sce/__ieee754_fmodf ] # __ieee754_fmodf
+        - [ 0x335C8, asm, sce/__ieee754_powf ] # __ieee754_powf
+        - [ 0x33DA8, asm, sce/__ieee754_rem_pio2f ] # __ieee754_rem_pio2f
+        - [ 0x34158, asm, sce/__ieee754_sqrtf ] # __ieee754_sqrtf
+        - [ 0x34228, asm, sce/__kernel_cosf ] # __kernel_cosf
+        - [ 0x34378, asm, sce/__kernel_rem_pio2f ] # __kernel_rem_pio2f
+        - [ 0x34BE0, asm, sce/__kernel_sinf ] # __kernel_sinf
+        - [ 0x34CE8, asm, sce/floorf ] # floorf
+        - [ 0x34DC0, asm, sce/scalbnf ] # scalbnf
+        - [ 0x34E88, asm, sce/copysignf ] # copysignf
+        - [ 0x34EC8, asm, sce/sceGsPutIMR ] # sceGsPutIMR
+        - [ 0x34F08, asm, sce/sceGsGetIMR ] # sceGsGetIMR
+        - [ 0x34F28, asm, sce/isceGsPutIMR ] # isceGsPutIMR
+        - [ 0x34F68, asm, sce/sceCdRead ] # sceCdRead
+        - [ 0x35148, asm, sce/sceCdReadIOPm ] # sceCdReadIOPm
+        - [ 0x352A0, asm, sce/sceCdGetError ] # sceCdGetError
+        - [ 0x35338, asm, sce/sceCdStatus ] # sceCdStatus
+        - [ 0x353F0, asm, sce/sceCdReadClock ] # sceCdReadClock
+        
 
-
-    - name: data
-      type: databin
-      start: 0x354b0
-      vram: 0x400454b0
-      size: 0x3637
-      align: 0
-      subalign: 0
-      subsegments:
-        - [ 0x354b0, databin, ios/cd ]
-        - [ 0x354c0, databin, ios/system ]
+        # data
+        - [ 0x354b0, data, ios/cd ]
+        - [ 0x354b8, data, ios/timer ]
+        - [ 0x354c0, data, ios/system ]
 #        - [ 0x40045558, data,  ] # iosSystemSema
-        - [ 0x35540, databin, ios/memory ]
+        - [ 0x35540, data, ios/memory ]
 #        - [ 0x40045564, data,  ] # gbPtn
 #        - [ 0x400455F8, data,  ] # rootPtn
 #        - [ 0x40045604, data,  ] # mallocStartAdrs
-        - [ 0x35608, databin, ios/mc ]
-        - [ 0x35710, databin, ios/net ]
-        - [ 0x35718, databin, ios/pad ]
+        - [ 0x35608, data, ios/mc ]
+        - [ 0x35710, data, ios/net ]
+        - [ 0x35718, data, ios/pad ]
 #        - [ 0x40045720, data,  ] # iosDefaultPadData
-        - [ 0x35810, databin, ios/print ]
-        - [ 0x35814, databin, ios/thread ]
-        - [ 0x35818, databin, ios/shock ]
+        - [ 0x35810, data, ios/print ]
+        - [ 0x35814, data, ios/thread ]
+        - [ 0x35818, data, ios/shock ]
 #        - [ 0x4004581C, data,  ] # ShockVoiceSetCommon
-        - [ 0x35820, databin, ios/isys/module ]
+        - [ 0x35820, data, ios/isys/module ]
 #        - [ 0x40045830, data,  ] # executableModuleGroup
 #        - [ 0x40045838, data,  ] # needResolveModuleGroup
 #        - [ 0x40045840, data,  ] # symbolDefModuleGroup
 #        - [ 0x40045844, data,  ] # DldSysUndefSymbol
-        - [ 0x35850, databin, ios/math ]
-        - [ 0x35870, databin, ios/math/matrix ] # UnitMatrix
-        - [ 0x358b0, databin, ios/math/quat ] # IdentityQuaternion
+        - [ 0x35850, data, ios/math ]
+        - [ 0x35870, data, ios/math/matrix ] # UnitMatrix
+        - [ 0x358b0, data, ios/math/quat ] # IdentityQuaternion
 #        - [ 0x400458C0, data,  ] # RotX90Quaternion
-        - [ 0x358e4, databin, ios/math/trig ]
-        - [ 0x35900, databin, ios/math/vector ] # ZeroVector
+        - [ 0x358e4, data, ios/math/trig ]
+        - [ 0x35900, data, ios/math/vector ] # ZeroVector
 #        - [ 0x40045910, data,  ] # XUnitVector
 #        - [ 0x40045920, data,  ] # YUnitVector
 #        - [ 0x40045930, data,  ] # ZUnitVector
@@ -1058,41 +1047,39 @@ segments:
 #        - [ 0x400459D0, data,  ] # XUnitPointInv
 #        - [ 0x400459E0, data,  ] # YUnitPointInv
 #        - [ 0x400459F0, data,  ] # ZUnitPointInv
-        - [ 0x35a00, databin, ios/dc ]
-        - [ 0x35a10, databin, ios/dl ]
+        - [ 0x35a00, data, ios/dc ]
+        - [ 0x35a10, data, ios/dl ]
 #        - [ 0x40045A30, data,  ] # fin
-        - [ 0x35a50, databin, ios/graph/gs ]
-        - [ 0x35ab8, databin, ios/graph/gp ]
+        - [ 0x35a50, data, ios/graph/gs ]
+        - [ 0x35ab8, data, ios/graph/gp ]
 #        - [ 0x40045AF0, data,  ] # gpMainCallCounter
-        - [ 0x35b30, databin, ios/isys/obj ]
-        - [ 0x35c64, databin, ios/sched ]
+        - [ 0x35b30, data, ios/isys/obj ]
+        - [ 0x35c64, data, ios/sched ]
 #        - [ 0x40045C70, data,  ] # ischedExecSubThread
 #        - [ 0x40045C78, data,  ] # schedGarbageDisableFlag
 #        - [ 0x40045C84, data,  ] # vschedGameTime
 #        - [ 0x40045C88, data,  ] # vschedGameTimeExec
-        - [ 0x35c8c, databin, ios/isys/letter ] # g_pLetterMem
-        - [ 0x35c90, databin, ios/font ]
-        - [ 0x35e98, databin, ios/isys/subthread ]
+        - [ 0x35c8c, data, ios/isys/letter ] # g_pLetterMem
+        - [ 0x35c90, data, ios/font ]
+        - [ 0x35e98, data, ios/isys/subthread ]
 #        - [ 0x40045EA0, data,  ] # subThreadGroup
-        - [ 0x35ea4, databin, ios/snd ]
+        - [ 0x35ea4, data, ios/snd ]
 #        - [ 0x40045EAC, data,  ] # soundTickProcCnt
-        - [ 0x35eb4, databin, ios/dev ]
-        - [ 0x35ec8, databin, Sg2/mod ] # pan_tbl
+        - [ 0x35eb4, data, ios/dev ]
+        - [ 0x35ec8, data, Sg2/mod ] # pan_tbl
 #        - [ 0x4004602C, data,  ] # sg2NicoReverbMode
 #        - [ 0x40046030, data,  ] # control_change_ev
 #        - [ 0x40046230, data,  ] # channel_ev
 #        - [ 0x400462A8, data,  ] # systemcommon_ev
-        - [ 0x36328, databin, Sg2/sep ]
-        - [ 0x36398, databin, Sg2/slot ]
-        - [ 0x363d8, databin, Sg2/smfp ]
-      
-    - name: rodata
-      type: rodatabin
-      start: 0x36430
-      vram: 0x40046430
-      size: 0x3637
-      align: 0
-      subalign: 0
+        - [ 0x36328, data, Sg2/sep ]
+        - [ 0x36398, data, Sg2/slot ]
+        - [ 0x363d8, data, Sg2/smfp ]
+        
+        # rodata
+        - { start: 0x36430, type: rodatabin, vram: 0x40046430, size: 0x3637 }
+        # bss
+        - { start: 0x63b88, type: bss, vram: 0x40073b88, name: bss, size: 0xa24ec }
+
 
     - name: xff_footer
       type: rodatabin
@@ -1101,6 +1088,5 @@ segments:
       size: 0x2a120
       align: 0
       subalign: 0
-      
       
     - [0x63B88]

@@ -265,7 +265,7 @@ if __name__ == "__main__":
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
-    parse_xff_relocs.main(XFF_FILE)
+#    parse_xff_relocs.main(XFF_FILE)
 
     split.main([YAML_FILE], modes="all", verbose=False)
 
