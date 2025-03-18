@@ -46,6 +46,7 @@ segments:
       type: code
       start: 0x21A0
       vram: 0x400121A0
+      bss_size: 0xa24ec
       subalign: 0
       align: 0
       subsegments:
@@ -1076,9 +1077,9 @@ segments:
         - [ 0x363d8, data, Sg2/smfp ]
         
         # rodata
-        - { start: 0x36430, type: rodatabin, vram: 0x40046430, size: 0x3637 }
+        - { start: 0x36430, type: rodata, vram: 0x40046430, size: 0x3637 }
         # bss
-        - { start: 0x63b88, type: bss, vram: 0x40073b88, name: bss, size: 0xa24ec }
+        - { type: bss, vram: 0x40049a68, name: bss }
 
 
     - name: xff_footer
