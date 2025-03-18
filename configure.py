@@ -275,7 +275,7 @@ if __name__ == "__main__":
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
 
-    split.main([YAML_FILE], modes="all", verbose=False)
+    split.main([Path(YAML_FILE)], modes="all", verbose=False)
 
     linker_entries = split.linker_writer.entries
 
