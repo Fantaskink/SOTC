@@ -30,6 +30,8 @@ def read_xffEntPntHdr(file):
     file.seek(0)
     hdr = {}
     hdr['ident'] = file.read(4)
+    file.seek(0x14)
+    hdr['fileSize'] = read_uint32(file)
     file.seek(0x1C)
     hdr['impSymIxsNrE'] = read_uint32(file)
     hdr['impSymIxs'] = read_uint32(file)
@@ -156,10 +158,13 @@ def extract_reloc_and_symbols(filename: Path):
         for i in range(hdr['sectNrE']):
             sect_offset = hdr['sectTab_Rel'] + i * 0x20
             sect = read_xffSectEnt(file, sect_offset)
+            if sect['type'] == 8:
+                sect['offs_Rel'] = (hdr['fileSize'] + sect['align'] - 1) & ~(sect['align'] - 1)
             file.seek(hdr['ssNamesOffs_Rel'] + i * 4)
             name_offset = read_uint32(file)
             section_names[i] = read_string(file, hdr['ssNamesBase_Rel'] + name_offset)
             section_offsets[i] = sect['offs_Rel']
+            
 #            print(f"{i:2X} {section_names[i]}")
 #            print(f"{sect['memPt']:8X} {sect['filePt']:8X} {sect['size']:8X} {sect['align']:8X} {sect['type']:8X} {sect['flags']:8X} {sect['moved']:8X} {sect['offs_Rel']:8X}")
 
@@ -285,10 +290,10 @@ def extract_reloc_and_symbols(filename: Path):
                         _addr  = (VRAM + sign_extend16(instr) + sym_addr)
                         if _sym_name == ".bss":
                             _addr += last_bss_hi
-                            s_off = section_offsets[14] # rodata end, cuz bss has no offset
+                        #    s_off = section_offsets[14] # rodata end, cuz bss has no offset
                         else:
                             _addr += last_normal_hi
-                            s_off = section_offsets[sym_sect]
+                        s_off = section_offsets[sym_sect]
                         
                         _addr += s_off
                         _addr &= 0xFFFFFFFF

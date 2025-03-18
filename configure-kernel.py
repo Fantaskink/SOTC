@@ -123,7 +123,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.rule(
         "as",
         description="as $in",
-        command=f"cpp {COMMON_INCLUDES} $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out",
+        command=f"cpp {COMMON_INCLUDES} $in | iconv -f=UTF-8 -t=EUC-JP $in | {cross}as -no-pad-sections -EL -march=5900 -mabi=eabi -Iinclude -o $out",
     )
 
     ninja.rule(
@@ -147,7 +147,8 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.rule(
         "elf",
         description="elf $out",
-        command=f"{cross}objcopy $in $out -O binary && python3 tools/fix_xff.py $out",
+        command=f"{cross}objcopy $in $out -O binary && python3 tools/fix_xff.py $out", # fix_xff applies the addends to bss symbols from the xff data. when all functions have been decomped this file can be commented out and the next line can be used
+        #command=f"{cross}objcopy $in $out -O binary",
     )
 
     for entry in linker_entries:
