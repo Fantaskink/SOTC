@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
 #    parse_xff_relocs.main(XFF_FILE)
 
-    split.main([YAML_FILE], modes="all", verbose=False)
+    split.main([Path(YAML_FILE)], modes="all", verbose=False)
 
     linker_entries = split.linker_writer.entries
 
