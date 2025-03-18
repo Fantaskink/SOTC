@@ -32,6 +32,7 @@
 *.i*86
 *.x86_64
 *.hex
+*.pyc
 
 # Debug files
 *.dSYM/
@@ -53,6 +54,7 @@ dkms.conf
 build.ninja
 SCPS_150.97
 SCPS_150.97.*
+KERNEL.XFF.*
 
 
 *.iso
@@ -75,4 +77,3 @@ compile_commands.json
 /__pycache__
 config/kernel_undefined_funcs_auto.txt
 config/kernel_undefined_syms_auto.txt
-tools/__pycache__/parse_xff_relocs.cpython-310.pyc
