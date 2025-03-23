@@ -22,7 +22,7 @@ _root                                            = 0x001000C8; // type:func
 LOADER_RESET_CALLBACK_NUM                        = 0x0013A17C; // type:s32
 RESET_CALLBACK_LIST                              = 0x0013D120; // size:0x28
 
-// os/loadersys.c
+// loader/loadersys.c
 ResolveRelocation                                = 0x001000D0; // type:func
 DecodeSection                                    = 0x00100278; // type:func
 RelocateElfInfoHeader                            = 0x001004B8; // type:func
@@ -48,7 +48,7 @@ _checkExistString                                = 0x00101B20; // type:func
 _execProgWithThread                              = 0x00101CC8; // type:func
 execProgWithThread                               = 0x00101D90; // type:func
 
-// os/loadersys2.c
+// loader/loadersys2.c
 InitException                                    = 0x001020C0; // type:func
 setCop0Epc                                       = 0x001021D0; // type:func
 LoaderSysDeleteAllExternalIntcHandler            = 0x00102438; // type:func
@@ -159,20 +159,20 @@ D_00136E10 = 0x00136E10; // force_not_migration:True
 D_00136E60 = 0x00136E60; // force_not_migration:True
 D_00136E78 = 0x00136E78; // force_not_migration:True
 
-// os/padsys.c
+// loader/padsys.c
 padSysTickProc                                   = 0x00104CC0; // type:func
 padsysInit                                       = 0x00104DF8; // type:func
 padSysGet                                        = 0x00104E78; // type:func
 padSysReadForLoader                              = 0x00104E98; // type:func
 padSysVibSetAcrParam                             = 0x00104EF8; // type:func
 
-// os/powerOff.c
+// loader/powerOff.c
 LoaderSysSetPowerOffCallBackFunc                 = 0x00104F58; // type:func
 PreparePowerOff                                  = 0x00104F60; // type:func
 PowerOffThread                                   = 0x00104FF0; // type:func size:0xB0
 PowerOffHandler                                  = 0x001050A0; // type:func
 
-// os/usbSerialSys.c
+// loader/usbSerialSys.c
 usbSerialSysPutString                            = 0x001050B8; // type:func
 usbSerialSysPrintf                               = 0x00105268; // type:func
 usbSerialSysInit                                 = 0x001052D8; // type:func
@@ -186,7 +186,7 @@ cdUsbSerial                                      = 0x0013EC40; // type:u8 size:0
 sdata                                            = 0x0013EC80; // type:u8 size:0x40
 rdata                                            = 0x0013ECC0; // type:u8 size:0x20
 
-// os/putString.c
+// loader/putString.c
 PutFont                                          = 0x00105408; // type:func
 _putString                                       = 0x001056D8; // type:func
 PutString                                        = 0x00105948; // type:func

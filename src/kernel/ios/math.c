@@ -1,3 +1,3 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/nonmatchings/ios/math", InitMath);
+INCLUDE_ASM("asm/kernel/nonmatchings/ios/math", InitMath);

@@ -5,7 +5,7 @@ options:
     target_path: iso/KERNEL.XFF
     base_path: ..
 
-    asm_path: asm
+    asm_path: asm/kernel
     src_path: src/kernel
     build_path: build
 

@@ -69,7 +69,7 @@ def getProgressFromMapFile(mapFile: mapfile_parser.MapFile, asmPath: Path, nonma
 
     return totalStats, progressPerFolder
 
-def getProgress(mapPath: Path) -> tuple[mapfile_parser.ProgressStats, dict[str, mapfile_parser.ProgressStats]]:
+def getProgress(mapPath: Path, asmPath: str) -> tuple[mapfile_parser.ProgressStats, dict[str, mapfile_parser.ProgressStats]]:
     """
     Gets the progress of the project using the mapfile parser.
     """
@@ -84,19 +84,23 @@ def getProgress(mapPath: Path) -> tuple[mapfile_parser.ProgressStats, dict[str, 
             filepathParts = list(file.filepath.parts)
             file.filepath = Path(*filepathParts)
 
-    nonMatchingsPath = ASMPATH / NONMATCHINGS
+    asmPath = Path(ASMPATH / asmPath)
 
-    progress = getProgressFromMapFile(mapFile.filterBySectionType(".text"), ASMPATH, nonMatchingsPath, aliases={"ultralib": "libultra"})
+    nonMatchingsPath = asmPath / NONMATCHINGS
+
+    progress = getProgressFromMapFile(mapFile.filterBySectionType(".text"), asmPath, nonMatchingsPath, aliases={"ultralib": "libultra"})
 
     return progress
 
-def processMapFiles(mapFiles: list[str], frogress_api_key: str) -> None:
+def processMapFiles(mapFiles: list[(str,str)], frogress_api_key: str) -> None:
     """
     Processes a list of map files and uploads their progress to frogress.
     """
     for mapFile in mapFiles:
-        print(f"Processing map file: {mapFile}")
-        codeTotalStats, codeProgressPerFolder = getProgress(mapFile)
+        print(f"Processing map file: {mapFile[0]}")
+        mapfilePathStr = mapFile[0]
+        mapfileAsmDir = mapFile[1]
+        codeTotalStats, codeProgressPerFolder = getProgress(mapfilePathStr, mapfileAsmDir)
         codeEntries: dict[str, int] = mapfile_parser.frontends.upload_frogress.getFrogressEntriesFromStats(codeTotalStats, codeProgressPerFolder, verbose=True)
 
         mapfile_parser.progress_stats.printStats(codeTotalStats, codeProgressPerFolder)
@@ -112,13 +116,14 @@ def main(args: argparse.ArgumentParser) -> None:
     if not frogress_api_key:
         raise ValueError("Missing frogress API key.")
 
+    # Map files and their asm directories
     mapFiles = [
-        "build/SCPS_150.97.map",
-        "build/KERNEL.XFF.map"
+        ("build/SCPS_150.97.map", "loader"),
+        ("build/KERNEL.XFF.map", "kernel")
     ]
 
     processMapFiles(mapFiles, frogress_api_key)
-    
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload progress to the frogress")
     parser.add_argument("--frogress_api_key", help="API key for the frogress")

@@ -153,9 +153,9 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         if entry.object_path is None:
             continue
 
-        if entry.object_path.is_relative_to(Path("build/asm/sdk")):
+        if entry.object_path.is_relative_to(Path("build/asm/loader/sdk")):
             override = "--section-align .text:0x4"
-        elif entry.object_path.is_relative_to(Path("build/asm/data/section")):
+        elif entry.object_path.is_relative_to(Path("build/asm/loader/data/section")):
             override = "--section-align .data:0x4"
         else:
             override = ""

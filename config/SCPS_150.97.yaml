@@ -6,12 +6,12 @@ options:
     target_path: iso/SCPS_150.97
     base_path: ..
     
-    asm_path: asm
-    src_path: src/os
+    asm_path: asm/loader
+    src_path: src/loader
     build_path: build
     
     extensions_path: tools/splat_ext
-    symbol_addrs_path: config/symbol_addrs.txt
+    symbol_addrs_path: config/loader_symbols.txt
 
     create_undefined_funcs_auto: True
     undefined_funcs_auto_path: config/SCPS_150.97_undefined_funcs_auto.txt
