@@ -14,9 +14,9 @@ options:
     symbol_addrs_path: config/symbol_addrs.txt
 
     create_undefined_funcs_auto: True
-    undefined_funcs_auto_path: config/undefined_funcs_auto.txt
+    undefined_funcs_auto_path: config/SCPS_150.97_undefined_funcs_auto.txt
     create_undefined_syms_auto: True
-    undefined_syms_auto_path:  config/undefined_syms_auto.txt
+    undefined_syms_auto_path:  config/SCPS_150.97_undefined_syms_auto.txt
     
     # compiler 
     compiler: EEGCC

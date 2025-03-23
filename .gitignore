@@ -53,8 +53,8 @@ dkms.conf
 .splache
 build.ninja
 SCPS_150.97
-SCPS_150.97.*
 KERNEL.XFF.*
+*.ld
 
 
 *.iso
@@ -63,17 +63,17 @@ KERNEL.XFF.*
 /venv
 /asm
 /assets
+/build
 
 /tools/cc/*
 
 permuter_settings.toml
 /nonmatchings
 
-undefined_funcs_auto.txt
-undefined_syms_auto.txt
 /.vscode
+
+*undefined_funcs_auto.txt
+*undefined_syms_auto.txt
 
 compile_commands.json
 /__pycache__
-config/kernel_undefined_funcs_auto.txt
-config/kernel_undefined_syms_auto.txt
