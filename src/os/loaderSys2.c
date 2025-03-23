@@ -4,6 +4,11 @@
 #include "sdk/ee/sifdev.h"
 #include "sdk/ee/sifrpc.h"
 
+static s32 D_0013B910[MAX_THREADS];
+static s32 D_0013BD10[MAX_SEMAPHORES];
+static struct unk D_0013C110[MAX_INTC_HANDLERS];
+static s32 D_0013C910[IOP_MEM_LIST_LEN];
+
 static inline s32 FindIntcHandlerIndex()
 {
     s32 i;

@@ -26,7 +26,7 @@ ELF_PATH = f"build/{BASENAME}"
 MAP_PATH = f"build/{BASENAME}.map"
 PRE_ELF_PATH = f"build/{BASENAME}.elf"
 
-COMMON_INCLUDES = "-Iinclude -I include/sdk/ee -I include/sdk -I include/gcc"
+COMMON_INCLUDES = "-Iinclude -I include/sdk/common -I include/sdk/ee -I include/sdk -I include/gcc"
 
 COMPILER = "ee-gcc2.96"
 GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"

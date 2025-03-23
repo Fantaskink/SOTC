@@ -3,6 +3,8 @@
 #include "sdk/ee/libpad2.h"
 #include "sdk/ee/libvib.h"
 
+struct t_padSysData D_0013D9C0[PAD_SYS_NR_PADS]; // 13D9C0
+
 void padSysTickProc(void)
 {
     struct t_padSysData *padsys;

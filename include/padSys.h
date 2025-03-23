@@ -47,7 +47,6 @@ struct t_padSysData
 }; //= 0x140
 
 #define PAD_SYS_NR_PADS 2
-struct t_padSysData D_0013D9C0[PAD_SYS_NR_PADS]; // 13D9C0
 
 void padSysTickProc(void);
 void padsysInit(void);

@@ -1,9 +1,9 @@
 #include "powerOff.h"
 #include "common.h"
 #include "putString.h"
+#include "sdk/common/libcdvd.h"
 #include "sdk/ee/eekernel.h"
 #include "sdk/ee/sifdev.h"
-#include "sdk/libcdvd.h"
 
 #define STACKSZ 0x1000
 

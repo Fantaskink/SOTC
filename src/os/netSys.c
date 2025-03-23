@@ -1,24 +1,17 @@
 #include "netSys.h"
 #include "common.h"
 #include "gcc/malloc.h"
+#include "gcc/stdio.h"
 #include "loaderSys3.h"
+#include "loaderSysFileIO.h"
 #include "padSys.h"
 #include "putString.h"
-
-// These are likely also const char*, used for identifiers
-extern const char D_0013A188[];
-extern const char D_0013A190[];
-extern const char D_0013A198[];
-extern const char D_0013A1A0[];
-extern const char D_0013A1A8[];
-extern const char D_0013A1B0[];
-extern const char D_0013A1B8[];
-extern const char D_0013A1C0[];
-extern const char D_0013A1C8[];
-extern const char D_0013A1D0[];
-extern const char D_0013A1D8[];
-extern const char D_0013A1E0[];
-extern const char D_0013A1E8[];
+#include "sdk/common/netcnfif.h"
+#include "sdk/ee/libmc2.h"
+#include "sdk/ee/libmrpc.h"
+#include "sdk/ee/libnet.h"
+#include "sdk/ee/libnet/libnetdefs.h"
+#include "usbSerialSys.h"
 
 // The buffer is accessed as an offset from D_0013D180 so it mus be an struct of this form
 // I'd imagine "buffer" is sceNetcnfifData_t but that struct is actually bigger
@@ -26,54 +19,50 @@ typedef struct joined_t
 {
     sceSifMClientData client_data;
     s32 pad;
-    u8 buffer[0x1000];
+    u8 buffer[0x800];
 } joined_t;
 
-extern int D_0013A304;
-extern char *D_001320A0[4];
-extern char *D_001320B8[];
-extern struct sceInetAddress D_001320C0;
-extern joined_t D_0013D180;
-extern s32 D_0013A1EC;
+static s32 func_00104090(s32 mode);
+static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, const char *fname, const char *usr_name, u32 flags);
+s32 func_00104668(s32 a0, s32 a1);
+int func_00104818(void);
+joined_t *LoaderSysInitTCP(void);
+
+int D_0013A304;
+static joined_t D_0013D180 __attribute__((aligned(64)));
+
+#define _LOAD_MODULE_ARGS(ident, argc, args)                                             \
+    {                                                                                    \
+        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\" ident ".IRX;1", argc, args) < 0) \
+            return -1;                                                                   \
+        setNewIopIdentifier(ident);                                                      \
+    }
+
+#define LOAD_MODULE_ARGS(ident, args) _LOAD_MODULE_ARGS(ident, sizeof(args), args)
+#define LOAD_MODULE(ident) _LOAD_MODULE_ARGS(ident, 0, NULL)
 
 static s32 func_00104090(s32 mode)
 {
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INET.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A188);
+    LOAD_MODULE("INET");
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\NETCNF.IRX;1", 70, "icon=cdrom0:\\SETTING\\SYS_NET.ICO;1\0iconsys=cdrom0:\\SETTING\\ICON.SYS;1") < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A190);
+    LOAD_MODULE_ARGS("NETCNF", "icon=cdrom0:\\SETTING\\SYS_NET.ICO;1\0iconsys=cdrom0:\\SETTING\\ICON.SYS;1");
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\INETCTL.IRX;1", 20, "-no_auto\0-no_decode") < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A198);
+    LOAD_MODULE_ARGS("INETCTL", "-no_auto\0-no_decode");
 
     switch (mode)
     {
     case 1:
     case 2:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\AN986.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A8);
+        LOAD_MODULE("USBD");
+        LOAD_MODULE("AN986");
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1A0);
+        LOAD_MODULE("USBD");
         break;
     case 3:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\DEV9.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1B0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\SMAP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1B8);
+        LOAD_MODULE("DEV9");
+        LOAD_MODULE("SMAP");
         break;
     case 0:
         break;
@@ -83,20 +72,12 @@ static s32 func_00104090(s32 mode)
     {
     case 2:
     case 4:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPPOE.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C8);
+        LOAD_MODULE("PPP");
+        LOAD_MODULE("PPPOE");
         break;
     case 5:
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\PPP.IRX;1", 0, NULL) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1C0);
-        if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\.IRX;1", 1, D_0013A1D0) < 0)
-            return -1;
-        setNewIopIdentifier(D_0013A1D0);
+        LOAD_MODULE("PPP");
+        LOAD_MODULE_ARGS("", "");
         break;
     case 0:
         LoaderSysLoadIopModule("cdrom0:\\MODULES\\USBD.IRX;1", 0, NULL);
@@ -108,13 +89,8 @@ static s32 func_00104090(s32 mode)
         break;
     }
 
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\MSIFRPC.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A1D8);
-
-    if (LoaderSysLoadIopModule("cdrom0:\\MODULES\\LIBNET.IRX;1", 0, NULL) < 0)
-        return -1;
-    setNewIopIdentifier(D_0013A1E0);
+    LOAD_MODULE("MSIFRPC");
+    LOAD_MODULE("LIBNET");
 
     if (LoaderSysLoadIopModule("cdrom0:\\MODULES2\\NETCNFIF.IRX;1", 0, NULL) < 0)
         return -1;
@@ -123,7 +99,7 @@ static s32 func_00104090(s32 mode)
     return 0;
 }
 
-static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, char *fname, char *usr_name, u32 flags)
+static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfifData_t *p_data, const char *fname, const char *usr_name, u32 flags)
 {
     sceNetcnfifArg_t if_arg;
     s32 addr;
@@ -177,7 +153,12 @@ static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfif
         }
 
         /* Get a destination address of sceNetcnfifData(). */
-        sceNetcnfifGetAddr(parg->data);
+        {
+            // Bug? sceNetcnfifGetAddr doesn't take any arguments, whatever it is, we need
+            // this compiling so override the declaration here
+            int sceNetcnfifGetAddr();
+            sceNetcnfifGetAddr(parg->data);
+        }
     }
     {
         sceNetcnfifArg_t *parg = &if_arg;
@@ -237,17 +218,7 @@ static s32 LoadSetConfiguration(sceSifMClientData *cd, u32 *net_buf, sceNetcnfif
     return (sceLIBNETE_OK);
 }
 
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137130);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137140);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137150);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137160);
-
-INCLUDE_RODATA("asm/nonmatchings/os/netSys", D_00137170);
-
-static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char *conf_path, char *usr_name, s32 flags)
+static inline s32 _load_set_conf_only(sceSifMClientData *cd, void *net_buf, const char *conf_path, const char *usr_name, s32 flags)
 {
     s32 ret;
     sceNetcnfifData_t *p_data;
@@ -264,10 +235,15 @@ static inline s32 load_set_conf_only(sceSifMClientData *cd, void *net_buf, char 
     return ret;
 }
 
+void *func_table[] = {&LoaderSysInitTCP, &sceMc2Init, &loaderSetResetCallback, &usbSerialSysPutString};
+const char *D_001320A0[] = {NULL, "Combination4", "Combination5", "Combination6", "Combination7"};
+const char *D_001320B8[] = {"Combination1"};
+struct sceInetAddress D_001320C0 = {0};
+
 s32 func_00104668(s32 a0, s32 a1)
 {
-    char *conf_path;
-    char *usr_name;
+    const char *conf_path;
+    const char *usr_name;
     u32 flags;
 
     // I'd like to know why the order is like this...
@@ -288,13 +264,13 @@ s32 func_00104668(s32 a0, s32 a1)
 
     printf("ldnet: up interface no auto\n");
 
-    if (load_set_conf_only(&D_0013D180.client_data, &D_0013D180.buffer, conf_path, usr_name, flags) < 0)
+    if (_load_set_conf_only(&D_0013D180.client_data, &D_0013D180.buffer, conf_path, usr_name, flags) < 0)
     {
         printf("load_set_conf_only() failed.\n");
         return 0;
     }
 
-    if (sceLibnetWaitGetInterfaceID(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1) < 0)
+    if (get_interface_id(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304) < 0)
     {
         printf("get_interface_id()\n");
         return 0;
@@ -302,7 +278,7 @@ s32 func_00104668(s32 a0, s32 a1)
 
     sceInetCtlUpInterface(&D_0013D180.client_data, &D_0013D180.buffer, D_0013A304);
 
-    if (sceLibnetWaitGetAddress(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, 1, &D_001320C0, 0) < 0)
+    if (wait_get_addr_only(&D_0013D180.client_data, &D_0013D180.buffer, &D_0013A304, &D_001320C0) < 0)
     {
         printf("wait_get_addr_only() failed.\n");
         return 0;
@@ -324,7 +300,7 @@ int func_00104818(void)
     s32 r;
     s32 ret;
 
-    PutStringS(PUTSTR_COL_LLBLUE, GSTR(D_0013A1E8, "  "));
+    PutStringS(PUTSTR_COL_LLBLUE, "  ");
 
     s1 = 0;
     r = 0;
@@ -364,4 +340,88 @@ int func_00104818(void)
     return ret;
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/netSys", LoaderSysInitTCP);
+joined_t *LoaderSysInitTCP(void)
+{
+    static s32 D_0013A1EC = 0;
+    char hostStr[0x80];
+    char ipStr[0x80];
+    s32 temp_v0;
+
+    if (D_0013A1EC != 0)
+    {
+        return &D_0013D180;
+    }
+
+    temp_v0 = func_00104818();
+    func_00104090(temp_v0);
+    sceSifMInitRpc(0);
+    sceLibnetInitialize(&D_0013D180.client_data, 0x800, 0x2000, 0x20);
+    if (sceLibnetRegisterHandler(&D_0013D180.client_data, &D_0013D180.buffer) < 0)
+    {
+        printf("reg_handler() failed.\n");
+        while (1)
+        {
+            // Infinite loop
+        }
+    }
+    LoaderSysLoadIopModule("cdrom0:\\MODULES2\\MCMAN.IRX;1", 0, 0);
+    LoaderSysLoadIopModule("cdrom0:\\MODULES2\\MCSERV.IRX;1", 0, 0);
+    PutString(PUTSTR_COL_WHITE, "\n\tInitialize network environment ");
+
+    switch (temp_v0)
+    {
+    case 0:
+        if (func_00104668(1, temp_v0))
+        {
+            break;
+        }
+        PutStringS(PUTSTR_COL_LORANGE, "failed.\n");
+        PutString(PUTSTR_COL_WHITE, "\t\tRetry by hdd ether ");
+        temp_v0 = 3;
+        /* fallthrough */
+    default:
+        if (func_00104668(0, temp_v0))
+        {
+            break;
+        }
+        PutStringS(PUTSTR_COL_LORANGE, "failed.\n");
+        PutString(PUTSTR_COL_WHITE, "\tCheck your hardware environment...\n");
+    }
+
+    if (sceInetAddress2String(&D_0013D180.client_data, &D_0013D180.buffer, (char *)&ipStr, sizeof(ipStr), &D_001320C0) != 0)
+    {
+        printf("ldnet: invalid addr\n");
+        while (1)
+        {
+            // Infinite loop
+        }
+    }
+
+    if (sceInetAddress2Name(&D_0013D180.client_data, &D_0013D180.buffer, 0, (char *)&hostStr, sizeof(hostStr), &D_001320C0, 0, 0) != 0)
+    {
+        hostStr[0] = 0;
+        printf("ldnet: my address: \"%s\"\n", (char *)&ipStr);
+    }
+    else
+    {
+        printf("ldnet: my address: \"%s\"[%s]\n", (char *)&hostStr, (char *)&ipStr);
+    }
+
+    PutString(PUTSTR_COL_WHITE, "done.\n\n");
+    LoaderSysUnloadIopModuleByName("mcserv", 0, 0, 0);
+    LoaderSysUnloadIopModuleByName("mcman", 0, 0, 0);
+    PutString(PUTSTR_COL_WHITE, "\n");
+    PutString(PUTSTR_COL_CYAN, "\t\t\t---------------------------------------------\n");
+    if (hostStr[0] != 0)
+    {
+        PutString(PUTSTR_COL_CYAN, "\t\t\tWelcome to ");
+        PutString(PUTSTR_COL_LGREEN3, "\"%s\"\n", (char *)&hostStr);
+    }
+    PutString(PUTSTR_COL_CYAN, "\t\t\t     this ps2's ip address is ");
+    PutString(PUTSTR_COL_LGREEN3, "\"%s\"\n", (char *)&ipStr);
+    PutString(PUTSTR_COL_CYAN, "\t\t\t---------------------------------------------\n");
+    PutStringS(PUTSTR_COL_CYAN, "\n");
+    D_0013A1EC = 1;
+
+    return &D_0013D180;
+}
