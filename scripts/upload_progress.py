@@ -90,6 +90,20 @@ def getProgress(mapPath: Path) -> tuple[mapfile_parser.ProgressStats, dict[str, 
 
     return progress
 
+def processMapFiles(mapFiles: list[str], frogress_api_key: str) -> None:
+    """
+    Processes a list of map files and uploads their progress to frogress.
+    """
+    for mapFile in mapFiles:
+        print(f"Processing map file: {mapFile}")
+        codeTotalStats, codeProgressPerFolder = getProgress(mapFile)
+        codeEntries: dict[str, int] = mapfile_parser.frontends.upload_frogress.getFrogressEntriesFromStats(codeTotalStats, codeProgressPerFolder, verbose=True)
+
+        mapfile_parser.progress_stats.printStats(codeTotalStats, codeProgressPerFolder)
+
+        url = mapfile_parser.utils.generateFrogressEndpointUrl(BASE_URL, SLUG, VERSION)
+        mapfile_parser.frontends.upload_frogress.uploadEntriesToFrogress(codeEntries, "default", url, apikey=frogress_api_key, verbose=True)
+
 def main(args: argparse.ArgumentParser) -> None:
     """
     Main function, calculates the progress and uploads it to frogress.
@@ -98,16 +112,13 @@ def main(args: argparse.ArgumentParser) -> None:
     if not frogress_api_key:
         raise ValueError("Missing frogress API key.")
 
-    mapPath = "build/SCPS_150.97.map"
+    mapFiles = [
+        "build/SCPS_150.97.map",
+        "build/KERNEL.XFF.map"
+    ]
 
-    codeTotalStats, codeProgressPerFolder = getProgress(mapPath)
-    codeEntries: dict[str, int] = mapfile_parser.frontends.upload_frogress.getFrogressEntriesFromStats(codeTotalStats, codeProgressPerFolder, verbose=True)
-
-    mapfile_parser.progress_stats.printStats(codeTotalStats, codeProgressPerFolder)
-
-    url = mapfile_parser.utils.generateFrogressEndpointUrl(BASE_URL, SLUG, VERSION)
-    mapfile_parser.frontends.upload_frogress.uploadEntriesToFrogress(codeEntries, "default", url, apikey=frogress_api_key, verbose=True)
-
+    processMapFiles(mapFiles, frogress_api_key)
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Upload progress to the frogress")
     parser.add_argument("--frogress_api_key", help="API key for the frogress")
