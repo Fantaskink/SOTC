@@ -47,11 +47,11 @@ jobs:
           python configure-SCPS_150.97.py
           ninja
 
-      - name: Post to frogress endpoint
-        run: |
-          python3 scripts/upload_progress.py --frogress_api_key ${{ secrets.FROGRESS_API_KEY }}
-
       - name: Build KERNEL.XFF
         run: |
           python configure-kernel.py
           ninja
+
+      - name: Post to frogress endpoint
+        run: |
+          python3 scripts/upload_progress.py --frogress_api_key ${{ secrets.FROGRESS_API_KEY }}
