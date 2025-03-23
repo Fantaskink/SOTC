@@ -117,7 +117,7 @@ def processMapFiles(mapFiles: list[tuple[str,str]], frogress_api_key: str) -> No
         combinedCodeEntries.update(codeEntries)
 
     url = mapfile_parser.utils.generateFrogressEndpointUrl(BASE_URL, SLUG, VERSION)
-    mapfile_parser.frontends.upload_frogress.uploadEntriesToFrogress(codeEntries, "default", url, apikey=frogress_api_key, verbose=True)
+    mapfile_parser.frontends.upload_frogress.uploadEntriesToFrogress(combinedCodeEntries, "default", url, apikey=frogress_api_key, verbose=True)
 
 def main(args: argparse.ArgumentParser) -> None:
     """
