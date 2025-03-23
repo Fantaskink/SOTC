@@ -32,6 +32,7 @@
 *.i*86
 *.x86_64
 *.hex
+*.pyc
 
 # Debug files
 *.dSYM/
@@ -52,7 +53,8 @@ dkms.conf
 .splache
 build.ninja
 SCPS_150.97
-SCPS_150.97.*
+KERNEL.XFF.*
+*.ld
 
 
 *.iso
@@ -61,15 +63,17 @@ SCPS_150.97.*
 /venv
 /asm
 /assets
+/build
 
 /tools/cc/*
 
 permuter_settings.toml
 /nonmatchings
 
-undefined_funcs_auto.txt
-undefined_syms_auto.txt
 /.vscode
+
+*undefined_funcs_auto.txt
+*undefined_syms_auto.txt
 
 compile_commands.json
 /__pycache__

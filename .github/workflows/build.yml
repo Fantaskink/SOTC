@@ -39,11 +39,17 @@ jobs:
         run: |
           sudo apt-get install -y binutils-mips-linux-gnu
           mkdir -p iso
-          wget --no-check-certificate "${{ secrets.FILE_URL }}" -O iso/SCPS_150.97 
+          wget --no-check-certificate "${{ secrets.FILE_URL }}" -O iso/SCPS_150.97
+          wget --no-check-certificate "${{ secrets.KERNEL_URL }}" -O iso/KERNEL.XFF
 
-      - name: Run build script
+      - name: Build main ELF
         run: |
-          python configure.py
+          python configure-SCPS_150.97.py
+          ninja
+
+      - name: Build KERNEL.XFF
+        run: |
+          python configure-kernel.py
           ninja
 
       - name: Post to frogress endpoint

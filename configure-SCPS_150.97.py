@@ -19,7 +19,7 @@ from splat.segtypes.linker_entry import LinkerEntry
 ROOT = Path(__file__).parent
 TOOLS_DIR = ROOT / "tools"
 
-YAML_FILE = "config/sotc_preview.yaml"
+YAML_FILE = "config/SCPS_150.97.yaml"
 BASENAME = "SCPS_150.97"
 LD_PATH = f"{BASENAME}.ld"
 ELF_PATH = f"build/{BASENAME}"
@@ -112,7 +112,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
 
     # Rules
     cross = "mips-linux-gnu-"
-    ld_args = "-EL -T config/undefined_syms_auto.txt -T config/undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
+    ld_args = "-EL -T config/SCPS_150.97_undefined_syms_auto.txt -T config/SCPS_150.97_undefined_funcs_auto.txt -T config/undefined_syms.txt -Map $mapfile -T $in -o $out"
 
     ninja.rule(
         "as",
@@ -153,9 +153,9 @@ def build_stuff(linker_entries: List[LinkerEntry]):
         if entry.object_path is None:
             continue
 
-        if entry.object_path.is_relative_to(Path("build/asm/sdk")):
+        if entry.object_path.is_relative_to(Path("build/asm/loader/sdk")):
             override = "--section-align .text:0x4"
-        elif entry.object_path.is_relative_to(Path("build/asm/data/section")):
+        elif entry.object_path.is_relative_to(Path("build/asm/loader/data/section")):
             override = "--section-align .data:0x4"
         else:
             override = ""
@@ -202,7 +202,7 @@ def build_stuff(linker_entries: List[LinkerEntry]):
     ninja.build(
         ELF_PATH + ".ok",
         "sha1sum",
-        "checksum.sha1",
+        "checksum-SCPS_150.97.sha1",
         implicit=[ELF_PATH],
     )
 
