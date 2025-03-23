@@ -69,7 +69,7 @@ def getProgressFromMapFile(mapFile: mapfile_parser.MapFile, asmPath: Path, nonma
 
     return totalStats, progressPerFolder
 
-def getProgress(mapPath: Path, asmPath: str) -> tuple[mapfile_parser.ProgressStats, dict[str, mapfile_parser.ProgressStats]]:
+def getProgress(mapPath: str, asmPath: str) -> tuple[mapfile_parser.ProgressStats, dict[str, mapfile_parser.ProgressStats]]:
     """
     Gets the progress of the project using the mapfile parser.
     """
@@ -84,15 +84,18 @@ def getProgress(mapPath: Path, asmPath: str) -> tuple[mapfile_parser.ProgressSta
             filepathParts = list(file.filepath.parts)
             file.filepath = Path(*filepathParts)
 
-    asmPath = Path(ASMPATH / asmPath)
+    asmPath = ASMPATH / Path(asmPath)
 
     nonMatchingsPath = asmPath / NONMATCHINGS
 
-    progress = getProgressFromMapFile(mapFile.filterBySectionType(".text"), asmPath, nonMatchingsPath, aliases={"ultralib": "libultra"})
+    print(f"ASM path: {asmPath}")
+    print(f"Nonmatchings path: {nonMatchingsPath}")
+
+    progress = getProgressFromMapFile(mapFile.filterBySectionType(".text"), asmPath, nonMatchingsPath)
 
     return progress
 
-def processMapFiles(mapFiles: list[(str,str)], frogress_api_key: str) -> None:
+def processMapFiles(mapFiles: list[tuple[str,str]], frogress_api_key: str) -> None:
     """
     Processes a list of map files and uploads their progress to frogress.
     """
