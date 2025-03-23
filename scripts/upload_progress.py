@@ -99,14 +99,22 @@ def processMapFiles(mapFiles: list[tuple[str,str]], frogress_api_key: str) -> No
     """
     Processes a list of map files and uploads their progress to frogress.
     """
-    for mapFile in mapFiles:
-        print(f"Processing map file: {mapFile[0]}")
-        mapfilePathStr = mapFile[0]
-        mapfileAsmDir = mapFile[1]
-        codeTotalStats, codeProgressPerFolder = getProgress(mapfilePathStr, mapfileAsmDir)
-        codeEntries: dict[str, int] = mapfile_parser.frontends.upload_frogress.getFrogressEntriesFromStats(codeTotalStats, codeProgressPerFolder, verbose=True)
+    combinedCodeEntries: dict[str, int] = dict()
 
+    for mapfilePathStr, mapfileAsmDir in mapFiles:
+        print(f"Processing map file: {mapfilePathStr}")
+
+        # Get progress stats for the current map file
+        codeTotalStats, codeProgressPerFolder = getProgress(mapfilePathStr, mapfileAsmDir)
+        codeEntries = mapfile_parser.frontends.upload_frogress.getFrogressEntriesFromStats(
+            codeTotalStats, codeProgressPerFolder, verbose=True
+        )
+
+        # Print stats for debugging
         mapfile_parser.progress_stats.printStats(codeTotalStats, codeProgressPerFolder)
+
+        # Combine entries into the aggregated dictionary
+        combinedCodeEntries.update(codeEntries)
 
         url = mapfile_parser.utils.generateFrogressEndpointUrl(BASE_URL, SLUG, VERSION)
         mapfile_parser.frontends.upload_frogress.uploadEntriesToFrogress(codeEntries, "default", url, apikey=frogress_api_key, verbose=True)
