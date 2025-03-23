@@ -1,6 +1,6 @@
 # Shadow of the Colossus Decompilation Project
 [loader-progress-badge]: https://img.shields.io/endpoint?url=https%3A%2F%2Fprogress.deco.mp%2Fdata%2Fsotc%2Fpreview%2Floader%2F%3Fmode%3Dshield%26measure%3Dloader&style=flat&label=SCPS_150.97
-[kernel-progress-badge]: https://img.shields.io/endpoint?url=https%3A%2F%2Fprogress.deco.mp%2Fdata%2Fsotc%2Fpreview%2Fkernel%2F%3Fmode%3Dshield%26measure%3Dloader&style=flat&label=KERNEL.XFF
+[kernel-progress-badge]: https://img.shields.io/endpoint?url=https%3A%2F%2Fprogress.deco.mp%2Fdata%2Fsotc%2Fpreview%2Fkernel%2F%3Fmode%3Dshield%26measure%3Dkernel&style=flat&label=KERNEL.XFF
 
 <!-- Contributors shield -->
 [contributors-url]: https://github.com/Fantaskink/SOTC/graphs/contributors
