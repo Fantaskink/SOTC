@@ -532,7 +532,7 @@ void LoaderSysJumpRecoverPointNoStateSetting(char *format, ...)
     func_00100A58();
 }
 
-INCLUDE_ASM("asm/nonmatchings/os/loaderSys", LoaderSysJumpRecoverPoint);
+INCLUDE_ASM("asm/nonmatchings/loaderSys", LoaderSysJumpRecoverPoint);
 
 void func_00101AA0(void)
 {
