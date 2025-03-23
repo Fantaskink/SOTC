@@ -5,7 +5,7 @@ options:
     target_path: iso/KERNEL.XFF
     base_path: ..
 
-    asm_path: asm/kernel
+    asm_path: asm
     src_path: src/kernel
     build_path: build
 
@@ -968,43 +968,43 @@ segments:
 
         # sce
         #- [ 0x31a98, textbin, sce ]
-        - [ 0x31a98, asm, sce/mktime ]
-        #- [ 0x31E68, asm, sce/mktime ] # mktime
-        - [ 0x32100, asm, sce/strstr ] # strstr
-        - [ 0x32188, asm, sce/div ] # div
-        - [ 0x32210, asm, sce/atanf ] # atanf
-        - [ 0x324A0, asm, sce/cosf ] # cosf
-        - [ 0x32578, asm, sce/fabsf ] # fabsf
-        - [ 0x325A0, asm, sce/sinf] # sinf
-        - [ 0x32688, asm, sce/sqrt] # sqrt
-        - [ 0x326A0, asm, sce/acosf] # acosf
-        - [ 0x326B8, asm, sce/asinf ] # asinf
-        - [ 0x326D0, asm, sce/atan2f ] # atan2f
-        - [ 0x326E8, asm, sce/fmodf ] # fmodf
-        - [ 0x32700, asm, sce/powf ] # powf
-        - [ 0x32718, asm, sce/sqrtf ] # sqrtf
-        - [ 0x32730, asm, sce/__ieee754_sqrt ] # __ieee754_sqrt
-        - [ 0x32A50, asm, sce/__ieee754_acosf ] # __ieee754_acosf
-        - [ 0x32E78, asm, sce/__ieee754_asinf ] # __ieee754_asinf
-        - [ 0x33218, asm, sce/__ieee754_atan2f ] # __ieee754_atan2f
-        - [ 0x333F8, asm, sce/__ieee754_fmodf ] # __ieee754_fmodf
-        - [ 0x335C8, asm, sce/__ieee754_powf ] # __ieee754_powf
-        - [ 0x33DA8, asm, sce/__ieee754_rem_pio2f ] # __ieee754_rem_pio2f
-        - [ 0x34158, asm, sce/__ieee754_sqrtf ] # __ieee754_sqrtf
-        - [ 0x34228, asm, sce/__kernel_cosf ] # __kernel_cosf
-        - [ 0x34378, asm, sce/__kernel_rem_pio2f ] # __kernel_rem_pio2f
-        - [ 0x34BE0, asm, sce/__kernel_sinf ] # __kernel_sinf
-        - [ 0x34CE8, asm, sce/floorf ] # floorf
-        - [ 0x34DC0, asm, sce/scalbnf ] # scalbnf
-        - [ 0x34E88, asm, sce/copysignf ] # copysignf
-        - [ 0x34EC8, asm, sce/sceGsPutIMR ] # sceGsPutIMR
-        - [ 0x34F08, asm, sce/sceGsGetIMR ] # sceGsGetIMR
-        - [ 0x34F28, asm, sce/isceGsPutIMR ] # isceGsPutIMR
-        - [ 0x34F68, asm, sce/sceCdRead ] # sceCdRead
-        - [ 0x35148, asm, sce/sceCdReadIOPm ] # sceCdReadIOPm
-        - [ 0x352A0, asm, sce/sceCdGetError ] # sceCdGetError
-        - [ 0x35338, asm, sce/sceCdStatus ] # sceCdStatus
-        - [ 0x353F0, asm, sce/sceCdReadClock ] # sceCdReadClock
+        - [ 0x31a98, asm, sdk/mktime ]
+        #- [ 0x31E68, asm, sdk/mktime ] # mktime
+        - [ 0x32100, asm, sdk/strstr ] # strstr
+        - [ 0x32188, asm, sdk/div ] # div
+        - [ 0x32210, asm, sdk/atanf ] # atanf
+        - [ 0x324A0, asm, sdk/cosf ] # cosf
+        - [ 0x32578, asm, sdk/fabsf ] # fabsf
+        - [ 0x325A0, asm, sdk/sinf] # sinf
+        - [ 0x32688, asm, sdk/sqrt] # sqrt
+        - [ 0x326A0, asm, sdk/acosf] # acosf
+        - [ 0x326B8, asm, sdk/asinf ] # asinf
+        - [ 0x326D0, asm, sdk/atan2f ] # atan2f
+        - [ 0x326E8, asm, sdk/fmodf ] # fmodf
+        - [ 0x32700, asm, sdk/powf ] # powf
+        - [ 0x32718, asm, sdk/sqrtf ] # sqrtf
+        - [ 0x32730, asm, sdk/__ieee754_sqrt ] # __ieee754_sqrt
+        - [ 0x32A50, asm, sdk/__ieee754_acosf ] # __ieee754_acosf
+        - [ 0x32E78, asm, sdk/__ieee754_asinf ] # __ieee754_asinf
+        - [ 0x33218, asm, sdk/__ieee754_atan2f ] # __ieee754_atan2f
+        - [ 0x333F8, asm, sdk/__ieee754_fmodf ] # __ieee754_fmodf
+        - [ 0x335C8, asm, sdk/__ieee754_powf ] # __ieee754_powf
+        - [ 0x33DA8, asm, sdk/__ieee754_rem_pio2f ] # __ieee754_rem_pio2f
+        - [ 0x34158, asm, sdk/__ieee754_sqrtf ] # __ieee754_sqrtf
+        - [ 0x34228, asm, sdk/__kernel_cosf ] # __kernel_cosf
+        - [ 0x34378, asm, sdk/__kernel_rem_pio2f ] # __kernel_rem_pio2f
+        - [ 0x34BE0, asm, sdk/__kernel_sinf ] # __kernel_sinf
+        - [ 0x34CE8, asm, sdk/floorf ] # floorf
+        - [ 0x34DC0, asm, sdk/scalbnf ] # scalbnf
+        - [ 0x34E88, asm, sdk/copysignf ] # copysignf
+        - [ 0x34EC8, asm, sdk/sceGsPutIMR ] # sceGsPutIMR
+        - [ 0x34F08, asm, sdk/sceGsGetIMR ] # sceGsGetIMR
+        - [ 0x34F28, asm, sdk/isceGsPutIMR ] # isceGsPutIMR
+        - [ 0x34F68, asm, sdk/sceCdRead ] # sceCdRead
+        - [ 0x35148, asm, sdk/sceCdReadIOPm ] # sceCdReadIOPm
+        - [ 0x352A0, asm, sdk/sceCdGetError ] # sceCdGetError
+        - [ 0x35338, asm, sdk/sceCdStatus ] # sceCdStatus
+        - [ 0x353F0, asm, sdk/sceCdReadClock ] # sceCdReadClock
         
 
         # data

@@ -7,7 +7,7 @@ options:
     base_path: ..
     
     asm_path: asm
-    src_path: src
+    src_path: src/os
     build_path: build
     
     extensions_path: tools/splat_ext
@@ -45,17 +45,17 @@ segments:
       subalign: null
       subsegments:
         - [0x1000, asm, sdk/crt0]
-        - [0x10d0, c, os/loaderSys, "-O3"]
-        - [0x2ec0, c, os/loaderSysException]
-        - [0x3438, c, os/loaderSys2, "-O3"]
-        - [0x3CF8, c, os/loaderSysFileIO, "-O3"]
-        - [0x43b0, c, os/loaderSys3, "-O3"]
-        - [0x4ff8, c, os/loaderSysMemprint]
-        - [0x5090, c, os/netSys]
-        - [0x5cc0, c, os/padSys]
-        - [0x5f58, c, os/powerOff]
-        - [0x60b8, c, os/usbSerialSys]
-        - [0x6408, c, os/putString, "-O3"]
+        - [0x10d0, c, loaderSys, "-O3"]
+        - [0x2ec0, c, loaderSysException]
+        - [0x3438, c, loaderSys2, "-O3"]
+        - [0x3CF8, c, loaderSysFileIO, "-O3"]
+        - [0x43b0, c, loaderSys3, "-O3"]
+        - [0x4ff8, c, loaderSysMemprint]
+        - [0x5090, c, netSys]
+        - [0x5cc0, c, padSys]
+        - [0x5f58, c, powerOff]
+        - [0x60b8, c, usbSerialSys]
+        - [0x6408, c, putString, "-O3"]
 
         # what the hell
         - [0x7c8c, asm, sdk/padding]
@@ -209,53 +209,53 @@ segments:
         - [0x32c10, asm, sdk/libgcc/_df_to_si]
 
         #- [0x32CB4, databin] # .reginfo
-        - [0x32D00, .data, os/loaderSys]
-        - [0x32E00, .data, os/loaderSysException]
-        - [0x33080, .data, os/loaderSys2]
-        - [0x33090, .data, os/netSys]
-        - [0x330d0, .data, os/putString]
+        - [0x32D00, .data, loaderSys]
+        - [0x32E00, .data, loaderSysException]
+        - [0x33080, .data, loaderSys2]
+        - [0x33090, .data, netSys]
+        - [0x330d0, .data, putString]
         - [0x33370, data, sdk/data] # library data
         - [0x371CC, databin, section/ctors] # .ctors
         - [0x371D4, databin, section/dtors] # .dtors
         - [0x371E0, databin, section/eh_frame] # .eh_frame
-        - [0x37200, .rodata, os/loaderSys]
-        - [0x37630, .rodata, os/loaderSysException]
-        - [0x37a00, .rodata, os/loaderSysFileIO]
-        - [0x37be8, .rodata, os/loaderSys3]
-        - [0x37ed8, .rodata, os/loaderSysMemprint]
-        - [0x37ee0, .rodata, os/netSys]
-        - [0x384f0, .rodata, os/powerOff]
-        - [0x38510, .rodata, os/usbSerialSys] 
-        - [0x38540, rodatabin, os/Font]
-        - [0x38d40, .rodata, os/putString]
+        - [0x37200, .rodata, loaderSys]
+        - [0x37630, .rodata, loaderSysException]
+        - [0x37a00, .rodata, loaderSysFileIO]
+        - [0x37be8, .rodata, loaderSys3]
+        - [0x37ed8, .rodata, loaderSysMemprint]
+        - [0x37ee0, .rodata, netSys]
+        - [0x384f0, .rodata, powerOff]
+        - [0x38510, .rodata, usbSerialSys] 
+        - [0x38540, rodatabin, Font]
+        - [0x38d40, .rodata, putString]
         
         - [0x38D88, rodatabin] # SDK rodata
-        - [0x3AE80, .lit4, os/putString] # .lit4
+        - [0x3AE80, .lit4, putString] # .lit4
         - [0x3AE84, pad] # .data_nop
-        - [0x3AF00, .sdata, os/loaderSys]
-        - [0x3AF68, .sdata, os/loaderSysException]
-        - [0x3b0f8, .sdata, os/loaderSysFileIO]
-        - [0x3b110, .sdata, os/loaderSys3]
-        - [0x3b188, .sdata, os/netSys]
-        - [0x3b218, .sdata, os/powerOff]
-        - [0x3b230, .sdata, os/putString]
+        - [0x3AF00, .sdata, loaderSys]
+        - [0x3AF68, .sdata, loaderSysException]
+        - [0x3b0f8, .sdata, loaderSysFileIO]
+        - [0x3b110, .sdata, loaderSys3]
+        - [0x3b188, .sdata, netSys]
+        - [0x3b218, .sdata, powerOff]
+        - [0x3b230, .sdata, putString]
         - [0x3b284, pad]
         
-        - {start: 0x3b300, type: .sbss, vram: 0x0013A300, name: os/loaderSys}
-        - {start: 0x3b300, type: .sbss, vram: 0x0013A304, name: os/netSys}
-        - {start: 0x3b300, type: .sbss, vram: 0x0013A308, name: os/usbSerialSys}
+        - {start: 0x3b300, type: .sbss, vram: 0x0013A300, name: loaderSys}
+        - {start: 0x3b300, type: .sbss, vram: 0x0013A304, name: netSys}
+        - {start: 0x3b300, type: .sbss, vram: 0x0013A308, name: usbSerialSys}
         - {start: 0x3b300, type: sbss, vram: 0x0013A30C, name: sdk}
         - {start: 0x3b370, type: bss, vram: 0x0013A380, name: sdk/crt0}
-        - {start: 0x3b370, type: .bss, vram: 0x0013A4C8, name: os/loaderSys}
-        - {start: 0x3b370, type: .bss, vram: 0x0013B900, name: os/loaderSysException}
-        - {start: 0x3b370, type: .bss, vram: 0x0013B910, name: os/loaderSys2}
-        - {start: 0x3b370, type: .bss, vram: 0x0013CD10, name: os/loaderSysFileIO}
-        - {start: 0x3b370, type: .bss, vram: 0x0013D110, name: os/loaderSys3}
-        - {start: 0x3b370, type: .bss, vram: 0x0013D180, name: os/netSys}
-        - {start: 0x3b370, type: .bss, vram: 0x0013D9C0, name: os/padSys}
-        - {start: 0x3b370, type: .bss, vram: 0x0013DC40, name: os/powerOff}
-        - {start: 0x3b370, type: .bss, vram: 0x0013EC40, name: os/usbSerialSys}
-        - {start: 0x3b370, type: .bss, vram: 0x0013ECE0, name: os/putString}
+        - {start: 0x3b370, type: .bss, vram: 0x0013A4C8, name: loaderSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013B900, name: loaderSysException}
+        - {start: 0x3b370, type: .bss, vram: 0x0013B910, name: loaderSys2}
+        - {start: 0x3b370, type: .bss, vram: 0x0013CD10, name: loaderSysFileIO}
+        - {start: 0x3b370, type: .bss, vram: 0x0013D110, name: loaderSys3}
+        - {start: 0x3b370, type: .bss, vram: 0x0013D180, name: netSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013D9C0, name: padSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013DC40, name: powerOff}
+        - {start: 0x3b370, type: .bss, vram: 0x0013EC40, name: usbSerialSys}
+        - {start: 0x3b370, type: .bss, vram: 0x0013ECE0, name: putString}
         - {start: 0x3b370, type: bss, vram: 0x00143A10, name: sdk}
     - [0x3B300, databin] # padding
     - [0x3B370, databin] # .shstrtab
