@@ -26,7 +26,7 @@ We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1
 ### Setup
 1. Create an ``iso`` directory in the root directory
 2. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` into the ``iso`` directory
-3. ``configure.py`` (optionally pass ``-c`` to do a clean split)
+3. ``configure-SCPS_105.97.py`` (optionally pass ``-c`` to do a clean split)
 4. ``ninja``
 
 ## Contributing
