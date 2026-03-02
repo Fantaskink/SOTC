@@ -8,8 +8,16 @@ if you want to contribute but dont know what all of this stuff about, hope this 
 
 #### Bash
 	it just command line on terminal that give instruction to operating system with various task
+	You will use it to:
+	- Run build scripts
+	- Execute tools
+	- Automate repetitive tasks
 #### Shell
 	because bash have limited like cant run some different multiple command at once, in shell you can do it.
+	Compared to basic Bash usage, shells allow:
+	- Command chaining
+	- Script automation
+	- Running multiple commands together
 
 ### Programing Language
 
@@ -35,7 +43,7 @@ for complete knowledge you visit resource below:
 	[C programing in advance](https://www.youtube.com/watch?v=PaPN51Mm5qQ&pp=ygUiYyBwcm9ncmFtaW5nIGxhbmd1YWdlIGZyZWVjb2RlY2FtcA%3D%3D)
 for more stuff you can learn by your own if you get basic stuff.
 
-#### Assembly Language
+#### Assembly Language (Critical Skill)
 you need to understand assembly language because it 1:1 with binary size, you cant bring back binary to c if you dont understand assembly language.
 Ok there are ton of assembly version like nasm,fasm,tasm,masm,etc. beside there are two common syntax style use in various assembly they are ```intel syntax``` and ```AT&T syntax```. for this project you just need learn mips assembly, but for strong foundation you can learn GNU assembly /  GASx64 before get your hand dirty with mips.
 because assembly is full of freedom languge there are no concept like: ```int``` ```string``` ```array``` ```oop``` ```var or auto```and other ton suff high programing language does, even you cant find starange ```borrow``` ```owner``` in rust concept rule , we cant explaint it with simple word here. you can surface by your own on internet. hope this some link help you to learn:
@@ -57,16 +65,26 @@ you can search on youtube,web,course there are ton material there.
 
 ### Other stuff
 #### Version Control
-- **Git** : a tools that need for project team
+- **Git** : Used for Collaboration, Tracking changes, Reviewing contributions
 #### Configuration
-- **YAML** : used to write configuration files in a human-readable way.
+- **YAML** : Tool configuration Build settings, Project metadata
 #### Decompiler Tools
-a tool that bring back mechinde code to c code
+a tool that bring back mechinde code to c code, at the moment if tool give a shity piece because protection you need to know mechone code and fix it manually
 - **Ghidra** 
 - **Ida pro** 
 
 
 ## FAQ
-.....................
+**Do I need to know everything before contributing?**
+No. Start small. Learn while contributing.
+
+**Is this project beginner-friendly?**
+obviously not you need a ton pre require to learn before get your hand dirty here
+
+**Where should I start?**
+-Learn C basics
+-Study assembly fundamentals
+-Use Ghidra or IDA
+-Write simple Python scripts
 
 
