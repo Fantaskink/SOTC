@@ -1,23 +1,14 @@
-// int gLastIndex; //last indeks
-// int* gBasedIndex; //array static or dynamic 
-// int gData; // curretn data node
 
-extern void iosDlChainTailCurrent(int data);
+extern s32 D_40045A08; //glastindex
+extern s32 D_40092288;//gbased index
+extern s32 D_40045A00; //gdata
+
+extern void iosDlChainTailCurrent(s32 data);
 void iosPushDC(int currentData) {
-      int *indexHelper = &gBasedIndex + gLastIndex;
-      ++gLastIndex;
-      *indexHelper = currentData;
-      iosDlChainTailCurrent(currentData);
-      gData = currentData;
-      return;
+    s32 *indexHelper = &D_40092288 + D_40045A08;
+    ++D_40045A08;
+    *indexHelper = currentData;
+    iosDlChainTailCurrent(currentData);
+    D_40045A00 = currentData;
+    return;
 }
-
-// void iosPushDC(param_1) {
-//       int *puVar1;
-//       puVar1 = &DAT_00065fc8 + DAT_00043868;
-//       int DAT_00043868 = DAT_00043868 + 1;
-//       *puVar1 = param_1;
-//       iosDlChainTailCurrent();
-//       int DAT_00043860 = param_1;
-//       return;
-// }
