@@ -66,6 +66,7 @@ SCPS_150.97
 /build
 /.python3
 /target
+/out
 
 /tools/cc/*
 
@@ -73,6 +74,7 @@ permuter_settings.toml
 /nonmatchings
 
 /.vscode
+.idea/
 
 *undefined_funcs_auto.txt
 *undefined_syms_auto.txt

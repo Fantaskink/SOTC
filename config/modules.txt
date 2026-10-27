@@ -1,0 +1,12 @@
+# The binaries this project builds. Read by configure.py, the makefile and CMakeLists.txt.
+#
+#   name     what -t, `make <name>` and `cmake --build --target <name>` take
+#   file     the file in iso/, also config/<file>/<file>.yaml and checksum-<file>.sha1
+#   format   elf: linked into a flat binary; xff: linked relocatable, then tools/fix_xff.py
+#   align=<dir>:<section>:<alignment>  (optional, repeatable)
+#            objects under asm/<file>/<dir>/ are patched to this section alignment by
+#            tools/elf_patcher.py; the first matching entry wins
+#
+# name      file          format  options
+loader      SCPS_150.97   elf     align=sdk:.text:0x4 align=data/section:.data:0x4
+kernel      KERNEL.XFF    xff

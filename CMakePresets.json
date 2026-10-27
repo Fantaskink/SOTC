@@ -1,0 +1,17 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out",
+      "cacheVariables": {
+        "DECOMP_PYTHON": "${sourceDir}/.python3/bin/python3",
+        "DECOMP_CC": "${sourceDir}/tools/cc/ee-gcc2.96/bin/ee-gcc",
+        "ISO_PATH": "${sourceDir}/iso"
+      }
+    }
+  ],
+  "buildPresets": [ { "name": "default", "configurePreset": "default" } ],
+  "testPresets":  [ { "name": "default", "configurePreset": "default" } ]
+}

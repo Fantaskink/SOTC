@@ -16,8 +16,9 @@ We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1
 </a>
 
 ## Getting Started
+(NOTE: if you have problems with building on wsl use docker)
 ### Requirements
-**Disclaimer**: Linux or WSL2 required
+**MakeFile**: Linux or WSL2 required
 1. ``sudo apt install gcc-mipsel-linux-gnu binutils-mips-linux-gnu ninja-build``
 2. ``sudo apt install python3-pip python3-venv``
 3. ``python3 -m venv ./.python3``
@@ -25,12 +26,15 @@ We are currently targeting the Preview Version's main ELF (``SCPS_150.97``, sha1
 3. ``python3 -m pip install -U -r requirements.txt``
 4. ``scripts/setup_compiler.sh``
 
+**CMake**: Linux or WSL2 required
+1. ``cmake --preset default # this should setup dependencies on its own``
+
 (NOTE: If you have problems when compiling try installing ``gcc-multilib``)
 
 ### Setup
 1. Create an ``iso`` directory in the root directory
 2. From a Shadow of the Colossus Preview Version ISO, extract ``SCPS_150.97`` and ``KERNEL.XFF`` into the ``iso`` directory
-3. Just run ``make`` to build all modules (``make loader`` or ``make kernel`` to build just one module. ``make clean`` also works)
+3. [Building with cmake](docs/CMAKE.md) or [Building with makefile](docs/MAKEFILE.MD) for windows users see [Building with docker](docs/DOCKER.MD)
 
 ## Contributing
 Use our [contribution guide](docs/CONTRIBUTING.md).

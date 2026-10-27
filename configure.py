@@ -1,4 +1,4 @@
-#!./.python3/bin/python3
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -8,7 +8,7 @@ import sys
 import re
 
 from pathlib import Path
-from typing import Dict, List, Set, Union
+from typing import Dict, List, NamedTuple, Set, Tuple, Union
 
 import ninja_syntax
 
@@ -20,16 +20,71 @@ from splat.segtypes.linker_entry import LinkerEntry
 
 ROOT = Path(__file__).parent
 TOOLS_DIR = ROOT / "tools"
-
+PYTHON_BIN = os.environ.get("DECOMP_PYTHON", sys.executable) or f"{ROOT}/.python3/bin/python3"
+ISO_PATH = os.environ.get("ISO_PATH", sys.executable) or f"{ROOT}/iso"
 COMMON_INCLUDES = "-Iinclude -I include/sdk/common -I include/sdk/ee -I include/sdk -I include/gcc"
-
-COMPILER = "ee-gcc2.96"
-GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
-CUSTOM_SPECS_FILE = f"{TOOLS_DIR}/cc/{COMPILER}/lib/regnames.specs"
+_env_cc = os.environ.get("DECOMP_CC")
+if _env_cc:
+    _cc_path = Path(_env_cc)
+    GAME_CC_DIR = str(_cc_path.parent)
+    CUSTOM_SPECS_FILE = str(_cc_path.parent.parent / "lib" / "regnames.specs")
+    COMPILER = _cc_path.parent.parent.name
+else:
+    COMPILER = "ee-gcc2.96"
+    GAME_CC_DIR = f"{TOOLS_DIR}/cc/{COMPILER}/bin"
+    CUSTOM_SPECS_FILE = f"{TOOLS_DIR}/cc/{COMPILER}/lib/regnames.specs"
 
 GAME_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} $optlevel -g2 $regnames"
 
 XFF_COMPILE_CMD = f"{GAME_CC_DIR}/ee-gcc -c {COMMON_INCLUDES} $optlevel -G0 -g2 $regnames"
+
+MODULES_FILE = ROOT / "config" / "modules.txt"
+
+
+"""look at config/modules.txt for more context"""
+class Module(NamedTuple):
+    name: str  # what -t takes (and the make/CMake target name)
+    basename: str  # the file in iso/ and config/<basename>/<basename>.yaml
+    is_xff: bool  # XFF files are linked relocatable and fixed up by tools/fix_xff.py
+    # (directory below asm/<basename>/, "<section>:<alignment>") pairs; the first match decides the
+    # --section-align override given to tools/elf_patcher.py for that directory's objects
+    section_aligns: Tuple[Tuple[str, str], ...]
+
+
+def load_modules() -> List[Module]:
+    """Reads config/modules.txt: `<name> <basename> <elf|xff> [align=<dir>:<section>:<alignment> ...]`."""
+    if not MODULES_FILE.is_file():
+        sys.exit(f"Error: {MODULES_FILE} not found")
+
+    modules: List[Module] = []
+    for number, line in enumerate(MODULES_FILE.read_text().splitlines(), 1):
+        fields = line.split("#")[0].split()
+        if not fields:
+            continue
+
+        def fail(message: str):
+            sys.exit(f"Error: {MODULES_FILE}:{number}: {message}")
+
+        if len(fields) < 3:
+            fail("expected '<name> <basename> <elf|xff> [align=<dir>:<section>:<alignment> ...]'")
+        name, basename, kind = fields[:3]
+        if kind not in ("elf", "xff"):
+            fail(f"format must be 'elf' or 'xff', not '{kind}'")
+        if any(m.name == name for m in modules):
+            fail(f"duplicate module '{name}'")
+
+        aligns = []
+        for option in fields[3:]:
+            key, _, value = option.partition("=")
+            parts = value.split(":")
+            if key != "align" or len(parts) != 3:
+                fail(f"unrecognized option '{option}' (expected align=<dir>:<section>:<alignment>)")
+            aligns.append((parts[0], f"{parts[1]}:{parts[2]}"))
+
+        modules.append(Module(name, basename, kind == "xff", tuple(aligns)))
+    return modules
+
+
 
 # Custom spec rule that invokes the preprocessor before assembling
 # avoids us having to manually pipe each step and just use GCC
@@ -64,7 +119,12 @@ def clean(target):
 
 
 def write_permuter_settings():
-    rel_cc_dir = Path(GAME_CC_DIR).relative_to(ROOT)
+    try:
+        rel_cc_dir = Path(GAME_CC_DIR).relative_to(ROOT)
+    except ValueError:
+        # If the compiler is located outside ROOT (e.g. in /opt/sotc-cc), use the absolute path or string
+        rel_cc_dir = GAME_CC_DIR
+
     with open("permuter_settings.toml", "w") as f:
         f.write(
             f"""compiler_command = "{rel_cc_dir}/ee-gcc -c {COMMON_INCLUDES} -O2 -g2"
@@ -79,7 +139,27 @@ compiler_type = "gcc"
         )
 
 
-def build_stuff(basename, linker_entries: List[LinkerEntry], is_xff, split):
+def cmake_quote(value) -> str:
+    return '"' + str(value).replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$") + '"'
+
+
+def write_cmake_manifest(path, is_xff, rows):
+    """One decomp_object() line per object, same data the ninja rules get."""
+    with open(path, "w") as f:
+        f.write(f"set(DECOMP_XFF {'ON' if is_xff else 'OFF'})\n")
+        f.write(f"set(DECOMP_INCLUDES {cmake_quote(COMMON_INCLUDES)})\n")
+        for kind, obj, srcs, variables in rows:
+            quoted_srcs = " ".join(cmake_quote(src) for src in srcs)
+            line = f"decomp_object({kind} {cmake_quote(obj)} SRC {quoted_srcs}"
+            for key in ("optlevel", "regnames", "override"):
+                if variables.get(key):
+                    line += f" {key.upper()} {cmake_quote(variables[key])}"
+            f.write(line + ")\n")
+
+
+
+
+def build_stuff(basename, linker_entries: List[LinkerEntry], is_xff, split, section_aligns=(), manifest_rows=None):
     built_objects: Set[Path] = set()
 
     def build(
@@ -93,6 +173,10 @@ def build_stuff(basename, linker_entries: List[LinkerEntry], is_xff, split):
             object_paths = [object_paths]
 
         object_strs = [str(obj) for obj in object_paths]
+
+        if manifest_rows is not None:
+            for object_str in object_strs:
+                manifest_rows.append((task, object_str, [str(p) for p in src_paths], variables))
 
         for object_path in object_paths:
             if object_path.suffix == ".o":
@@ -174,12 +258,11 @@ def build_stuff(basename, linker_entries: List[LinkerEntry], is_xff, split):
         if entry.object_path is None:
             continue
 
-        if entry.object_path.is_relative_to(Path("build/SCPS_150.97/asm/SCPS_150.97/sdk")):
-            override = "--section-align .text:0x4"
-        elif entry.object_path.is_relative_to(Path("build/SCPS_150.97/asm/SCPS_150.97/data/section")):
-            override = "--section-align .data:0x4"
-        else:
-            override = ""
+        override = ""
+        for directory, align in section_aligns:
+            if entry.object_path.is_relative_to(Path(f"build/{basename}/asm/{basename}/{directory}")):
+                override = f"--section-align {align}"
+                break
 
         if isinstance(seg, splat.segtypes.common.asm.CommonSegAsm) or isinstance(
             seg, splat.segtypes.common.data.CommonSegData
@@ -276,21 +359,24 @@ def replace_instructions_with_opcodes(asm_folder: Path) -> None:
 
 
 def split_binaries(args):
-    target_aliases = {
-        "loader" : "SCPS_150.97", 
-        "kernel" : "KERNEL.XFF",
-        }
-    
-    target_files = []
-    
+    modules = {module.name: module for module in load_modules()}
+
     if not args.target:
-        target_files = list(target_aliases.values())
+        selected = list(modules.values())
     else:
+        selected = []
         for target in args.target:
-            if target not in target_aliases.keys():
-                print(f"Error: Unrecognized target. Valid targets: {list(target_aliases.keys())}." )
+            if target not in modules:
+                print(f"Error: Unrecognized target. Valid targets: {list(modules.keys())}.")
                 return
-            target_files.append(target_aliases.get(target))
+            selected.append(modules[target])
+
+    if len(selected) > 1:
+        print(
+            "Warning: several targets in one process leak state into each other (the later ones can fail their "
+            "checksum). Run one target per process: ./configure.py -c -t <name>",
+            file=sys.stderr,
+        )
 
 #    ninja = ninja_syntax.Writer(open(str(ROOT / "build.ninja"), "w"), width=9999)
 #    ninja.rule(
@@ -299,13 +385,14 @@ def split_binaries(args):
 #        command=f"ninja -f $in",
 #    )
 
-    for target_file in target_files:
+    for module in selected:
+        target_file = module.basename
 
         if args.clean:
             clean(target_file)
         
         if args.rescan:
-            parse_xff_relocs.main(f"iso/{target_file}")
+            parse_xff_relocs.main(f"{ISO_PATH}/{target_file}")
 
         yaml_file = f"config/{target_file}/{target_file}.yaml"
 
@@ -315,8 +402,18 @@ def split_binaries(args):
 
         create_custom_specs()
 
-        build_stuff(target_file, linker_entries, target_file != "SCPS_150.97", split)
-        
+        manifest_rows = [] if args.emit_cmake else None
+
+        build_stuff(target_file, linker_entries, module.is_xff, split, module.section_aligns, manifest_rows)
+
+        if args.emit_cmake:
+            write_cmake_manifest(args.emit_cmake, module.is_xff, manifest_rows)
+
+        if args.emit_objdiff:
+            from tools.gen_objdiff import write_objdiff_config
+            basenames = [m.basename for m in selected]
+            write_objdiff_config(args.emit_objdiff, basenames)
+
 #        ninja.build(
 #            f"build/{target_file}/{target_file}",
 #            "ninja",
@@ -352,7 +449,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-t",
         "--target",
-        help="Choose one or more target binaries",
+        help="Choose one or more targets, as listed in config/modules.txt",
         action="extend",
         nargs="+",
         type=str
@@ -363,7 +460,22 @@ if __name__ == "__main__":
         help="Rescans the target XFF file for reallocations",
         action="store_true",
     )
+    parser.add_argument(
+        "--emit-cmake",
+        help="Also write a CMake object manifest to this path (use with a single -t target)",
+        metavar="PATH",
+        default=None,
+    )
+    parser.add_argument(
+        "--emit-objdiff",
+        metavar="PATH",
+        default=None,
+        help="Write objdiff project config JSON to this path"
+    )
     args = parser.parse_args()
+
+    if args.emit_cmake and (not args.target or len(args.target) != 1):
+        parser.error("--emit-cmake needs exactly one -t target")
 
     if args.cleansrc:
         shutil.rmtree("src", ignore_errors=True)
